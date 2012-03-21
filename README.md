@@ -53,3 +53,8 @@ and then:
     $ ls -al
 
 and you'll see the .m2 and .maven directories are now present in your slug.
+
+License
+-------
+
+Licensed under the MIT License. See LICENSE file.
