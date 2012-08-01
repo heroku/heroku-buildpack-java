@@ -11,7 +11,7 @@ config_vars:
   JAVA_OPTS: -Xmx384m -Xss512k -XX:+UseCompressedOops
   MAVEN_OPTS: -Xmx384m -Xss512k -XX:+UseCompressedOops 
 addons:
-  shared-database:5mb
+  heroku-postgresql:dev
 
 
 EOF`
