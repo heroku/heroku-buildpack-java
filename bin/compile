@@ -63,14 +63,20 @@ if [ ! -d .maven ]; then
   echo " done"
 fi
 
+# Configure maven settings
+MAVEN_SETTINGS="$HOME/.m2/settings.xml"
 MAVEN_SETTINGS_URL="http://s3.amazonaws.com/heroku-jvm-langpack-java/settings.xml"
 
-echo -n "-----> Installing settings.xml..."
-if [ -f .m2/settings.xml ]; then
-  rm .m2/settings.xml 
+if [ ! -e $MAVEN_SETTINGS ]; then
+  echo -n "-----> Installing settings.xml..."
+  if [ -f .m2/settings.xml ]; then
+    rm .m2/settings.xml
+  fi
+  curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
+  echo " done"
+
+  MAVEN_SETTINGS="$CACHE_DIR/.m2/settings.xml"
 fi
-curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
-echo " done"
 
 # change to build dir to run maven
 cd $BUILD_DIR
@@ -78,7 +84,7 @@ cd $BUILD_DIR
 export MAVEN_OPTS="-Xmx512m"
 
 # build app
-BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
+BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $MAVEN_SETTINGS -DskipTests=true clean install"
 echo "-----> executing $BUILDCMD"
 
 $BUILDCMD 2>&1 | sed -u 's/^/       /'
