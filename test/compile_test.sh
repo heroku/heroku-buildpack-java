@@ -4,12 +4,12 @@
 . ${BUILDPACK_HOME}/bin/java
 
 testUserIsFlaggedForDownload() {
-  capture is_flagged_for_download "0"
+  capture is_flagged_for_download 100
   assertCapturedEquals "true"
 }
 
 testUserIsNotFlaggedForDownload() {
-  capture is_flagged_for_download 100
+  capture is_flagged_for_download 0
   assertCapturedEquals "false"
 }
 
