@@ -1,6 +1,53 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 . ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
+. ${BUILDPACK_HOME}/bin/java
+
+testUserIsFlaggedForDownload() {
+  capture is_flagged_for_download "0"
+  assertCapturedEquals "true"
+}
+
+testUserIsNotFlaggedForDownload() {
+  capture is_flagged_for_download 100
+  assertCapturedEquals "false"
+}
+
+testInvalidInputForFlag() {
+  capture is_flagged_for_download "<somexmlerror>err</somexmlerr>"
+  assertCapturedEquals "false"
+}
+
+testFlagIsDownloaded() {
+  capture is_flagged_for_download
+  flagged=$(cat $STD_OUT)
+  assertTrue "Response should be true or false." "[ $flagged = 'true' ] || [ $flagged = 'false' ]"
+}
+
+testDownloadFlagIsUsedWhenVendoredFileIsPresent() {
+  mkdir -p ${CACHE_DIR}/.jdk
+  touch ${CACHE_DIR}/.jdk/vendor
+  
+  createPom "$(withDependency)" # including dependency to force use of s3pository.heroku.com
+
+  compile
+  
+  assertCapturedSuccess
+
+  assertCaptured "Installing Maven 3.0.3"
+  assertFileMD5 "605f8b746e16576064258afaf630a2cc"  ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+  
+  assertCaptured "Installing settings.xml" 
+  assertFileMD5 "a5fa7b9982fc64939c0e215f935a850a" ${CACHE_DIR}/.m2/settings.xml
+  
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
+  assertCaptured "s3pository.heroku.com" 
+  assertCaptured "BUILD SUCCESS" 
+  assertCaptured "Installing OpenJDK 1.6.0_20"
+  assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
+  assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
+}
 
 createPom()
 {
