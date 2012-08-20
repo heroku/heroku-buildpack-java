@@ -3,10 +3,15 @@
 
 BUILD_DIR=$1
 
+JAVA_PATH=""
+if [ -d ${BUILD_DIR}/.jdk ]; then
+  JAVA_PATH="/app/.jdk/bin:"
+fi
+
 cat <<EOF
 ---
 config_vars:
-  PATH: /usr/local/bin:/usr/bin:/bin
+  PATH: $JAVA_PATH/usr/local/bin:/usr/bin:/bin
   JAVA_OPTS: -Xmx384m -Xss512k -XX:+UseCompressedOops
   MAVEN_OPTS: -Xmx384m -Xss512k -XX:+UseCompressedOops 
 addons:

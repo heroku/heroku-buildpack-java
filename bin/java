@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+LATEST_JDK_VERSION="1.7"
+DEFAULT_JDK_VERSION="1.6"
+
+JDK_URL_1_7="https://s3.amazonaws.com/heroku-jvm-langpack-java/openjdk7-u4-heroku-temaki-b20.tar.gz"
+JDK_URL_1_6="https://s3.amazonaws.com/heroku-jvm-langpack-java/openjdk6-u25-heroku-temaki.tar.gz"
+JDK_URL_1_6_DARWIN="http://heroku-jvm-langpack-java.s3.amazonaws.com/openjdk6-u33-heroku-temaki-darwin.tar.gz"
+JDK_URL_1_7_DARWIN="http://heroku-jvm-langpack-java.s3.amazonaws.com/openjdk7-u4-heroku-temaki-darwin.tar.gz"
+
+install_java() {
+  baseDir=$1
+  if [ ! -d "${baseDir}" ]; then echo "Invalid directory to install java."; return 1 ; fi
+  javaVersion=${2:-"$(get_java_version ${baseDir})"}
+  jdkDir="${baseDir}"/.jdk
+  jdkTarball="${jdkDir}"/jdk.tar.gz
+  javaExe="${jdkDir}/$(_get_relative_jdk_bin)"/java
+  mkdir -p "${jdkDir}"
+  if [ ! -f "${jdkTarball}" ] && [ ! -f "${javaExe}" ] || is_java_version_change "${jdkDir}" "${javaVersion}"; then 
+    jdkUrl=$(_get_jdk_download_url "${javaVersion}")
+    curl --silent --location ${jdkUrl} --output ${jdkTarball}
+    tar pxzf ${jdkTarball} -C "${jdkDir}"
+    rm ${jdkTarball}
+    echo "${javaVersion}" > "${jdkDir}"/version
+    if [ ! -f "${javaExe}" ]; then
+      echo "Unable to retrieve the JDK."
+      return 1
+    fi
+  fi
+  export JAVA_HOME="${jdkDir}/$(_get_relative_jdk_home)"
+  export PATH="${jdkDir}/$(_get_relative_jdk_bin):${PATH}"
+}
+
+is_java_version_change() {
+  jdkDir=$1
+  javaVersion=${2:-"${DEFAULT_JDK_VERSION}"}
+  if [ ! -d "${jdkDir}" ]; then echo "Invalid JDK directory."; return 1; fi
+  test -f "${jdkDir}/version" && [ "$(cat ${jdkDir}/version)" != "${javaVersion}" ]
+}
+
+_get_jdk_download_url() {
+  jdkVersion=${1:-${DEFAULT_JDK_VERSION}}
+  # hacky way of parsing the variable name.
+  # bash 4 would solve this with associative arrays, but shunit 
+  # tests don't seem to respect the correct bash version.
+  minorJdkVersion=\$JDK_URL_1_$(expr "${jdkVersion}" : '1.\([6-7]\)')
+  osSuffix="$(_get_os_suffix)"
+  jdkUrl=$(eval echo \$JDK_URL_1_${minorJdkVersion}${osSuffix})
+  echo "${jdkUrl}"
+}
+
+_get_relative_jdk_bin() {
+  echo "$(_get_relative_jdk_home)/bin"
+}
+
+_get_relative_jdk_home() {
+  if [ "$(_get_os_suffix)" == "_DARWIN" ]; then
+    echo "Home"
+  else
+    echo ""
+  fi
+}
+
+_get_os_suffix() {
+  osSuffix=""
+  if [ "$(uname)" == "Darwin" ]; then osSuffix="_DARWIN"; fi
+  echo "${osSuffix}"
+}
+
+get_java_version() {
+  echo "${DEFAULT_JDK_VERSION}"
+}
+
+get_jvm_utils_command() {
+  baseDir=${1:-"No Dir"}
+  if [ "${baseDir}" == "No Dir" ] || [ ! -d "${baseDir}" ] ; then
+    echo "Invalid directory specified for pom file."
+    return 1
+  fi
+  
+  jvmUtilsDir="${baseDir}"/.jvm-utils
+  mkdir -p "${jvmUtilsDir}"
+  
+  if [ ! -f "$jvmUtilsDir"/jvm-utils.jar ] ; then
+    jvmUtilsURL="https://s3.amazonaws.com/heroku-jvm-langpack-java/buildpack-jvm-utils-0.1.jar"
+    curl --silent --location ${jvmUtilsURL} --output "${jvmUtilsDir}"/jvm-utils.jar 
+  fi
+
+  echo "${jvmUtilsDir}"/jvm-utils.jar
+}
+
+is_flagged_for_download() {
+  randThreshold=${1:-"$(curl --silent http://heroku-jvm-langpack-java.s3.amazonaws.com/flags/download-jdk-6-rate)"}
+  rand=$(shuf -i 0-100 -n 1)
+  thresholdIsNumber=$(echo "$randThreshold" | grep -E ^[0-9]+$)
+  if [ ${#thresholdIsNumber} -gt 0 ] && [ $rand -lt $randThreshold ]; then
+    echo "true"
+  else
+    echo "false"
+  fi 
+}

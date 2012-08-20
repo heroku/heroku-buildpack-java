@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+copy_directories() {
+  dirList=$1
+  sourceDir=$2
+  destDir=$3
+
+  if [ ! -d "${sourceDir}" ] ; then echo "Invalid source directory to copy from. ${sourceDir}" ; return 1 ; fi
+  if [ ! -d "${destDir}" ] ; then echo "Invalid destination directory to copy to. ${destDir}" ; return 1 ; fi
+
+  for dir in ${dirList} ; do
+    rm -rf "${destDir}/${dir}"
+    
+    if [ -d "${sourceDir}/${dir}" ] ; then
+      mkdir -p "${destDir}/${dir}" 
+      cp -r "${sourceDir}/${dir}/." "${destDir}/${dir}"
+    fi
+  done
+}
