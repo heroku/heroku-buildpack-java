@@ -90,7 +90,7 @@ get_jvm_utils_command() {
 }
 
 is_flagged_for_download() {
-  randThreshold=${1-"$(curl --silent http://heroku-jvm-langpack-java.s3.amazonaws.com/flags/download-jdk-6-rate)"}
+  randThreshold=${1:-"$(curl --silent http://heroku-jvm-langpack-java.s3.amazonaws.com/flags/download-jdk-6-rate)"}
   rand=$(shuf -i 0-100 -n 1)
   thresholdIsNumber=$(echo "$randThreshold" | grep -E ^[0-9]+$)
   if [ ${#thresholdIsNumber} -gt 0 ] && [ $rand -lt $randThreshold ]; then

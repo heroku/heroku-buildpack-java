@@ -38,7 +38,7 @@ cd $CACHE_DIR
 # install JDK if it's a new app or is already using the vendored JDK
 if [ "true" == ${DOWNLOAD_JDK} ]; then
   logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk-6"
-  echo -n "-----> Installing OpenJDK 1.6.0_20..."
+  echo -n "-----> Installing OpenJDK 1.6.0_25..."
   install_java ${BUILD_DIR}
   echo "done"
   mkdir -p ${CACHE_DIR}/.jdk
