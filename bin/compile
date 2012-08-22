@@ -10,6 +10,7 @@ BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 # parse args
 BUILD_DIR=$1
 CACHE_DIR=$2
+LOGGER_FLAGS=""
 
 . ${BIN_DIR}/java
 
@@ -40,6 +41,7 @@ cd $CACHE_DIR
 # install JDK if it's a new app or is already using the vendored JDK
 if [ "true" == ${DOWNLOAD_JDK} ]; then
   logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk-6"
+  LOGGER_FLAGS="$LOGGER_FLAGS download_jdk-6"
   echo -n "-----> Installing OpenJDK 1.6.0_25..."
   install_java ${BUILD_DIR}
   echo "done"
@@ -94,4 +96,4 @@ if [ "true" == $KEEP_M2_CACHE ]; then
   done
 fi
 
-logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end"
+logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end $LOGGER_FLAGS"
