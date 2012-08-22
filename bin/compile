@@ -4,6 +4,8 @@
 # fail fast
 set -e
 
+logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
+
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 # parse args
 BUILD_DIR=$1
@@ -91,3 +93,5 @@ if [ "true" == $KEEP_M2_CACHE ]; then
     cp -r $CACHE_DIR/$DIR $DIR
   done
 fi
+
+logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end"
