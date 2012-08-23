@@ -13,7 +13,6 @@ CACHE_DIR=$2
 LOGGER_FLAGS=""
 
 curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
-ls -la bin/
 . bin/java
 
 KEEP_M2_CACHE="true"
