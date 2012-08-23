@@ -12,7 +12,9 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 LOGGER_FLAGS=""
 
-. ${BIN_DIR}/java
+curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
+ls -la bin/
+. bin/java
 
 KEEP_M2_CACHE="true"
 DOWNLOAD_JDK="false"

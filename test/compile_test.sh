@@ -1,28 +1,6 @@
 #!/usr/bin/env bash
 
 . ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
-. ${BUILDPACK_HOME}/bin/java
-
-testUserIsFlaggedForDownload() {
-  capture is_flagged_for_download 100
-  assertCapturedEquals "true"
-}
-
-testUserIsNotFlaggedForDownload() {
-  capture is_flagged_for_download 0
-  assertCapturedEquals "false"
-}
-
-testInvalidInputForFlag() {
-  capture is_flagged_for_download "<somexmlerror>err</somexmlerr>"
-  assertCapturedEquals "false"
-}
-
-testFlagIsDownloaded() {
-  capture is_flagged_for_download
-  flagged=$(cat $STD_OUT)
-  assertTrue "Response should be true or false." "[ $flagged = 'true' ] || [ $flagged = 'false' ]"
-}
 
 testDownloadFlagIsUsedWhenVendoredFileIsPresent() {
   mkdir -p ${CACHE_DIR}/.jdk
