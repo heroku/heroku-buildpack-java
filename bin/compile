@@ -19,6 +19,7 @@ KEEP_M2_CACHE="true"
 DOWNLOAD_JDK="false"
 
 if [ ! -d $CACHE_DIR ]; then
+  logger -p user.notice -t "slugc[$$]" "language_pack_java new_java_app"
   KEEP_M2_CACHE="false"
   DOWNLOAD_JDK=$(is_flagged_for_download)
 elif [ -f $CACHE_DIR/removeM2Cache ]; then
