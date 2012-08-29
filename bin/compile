@@ -16,19 +16,13 @@ curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack
 . bin/java
 
 KEEP_M2_CACHE="true"
-DOWNLOAD_JDK="false"
 
 if [ ! -d $CACHE_DIR ]; then
   LOGGER_FLAGS="$LOGGER_FLAGS new_java_app"
   logger -p user.notice -t "slugc[$$]" "language_pack_java new_java_app"
   KEEP_M2_CACHE="false"
-  DOWNLOAD_JDK=$(is_flagged_for_download)
 elif [ -f $CACHE_DIR/removeM2Cache ]; then
   KEEP_M2_CACHE="false"
-fi
-
-if [ -f ${CACHE_DIR}/.jdk/vendor ]; then
-  DOWNLOAD_JDK="true"
 fi
 
 if [ "true" == $KEEP_M2_CACHE ]; then
@@ -41,17 +35,13 @@ mkdir -p $CACHE_DIR
 # change to cache dir to install maven
 cd $CACHE_DIR
 
-# install JDK if it's a new app or is already using the vendored JDK
-if [ "true" == ${DOWNLOAD_JDK} ]; then
-  logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk-6"
-  LOGGER_FLAGS="$LOGGER_FLAGS download_jdk-6"
-  javaVersion=$(detect_java_version ${BUILD_DIR})
-  echo -n "-----> Installing OpenJDK ${javaVersion}..."
-  install_java ${BUILD_DIR} ${javaVersion}
-  echo "done"
-  mkdir -p ${CACHE_DIR}/.jdk
-  touch ${CACHE_DIR}/.jdk/vendor
-fi
+# install JDK 
+logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk"
+LOGGER_FLAGS="$LOGGER_FLAGS download_jdk"
+javaVersion=$(detect_java_version ${BUILD_DIR})
+echo -n "-----> Installing OpenJDK ${javaVersion}..."
+install_java ${BUILD_DIR} ${javaVersion}
+echo "done"
 
 # install maven with base repository
 MAVEN_URL="http://s3.amazonaws.com/heroku-jvm-langpack-java/maven.tar.gz"
