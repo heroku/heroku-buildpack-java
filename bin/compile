@@ -45,8 +45,9 @@ cd $CACHE_DIR
 if [ "true" == ${DOWNLOAD_JDK} ]; then
   logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk-6"
   LOGGER_FLAGS="$LOGGER_FLAGS download_jdk-6"
-  echo -n "-----> Installing OpenJDK 1.6.0_25..."
-  install_java ${BUILD_DIR}
+  javaVersion=$(detect_java_version ${BUILD_DIR})
+  echo -n "-----> Installing OpenJDK ${javaVersion}..."
+  install_java ${BUILD_DIR} ${javaVersion}
   echo "done"
   mkdir -p ${CACHE_DIR}/.jdk
   touch ${CACHE_DIR}/.jdk/vendor
