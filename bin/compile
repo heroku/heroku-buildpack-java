@@ -38,7 +38,7 @@ cd $CACHE_DIR
 # install JDK 
 logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk"
 LOGGER_FLAGS="$LOGGER_FLAGS download_jdk"
-javaVersion=$(detect_java_version ${BUILD_DIR})
+javaVersion=$(get_java_version $(detect_java_version ${BUILD_DIR}))
 echo -n "-----> Installing OpenJDK ${javaVersion}..."
 install_java ${BUILD_DIR} ${javaVersion}
 echo "done"
