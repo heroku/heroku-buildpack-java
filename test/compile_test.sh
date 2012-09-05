@@ -25,6 +25,8 @@ testDownloadFlagIsUsedWhenVendoredFileIsPresent() {
   assertCaptured "Installing OpenJDK 1.6"
   assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
   assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
+  assertTrue "System properties file should be present in build dir." "[ -f ${BUILD_DIR}/system.properties ]"
+  assertTrue "System properties file should be present in cache." "[ -f ${CACHE_DIR}/system.properties ]"
 }
 
 createPom()
