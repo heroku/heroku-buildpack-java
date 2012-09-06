@@ -2,7 +2,7 @@
 
 . ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
 
-testDownloadFlagIsUsedWhenVendoredFileIsPresent() {
+testCompileWithVendorFlagGetsSystemProperties() {
   mkdir -p ${CACHE_DIR}/.jdk
   touch ${CACHE_DIR}/.jdk/vendor
   
@@ -39,6 +39,18 @@ testExistingAppDoesNotDownloadJDK() {
   assertTrue "Vendor file should not be present in cache dir." "[ ! -f ${CACHE_DIR}/.jdk/vendor ]"
   assertTrue "System properties file should not be present in build dir." "[ ! -f ${BUILD_DIR}/system.properties ]"
   assertTrue "System properties file should not be present in cache dir." "[ ! -f ${CACHE_DIR}/system.properties ]"
+}
+
+testNewAppGetsSystemPropertiesFile() {
+  rm -rf ${CACHE_DIR}
+  createPom "$(withDependency)"
+  compile
+  assertCapturedSuccess
+  assertCaptured "Installing OpenJDK"
+  assertTrue "Vendor file should not be present in build dir." "[ ! -f ${BUILD_DIR}/.jdk/vendor ]"
+  assertTrue "Vendor file should not be present in cache dir." "[ ! -f ${CACHE_DIR}/.jdk/vendor ]"
+  assertTrue "System properties file should be present in build dir." "[ -f ${BUILD_DIR}/system.properties ]"
+  assertTrue "System properties file should be present in cache dir." "[ -f ${CACHE_DIR}/system.properties ]"
 }
 
 createPom()
