@@ -19,6 +19,7 @@ Example usage:
     -----> Heroku receiving push
     -----> Fetching custom language pack... done
     -----> Java app detected
+    -----> Installing OpenJDK 1.6... done
     -----> Installing Maven 3.0.3... done
     -----> Installing settings.xml... done
     -----> executing /app/tmp/repo.git/.cache/.maven/bin/mvn -B -Duser.home=/tmp/build_19z6l4hp57wqm -Dmaven.repo.local=/app/tmp/repo.git/.cache/.m2/repository -s /app/tmp/repo.git/.cache/.m2/settings.xml -DskipTests=true clean install
@@ -30,6 +31,27 @@ Example usage:
     ...
 
 The buildpack will detect your app as Java if it has the file `pom.xml` in the root.  It will use Maven to execute the build defined by your pom.xml and download your dependencies. The .m2 folder (local maven repository) will be cached between builds for faster dependency resolution. However neither the mvn executable or the .m2 folder will be available in your slug at runtime.
+
+Choose a JDK
+--------------
+Create a `system.properties` file in the root of your project directory and set `java.runtime.version=1.7`.
+
+Example:
+
+    $ ls
+    Procfile pom.xml src
+    
+    $ echo "java.runtime.version=1.7" > system.properties
+    
+    $ git add system.properties && git commit -m "Java 7"
+    
+    $ git push heroku master
+    ...
+    -----> Heroku receiving push
+    -----> Fetching custom language pack... done
+    -----> Java app detected
+    -----> Installing OpenJDK 1.7... done
+    ...
 
 Hacking
 -------
