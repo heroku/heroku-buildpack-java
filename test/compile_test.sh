@@ -29,6 +29,18 @@ testDownloadFlagIsUsedWhenVendoredFileIsPresent() {
   assertTrue "System properties file should be present in cache." "[ -f ${CACHE_DIR}/system.properties ]"
 }
 
+testExistingAppDoesNotDownloadJDK() {
+  mkdir -p ${CACHE_DIR}
+  createPom "$(withDependency)"
+  compile
+  assertCapturedSuccess
+  assertNotCaptured "Installing OpenJDK"
+  assertTrue "Vendor file should not be present in build dir." "[ ! -f ${BUILD_DIR}/.jdk/vendor ]"
+  assertTrue "Vendor file should not be present in cache dir." "[ ! -f ${CACHE_DIR}/.jdk/vendor ]"
+  assertTrue "System properties file should not be present in build dir." "[ ! -f ${BUILD_DIR}/system.properties ]"
+  assertTrue "System properties file should not be present in cache dir." "[ ! -f ${CACHE_DIR}/system.properties ]"
+}
+
 createPom()
 {
   cat > ${BUILD_DIR}/pom.xml <<EOF
