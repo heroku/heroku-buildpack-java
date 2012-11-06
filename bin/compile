@@ -66,6 +66,7 @@ if [ ! -d .maven ]; then
   echo -n "-----> Installing Maven 3.0.4..."
   curl --silent --max-time 60 --location $MAVEN_URL | tar xz
   mv apache-maven-3.0.4 .maven
+  mkdir .m2
   chmod +x .maven/bin/mvn
   echo " done"
 fi
