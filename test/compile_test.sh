@@ -17,7 +17,6 @@ testCompileWithVendorFlagGetsSystemProperties() {
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
   assertCaptured "Installing settings.xml" 
-  assertFileMD5 "a5fa7b9982fc64939c0e215f935a850a" ${CACHE_DIR}/.m2/settings.xml
   
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
   assertCaptured "s3pository.heroku.com" 
@@ -99,7 +98,6 @@ testCompile()
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
   assertCaptured "Installing settings.xml" 
-  assertFileMD5 "a5fa7b9982fc64939c0e215f935a850a" ${CACHE_DIR}/.m2/settings.xml
   
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
   assertCaptured "s3pository.heroku.com" 
