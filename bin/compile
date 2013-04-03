@@ -92,4 +92,8 @@ if [ "true" == $KEEP_M2_CACHE ]; then
   done
 fi
 
+PROFILE_PATH="$BUILD_DIR/.profile.d/java.sh"
+mkdir -p $(dirname $PROFILE_PATH)
+echo 'export PATH=".jdk/bin:$PATH"' >> $PROFILE_PATH
+
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end $LOGGER_FLAGS"
