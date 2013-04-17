@@ -40,7 +40,7 @@ javaVersion=$(detect_java_version ${BUILD_DIR})
 echo -n "-----> Installing OpenJDK ${javaVersion}..."
 install_java ${BUILD_DIR} ${javaVersion}
 jdk_overlay ${BUILD_DIR}
-echo "done"
+echo " done"
 
 # change to cache dir to install maven
 cd $CACHE_DIR
