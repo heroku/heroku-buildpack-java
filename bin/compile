@@ -72,8 +72,6 @@ fi
 MAVEN_SETTINGS_URL="http://192.81.131.224/settings.xml"
 
 echo -n "-----> Installing settings.xml..."
-echo $MI_REPO_USER
-echo $MI_REPO_PASSWORD
 if [ -f .m2/settings.xml ]; then
   rm .m2/settings.xml 
 fi
