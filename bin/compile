@@ -4,21 +4,38 @@
 # fail fast
 set -e
 
+BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+
+source "${BIN_DIR}/../conf/${PAAS_VENDOR}-env.properties"
+
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
 
-BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 # parse args
 BUILD_DIR=$1
 CACHE_DIR=$2
 LOGGER_FLAGS=""
 
-curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
+curl --silent --location "${JVM_BUILDPACK_COMMON_URL}" | tar xz
 . bin/java
 
 KEEP_M2_CACHE="true"
 
+# create default system.properties for apps that had the jdk vendored in 
+if [ -f ${CACHE_DIR}/.jdk/vendor ] && [ ! -f ${BUILD_DIR}/system.properties ]; then
+  echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
+fi
+
+if [ -f ${CACHE_DIR}/system.properties ] && [ ! -f ${BUILD_DIR}/system.properties ]; then
+  cp ${CACHE_DIR}/system.properties ${BUILD_DIR}/system.properties
+fi
+
 if [ ! -d $CACHE_DIR ]; then
+  LOGGER_FLAGS="$LOGGER_FLAGS new_java_app"
+  logger -p user.notice -t "slugc[$$]" "language_pack_java new_java_app"
   KEEP_M2_CACHE="false"
+  if [ ! -f ${BUILD_DIR}/system.properties ]; then 
+    echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties; 
+  fi
 elif [ -f $CACHE_DIR/removeM2Cache ]; then
   KEEP_M2_CACHE="false"
 fi
@@ -30,32 +47,29 @@ fi
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
 
-# create default system.properties 
-if [ ! -f ${BUILD_DIR}/system.properties ]; then
-  echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
-fi
-
 # install JDK 
-javaVersion=$(detect_java_version ${BUILD_DIR})
-echo -n "-----> Installing OpenJDK ${javaVersion}..."
-install_java ${BUILD_DIR} ${javaVersion}
-jdk_overlay ${BUILD_DIR}
-echo " done"
+if [ -f ${BUILD_DIR}/system.properties ]; then
+  logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk"
+  LOGGER_FLAGS="$LOGGER_FLAGS download_jdk"
+  javaVersion=$(detect_java_version ${BUILD_DIR})
+  echo -n "-----> Installing OpenJDK ${javaVersion}"
+  jdk_file=$(install_java ${BUILD_DIR} ${javaVersion})
+  echo -n " (${jdk_file})..."
+  jdk_overlay ${BUILD_DIR}
+  echo "done"
+  cp ${BUILD_DIR}/system.properties ${CACHE_DIR}/
+fi
 
 # change to cache dir to install maven
 cd $CACHE_DIR
 
 # install maven with base repository
-MAVEN_URL="http://s3.amazonaws.com/heroku-jvm-langpack-java/maven.tar.gz"
-
 if [ ! -d .maven ]; then
-  echo -n "-----> Installing Maven 3.0.3..."
+  echo -n "-----> Installing Maven (${MAVEN_URL##*/})..."
   curl --silent --max-time 60 --location $MAVEN_URL | tar xz
   chmod +x .maven/bin/mvn
   echo " done"
 fi
-
-MAVEN_SETTINGS_URL="http://s3.amazonaws.com/heroku-jvm-langpack-java/settings.xml"
 
 echo -n "-----> Installing settings.xml..."
 if [ -f .m2/settings.xml ]; then
