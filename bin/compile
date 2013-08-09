@@ -52,11 +52,8 @@ if [ -f ${BUILD_DIR}/system.properties ]; then
   logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk"
   LOGGER_FLAGS="$LOGGER_FLAGS download_jdk"
   javaVersion=$(detect_java_version ${BUILD_DIR})
-  echo -n "-----> Installing OpenJDK ${javaVersion}"
-  jdk_file=$(install_java ${BUILD_DIR} ${javaVersion})
-  echo -n " (${jdk_file})..."
+  install_java ${BUILD_DIR} ${javaVersion}
   jdk_overlay ${BUILD_DIR}
-  echo "done"
   cp ${BUILD_DIR}/system.properties ${CACHE_DIR}/
 fi
 
