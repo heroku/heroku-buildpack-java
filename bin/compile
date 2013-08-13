@@ -20,9 +20,9 @@ curl --silent --location "${JVM_BUILDPACK_COMMON_URL}" | tar xz
 
 KEEP_M2_CACHE="true"
 
-# create default system.properties for apps that had the jdk vendored in 
+# create default system.properties for apps that had the jdk vendored in
 if [ -f ${CACHE_DIR}/.jdk/vendor ] && [ ! -f ${BUILD_DIR}/system.properties ]; then
-  echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
+  echo "java.runtime.version=1.7" > ${BUILD_DIR}/system.properties
 fi
 
 if [ -f ${CACHE_DIR}/system.properties ] && [ ! -f ${BUILD_DIR}/system.properties ]; then
@@ -33,8 +33,8 @@ if [ ! -d $CACHE_DIR ]; then
   LOGGER_FLAGS="$LOGGER_FLAGS new_java_app"
   logger -p user.notice -t "slugc[$$]" "language_pack_java new_java_app"
   KEEP_M2_CACHE="false"
-  if [ ! -f ${BUILD_DIR}/system.properties ]; then 
-    echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties; 
+  if [ ! -f ${BUILD_DIR}/system.properties ]; then
+    echo "java.runtime.version=1.7" > ${BUILD_DIR}/system.properties;
   fi
 elif [ -f $CACHE_DIR/removeM2Cache ]; then
   KEEP_M2_CACHE="false"
@@ -47,7 +47,7 @@ fi
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
 
-# install JDK 
+# install JDK
 if [ -f ${BUILD_DIR}/system.properties ]; then
   logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk"
   LOGGER_FLAGS="$LOGGER_FLAGS download_jdk"
@@ -70,7 +70,7 @@ fi
 
 echo -n "-----> Installing settings.xml..."
 if [ -f .m2/settings.xml ]; then
-  rm .m2/settings.xml 
+  rm .m2/settings.xml
 fi
 curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
 echo " done"
