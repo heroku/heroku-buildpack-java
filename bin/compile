@@ -60,7 +60,7 @@ fi
 cd $CACHE_DIR
 
 # install maven without base repository
-MAVEN_URL="http://www.us.apache.org/dist/maven/maven-3/3.0.4/binaries/apache-maven-3.0.4-bin.tar.gz"
+MAVEN_URL="http://archive.apache.org/dist/maven/binaries/apache-maven-3.0.4-bin.tar.gz"
 
 if [ ! -d .maven ]; then
   echo -n "-----> Installing Maven 3.0.4..."
