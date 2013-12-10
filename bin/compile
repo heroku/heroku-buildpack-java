@@ -69,7 +69,7 @@ if [ ! -d .maven ]; then
   echo " done"
 fi
 
-MAVEN_SETTINGS_URL="http://192.81.131.224/settings.xml"
+MAVEN_SETTINGS_URL="http://buildpack-miairline.s3-website-eu-west-1.amazonaws.com/settings.xml"
 
 echo -n "-----> Installing settings.xml..."
 if [ -f .m2/settings.xml ]; then
