@@ -10,6 +10,11 @@ BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 # parse args
 BUILD_DIR=$1
 CACHE_DIR=$2
+ENV_FILE=$3
+
+EXCLUDE_ENV="PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH"
+[ -f "$ENV_FILE" ] && export $(grep -vE "($EXCLUDE_ENV)" "$ENV_FILE")
+
 LOGGER_FLAGS=""
 
 curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
