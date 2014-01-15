@@ -4,15 +4,24 @@
 . ${BUILDPACK_HOME}/bin/common
 
 testExportEnvAppliesBlacklist() {
-  cat >$ENV_FILE<<EOF
-GIT_DIR=/lol
-MAVEN_PATH=/jars
-THIRD=3rd
-EOF
+  echo "/lol"  > $ENV_DIR/GIT_DIR
+  echo "/jars" > $ENV_DIR/MAVEN_DIR
+  cat > $ENV_DIR/MULTILINE <<EOF
+i'm a cool
+multiline
+config
+var
+i even have a trailing new line or two!
 
-  export_env_file $ENV_FILE
+EOF
+  echo ""    > $ENV_DIR/EMPTY
+
+  export_env_dir $ENV_DIR
   
-  assertTrue "GIT_DIR should not be set" "[ -z $GIT_DIR ]" # -z is a zero-length string test
-  assertTrue "MAVEN_PATH should be set" "[ -n $MAVEN_PATH ]" # -n is a non-zero-length string test
-  assertTrue "THIRD should be set" "[ -n $THIRD ]"
+  assertNull 'GIT_DIR should not be set' "$(env | grep '^GIT_DIR=')"
+  assertNotNull 'MAVEN_DIR should be set' "$(env | grep '^MAVEN_DIR=')"
+  assertEquals 'MAVEN_DIR should be set with value' "/jars" "$MAVEN_DIR" 
+  assertNotNull 'EMPTY should but without any value' "$(env | grep '^EMPTY=$')"
+  assertTrue 'MULTILINE should be set' '[ -n "$MULTILINE" ]'
+  assertEquals 'MULTILINE should have line breaks without trailing new lines' '4' "$(printf "$MULTILINE" | wc -l)"
 }
