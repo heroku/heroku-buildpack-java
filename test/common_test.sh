@@ -4,8 +4,8 @@
 . ${BUILDPACK_HOME}/bin/common
 
 testExportEnvAppliesBlacklist() {
-  echo "/lol"  > $ENV_DIR/GIT_DIR
-  echo "/jars" > $ENV_DIR/MAVEN_DIR
+  echo -n "/lol"  > $ENV_DIR/GIT_DIR
+  echo -n "/jars" > $ENV_DIR/MAVEN_DIR
   cat > $ENV_DIR/MULTILINE <<EOF
 i'm a cool
 multiline
@@ -14,7 +14,7 @@ var
 i even have a trailing new line or two!
 
 EOF
-  echo ""    > $ENV_DIR/EMPTY
+  echo -n ""    > $ENV_DIR/EMPTY
 
   export_env_dir $ENV_DIR
   
