@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-export_env_file() {
-  env_file=$1
-  if [ -f "$env_file" ]; then
-    whitelisted_env=$(grep -vE "^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)" "$env_file" || :)
-    if [ -n "$whitelisted_env" ]; then
-      export $whitelisted_env
-    fi
+export_env_dir() {
+  env_dir=$1
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo $e | grep -qE '^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$' ||
+      export "$e=$(cat $env_dir/$e)"
+    done
   fi
 }
