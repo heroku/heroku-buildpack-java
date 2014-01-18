@@ -7,17 +7,19 @@ set -e
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
 
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
-. $BIN_DIR/common # common functions
 
 # parse args
 BUILD_DIR=$1
 CACHE_DIR=$2
-export_env_dir $3
+ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
 curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
+. bin/util
 . bin/java
+
+export_env_dir $ENV_DIR
 
 KEEP_M2_CACHE="true"
 
