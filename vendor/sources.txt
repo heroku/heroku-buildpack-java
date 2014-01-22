@@ -1,0 +1,4 @@
+http://apache.org/dist/maven/maven-2/2.0.11/binaries/apache-maven-2.0.11-bin.tar.gz
+http://apache.org/dist/maven/maven-2/2.2.1/binaries/apache-maven-2.2.1-bin.tar.gz
+http://apache.org/dist/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz
+http://apache.org/dist/maven/maven-3/3.1.1/binaries/apache-maven-3.1.1-bin.tar.gz
