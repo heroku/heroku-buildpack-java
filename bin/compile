@@ -52,7 +52,7 @@ echo " done"
 cd $CACHE_DIR
 
 # install maven with base repository
-MAVEN_URL="https://region-a.geo-1.objects.hpcloudsvc.com:443/v1/94165097550687/heroku-buildpack-java/maven-3.0.5.tar.gz"
+MAVEN_URL="https://region-a.geo-1.objects.hpcloudsvc.com:443/v1/94165097550687/heroku-buildpack-java/maven-3.1.1.tar.gz"
 
 if [ ! -d .maven ]; then
   echo -n "-----> Installing Maven 3.0.5..."
