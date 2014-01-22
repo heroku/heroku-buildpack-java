@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+for MAVEN in $(cat sources.txt)
+do
+    echo "downloading $MAVEN..."
+    wget --quiet $MAVEN
+done
+
+for FILE in *.tar.gz
+do
+    NAME=$(echo $FILE | sed -e 's/.*\(maven-[0-9]*.[0-9]*.[0-9]*\).*/\1/g')
+    echo "packaging $NAME..."
+    TMPDIR=$(mktemp -d)
+    tar xzvf $FILE -C $TMPDIR &> /dev/null
+    mv $TMPDIR/apache-maven* $TMPDIR/.maven
+    tar -czvf $NAME.tar.gz -C $TMPDIR .maven &> /dev/null
+    rm -rf $TMPDIR
+done
+
+echo "cleaning up..."
+rm apache-maven-*
