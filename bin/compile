@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
+# bin/compile <build-dir> <cache-dir> <env-dir>
 
 # fail fast
 set -e
@@ -7,32 +7,24 @@ set -e
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
 
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+
 # parse args
 BUILD_DIR=$1
 CACHE_DIR=$2
+ENV_DIR=$3
+
 LOGGER_FLAGS=""
 
 curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
+. bin/util
 . bin/java
+
+export_env_dir $ENV_DIR
 
 KEEP_M2_CACHE="true"
 
-# create default system.properties for apps that had the jdk vendored in 
-if [ -f ${CACHE_DIR}/.jdk/vendor ] && [ ! -f ${BUILD_DIR}/system.properties ]; then
-  echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
-fi
-
-if [ -f ${CACHE_DIR}/system.properties ] && [ ! -f ${BUILD_DIR}/system.properties ]; then
-  cp ${CACHE_DIR}/system.properties ${BUILD_DIR}/system.properties
-fi
-
 if [ ! -d $CACHE_DIR ]; then
-  LOGGER_FLAGS="$LOGGER_FLAGS new_java_app"
-  logger -p user.notice -t "slugc[$$]" "language_pack_java new_java_app"
   KEEP_M2_CACHE="false"
-  if [ ! -f ${BUILD_DIR}/system.properties ]; then 
-    echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties; 
-  fi
 elif [ -f $CACHE_DIR/removeM2Cache ]; then
   KEEP_M2_CACHE="false"
 fi
@@ -44,17 +36,17 @@ fi
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
 
-# install JDK 
-if [ -f ${BUILD_DIR}/system.properties ]; then
-  logger -p user.notice -t "slugc[$$]" "language_pack_java download_jdk"
-  LOGGER_FLAGS="$LOGGER_FLAGS download_jdk"
-  javaVersion=$(detect_java_version ${BUILD_DIR})
-  echo -n "-----> Installing OpenJDK ${javaVersion}..."
-  install_java ${BUILD_DIR} ${javaVersion}
-  jdk_overlay ${BUILD_DIR}
-  echo "done"
-  cp ${BUILD_DIR}/system.properties ${CACHE_DIR}/
+# create default system.properties 
+if [ ! -f ${BUILD_DIR}/system.properties ]; then
+  echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
 fi
+
+# install JDK 
+javaVersion=$(detect_java_version ${BUILD_DIR})
+echo -n "-----> Installing OpenJDK ${javaVersion}..."
+install_java ${BUILD_DIR} ${javaVersion}
+jdk_overlay ${BUILD_DIR}
+echo " done"
 
 # change to cache dir to install maven
 cd $CACHE_DIR
@@ -81,7 +73,7 @@ echo " done"
 # change to build dir to run maven
 cd $BUILD_DIR
 
-export MAVEN_OPTS="-Xmx512m"
+export MAVEN_OPTS="-Xmx1024m"
 
 # build app
 BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
@@ -105,5 +97,10 @@ if [ "true" == $KEEP_M2_CACHE ]; then
     cp -r $CACHE_DIR/$DIR $DIR
   done
 fi
+
+PROFILE_PATH="$BUILD_DIR/.profile.d/java.sh"
+mkdir -p $(dirname $PROFILE_PATH)
+echo 'export PATH="/app/.jdk/bin:$PATH"' >> $PROFILE_PATH
+echo 'export JAVA_TOOL_OPTIONS="$JAVA_TOOL_OPTIONS -Djava.rmi.server.useCodebaseOnly=true"' >> $PROFILE_PATH
 
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end $LOGGER_FLAGS"
