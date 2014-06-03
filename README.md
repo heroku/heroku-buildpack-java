@@ -62,7 +62,7 @@ For example if you want to have maven available to use at runtime in your applic
 
     for DIR in ".m2" ".maven" ; do
       cp -r $CACHE_DIR/$DIR $BUILD_DIR/$DIR
-    done
+    done
 
 This will copy the local maven repo and maven binaries into your slug.
 
