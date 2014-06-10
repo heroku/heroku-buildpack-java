@@ -52,7 +52,7 @@ echo " done"
 cd $CACHE_DIR
 
 # install maven with base repository
-MAVEN_URL="http://s3.amazonaws.com/heroku-jvm-langpack-java/maven.tar.gz"
+MAVEN_URL="http://heroku-jvm-langpack-java.s3.amazonaws.com/maven.central.tar.gz"
 
 if [ ! -d .maven ]; then
   echo -n "-----> Installing Maven 3.0.3..."
