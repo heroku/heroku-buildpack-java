@@ -3,7 +3,7 @@
 . ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
 
 testCompileGetsDefaultSystemProperties() {
-  createPom "$(withDependency)" # including dependency to force use of s3pository.heroku.com
+  createPom "$(withDependency)"
 
   compile
   
@@ -13,10 +13,8 @@ testCompileGetsDefaultSystemProperties() {
   assertFileMD5 "605f8b746e16576064258afaf630a2cc"  ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
-  assertCaptured "Installing settings.xml" 
   
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
-  assertCaptured "s3pository.heroku.com" 
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS" 
   assertCaptured "Installing OpenJDK 1.6"
   assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
@@ -59,7 +57,7 @@ EOF
 
 testCompile()
 {
-  createPom "$(withDependency)" # including dependency to force use of s3pository.heroku.com
+  createPom "$(withDependency)"
 
   compile
   
@@ -69,10 +67,7 @@ testCompile()
   assertFileMD5 "605f8b746e16576064258afaf630a2cc"  ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
-  assertCaptured "Installing settings.xml" 
-  
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
-  assertCaptured "s3pository.heroku.com" 
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS" 
 }
 
@@ -92,13 +87,10 @@ testDownloadCaching()
   # simulate a primed cache
   mkdir -p ${CACHE_DIR}/.maven
   mkdir -p ${CACHE_DIR}/.m2
-  echo "OLD SETTINGS" > ${CACHE_DIR}/.m2/settings.xml
 
   compile
 
   assertNotCaptured "Maven should not be installed again when already cached" "Installing Maven"
-  assertCaptured "settings.xml should always be installed" "Installing settings.xml" 
-  assertFileNotContains "existing settings.xml file should have been replaced" "OLD SETTINGS" "${CACHE_DIR}/.m2/settings.xml"
 }
 
 testNewAppsRemoveM2Cache()
