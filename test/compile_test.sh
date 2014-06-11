@@ -10,7 +10,7 @@ testCompileGetsDefaultSystemProperties() {
   assertCapturedSuccess
 
   assertCaptured "Installing Maven 3.0.3"
-  assertFileMD5 "605f8b746e16576064258afaf630a2cc"  ${CACHE_DIR}/.maven/bin/mvn
+  assertFileMD5 "7d2bdb60388da32ba499f953389207fe"  ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
   
@@ -64,7 +64,7 @@ testCompile()
   assertCapturedSuccess
 
   assertCaptured "Installing Maven 3.0.3"
-  assertFileMD5 "605f8b746e16576064258afaf630a2cc"  ${CACHE_DIR}/.maven/bin/mvn
+  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -DskipTests=true clean install"
