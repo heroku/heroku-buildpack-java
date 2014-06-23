@@ -64,10 +64,18 @@ fi
 # change to build dir to run maven
 cd $BUILD_DIR
 
-export MAVEN_OPTS="-Xmx1024m"
+if [ -z "$MAVEN_BUILD_OPTS" ]; then
+  export MAVEN_OPTS="-Xmx1024m"
+else
+  export MAVEN_OPTS="$MAVEN_BUILD_OPTS"
+fi
+
+if [ -z "$MAVEN_BUILD_COMMAND" ]; then
+  MAVEN_BUILD_COMMAND="-DskipTests=true clean install"
+fi
 
 # build app
-BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -DskipTests=true clean install"
+BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository $MAVEN_BUILD_COMMAND"
 echo "-----> executing $BUILDCMD"
 
 $BUILDCMD 2>&1 | sed -u 's/^/       /'
