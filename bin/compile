@@ -15,7 +15,7 @@ ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
-curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
+curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xzm
 . bin/util
 . bin/java
 
@@ -61,15 +61,16 @@ if [ ! -d .maven ]; then
   echo " done"
 fi
 
-if [ -f .m2/settings.xml ]; then
-  rm .m2/settings.xml
-fi
-
-if [ -f $BUILD_DIR/settings.xml ]; then
-  echo "-----> Installing settings.xml..."
-  cp $BUILD_DIR/settings.xml .m2/settings.xml
-  SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
+if [ ! -z "$MAVEN_SETTINGS_PATH" ]; then
+  MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
+elif [ ! -z "$MAVEN_SETTINGS_URL" ]; then
+  echo -n "-----> Installing settings.xml..."
+  mkdir -p .m2
+  curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
   echo " done"
+  MAVEN_SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
+elif [ -f $BUILD_DIR/settings.xml ]; then
+  MAVEN_SETTINGS_OPT="-s $BUILD_DIR/settings.xml"
 fi
 
 # change to build dir to run maven
@@ -78,7 +79,7 @@ cd $BUILD_DIR
 export MAVEN_OPTS="-Xmx1024m"
 
 # build app
-BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository $SETTINGS_OPT -DskipTests=true clean install"
+BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository $MAVEN_SETTINGS_OPT -DskipTests=true clean install"
 echo "-----> executing $BUILDCMD"
 
 $BUILDCMD 2>&1 | sed -u 's/^/       /'

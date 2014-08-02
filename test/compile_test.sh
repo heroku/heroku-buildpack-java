@@ -54,6 +54,39 @@ withDependency()
 EOF
 }
 
+createSettingsXml() 
+{
+  if [ ! -z "$1" ]; then
+    SETTINGS_FILE=$1
+  else
+    SETTINGS_FILE="${BUILD_DIR}/settings.xml"
+  fi
+  
+  cat > $SETTINGS_FILE <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <profiles>
+    <profile>
+      <id>jboss-public-repository</id>
+      <repositories>
+        <repository>
+          <id>jboss-no-bees</id>
+          <name>JBoss Public Maven Repository Group</name>
+          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>jboss-public-repository</activeProfile>
+  </activeProfiles>
+</settings>
+EOF
+}
+
 
 testCompile()
 {
@@ -143,33 +176,43 @@ testLegacyAppsKeepM2Cache()
 testCustomSettingsXml()
 {
   createPom "$(withDependency)"
-  cat > ${BUILD_DIR}/settings.xml <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-  <profiles>
-    <profile>
-      <id>jboss-public-repository</id>
-      <repositories>
-        <repository>
-          <id>jboss-no-bees</id>
-          <name>JBoss Public Maven Repository Group</name>
-          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
-
-  <activeProfiles>
-    <activeProfile>jboss-public-repository</activeProfile>
-  </activeProfiles>
-</settings>
-EOF
+  createSettingsXml
   
-  compile 
+  compile
   
   assertCapturedSuccess
-  assertCaptured "Installing settings.xml" 
   assertCaptured "Downloading: http://repository.jboss.org/nexus/content/groups/public" 
+}
+
+testCustomSettingsXmlWithPath()
+{
+  createPom "$(withDependency)"
+  mkdir -p $BUILD_DIR/support
+  createSettingsXml "${BUILD_DIR}/support/settings.xml"
+  
+  export MAVEN_SETTINGS_PATH="${BUILD_DIR}/support/settings.xml"
+  
+  compile
+  
+  assertCapturedSuccess
+  assertCaptured "Downloading: http://repository.jboss.org/nexus/content/groups/public"
+
+  unset MAVEN_SETTINGS_PATH
+}
+
+testCustomSettingsXmlWithUrl()
+{
+  createPom "$(withDependency)"
+  mkdir -p /tmp/.m2
+  createSettingsXml "/tmp/.m2/settings.xml"
+  
+  export MAVEN_SETTINGS_URL="file:///tmp/.m2/settings.xml"
+  
+  compile
+  
+  assertCapturedSuccess
+  assertCaptured "Installing settings.xml"
+  assertCaptured "Downloading: http://repository.jboss.org/nexus/content/groups/public" 
+  
+  unset MAVEN_SETTINGS_URL
 }
