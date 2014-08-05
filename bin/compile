@@ -61,7 +61,7 @@ if [ ! -d .maven ]; then
   echo " done"
 fi
 
-if [ ! -z "$MAVEN_SETTINGS_PATH" ]; then
+if [ -n "$MAVEN_SETTINGS_PATH" ]; then
   MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
 elif [ ! -z "$MAVEN_SETTINGS_URL" ]; then
   echo -n "-----> Installing settings.xml..."
@@ -71,6 +71,8 @@ elif [ ! -z "$MAVEN_SETTINGS_URL" ]; then
   MAVEN_SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
 elif [ -f $BUILD_DIR/settings.xml ]; then
   MAVEN_SETTINGS_OPT="-s $BUILD_DIR/settings.xml"
+else
+  unset MAVEN_SETTINGS_OPT
 fi
 
 # change to build dir to run maven

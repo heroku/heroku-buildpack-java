@@ -216,3 +216,12 @@ testCustomSettingsXmlWithUrl()
   
   unset MAVEN_SETTINGS_URL
 }
+
+testIgnoreSettingsOptConfig()
+{
+  createPom "$(withDependency)"
+  export MAVEN_SETTINGS_OPT="-s nonexistant_file.xml"
+  compile
+  assertCapturedSuccess
+  unset MAVEN_SETTINGS_OPT
+}
