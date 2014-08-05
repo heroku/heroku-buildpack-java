@@ -63,7 +63,7 @@ fi
 
 if [ -n "$MAVEN_SETTINGS_PATH" ]; then
   MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
-elif [ ! -z "$MAVEN_SETTINGS_URL" ]; then
+elif [ -n "$MAVEN_SETTINGS_URL" ]; then
   echo -n "-----> Installing settings.xml..."
   mkdir -p .m2
   curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
