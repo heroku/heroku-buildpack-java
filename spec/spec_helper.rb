@@ -22,7 +22,7 @@ RSpec.configure do |config|
 end
 
 def git_repo
-  "https://github.com/heroku/heroku-buildpack-ruby.git"
+  "https://github.com/heroku/heroku-buildpack-java.git"
 end
 
 def add_database(app, heroku)
