@@ -1,4 +1,7 @@
 {
+  "hatchet": {
+    "directory": "spec/fixtures"
+  },
   "java": [
     "kissaten/java-servlets-sample"
   ]
