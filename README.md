@@ -1,4 +1,4 @@
-Heroku buildpack: Java
+Heroku buildpack: Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java)
 =========================
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Java apps.
@@ -24,7 +24,7 @@ Example usage:
     -----> Installing settings.xml... done
     -----> executing /app/tmp/repo.git/.cache/.maven/bin/mvn -B -Duser.home=/tmp/build_19z6l4hp57wqm -Dmaven.repo.local=/app/tmp/repo.git/.cache/.m2/repository -s /app/tmp/repo.git/.cache/.m2/settings.xml -DskipTests=true clean install
            [INFO] Scanning for projects...
-           [INFO]                                                                         
+           [INFO]
            [INFO] ------------------------------------------------------------------------
            [INFO] Building readmeTest 1.0-SNAPSHOT
            [INFO] ------------------------------------------------------------------------
@@ -40,11 +40,11 @@ Example:
 
     $ ls
     Procfile pom.xml src
-    
+
     $ echo "java.runtime.version=1.7" > system.properties
-    
+
     $ git add system.properties && git commit -m "Java 7"
-    
+
     $ git push heroku master
     ...
     -----> Heroku receiving push
