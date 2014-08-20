@@ -16,7 +16,7 @@ testCompileWithVendorFlagGetsSystemProperties() {
   assertFileMD5 "08a6e3ab11f4add00d421dfa57ef4c85"  ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
-  assertCaptured "Installing settings.xml" 
+  assertCaptured "Installing default settings.xml"
   assertFileMD5 "20b8c3d3c808129f6635597a05ece6b2" ${CACHE_DIR}/.m2/settings.xml
   
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
@@ -97,7 +97,7 @@ testCompile()
   assertFileMD5 "08a6e3ab11f4add00d421dfa57ef4c85"  ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
   
-  assertCaptured "Installing settings.xml" 
+  assertCaptured "Installing default settings.xml"
   assertFileMD5 "20b8c3d3c808129f6635597a05ece6b2" ${CACHE_DIR}/.m2/settings.xml
   
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
@@ -125,7 +125,7 @@ testDownloadCaching()
   compile
 
   assertNotCaptured "Maven should not be installed again when already cached" "Installing Maven"
-  assertCaptured "settings.xml should always be installed" "Installing settings.xml" 
+  assertCaptured "settings.xml should always be installed" "Installing default settings.xml"
   assertFileNotContains "existing settings.xml file should have been replaced" "OLD SETTINGS" "${CACHE_DIR}/.m2/settings.xml"
 }
 
@@ -174,4 +174,40 @@ testLegacyAppsKeepM2Cache()
   assertFalse "removeM2Cache file should not exist in cache" "[ -f ${CACHE_DIR}/removeM2Cache ]"  
   assertEquals ".m2 should be copied to build dir" "" "$(diff -r ${CACHE_DIR}/.m2 ${BUILD_DIR}/.m2)"
   assertEquals ".maven should be copied to build dir" "" "$(diff -r ${CACHE_DIR}/.maven ${BUILD_DIR}/.maven)"
+}
+
+testCustomSettingsXml()
+{
+  createPom "$(withDependency)"
+  cat > ${BUILD_DIR}/settings.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <profiles>
+    <profile>
+      <id>jboss-public-repository</id>
+      <repositories>
+        <repository>
+          <id>jboss-no-bees</id>
+          <name>JBoss Public Maven Repository Group</name>
+          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>jboss-public-repository</activeProfile>
+  </activeProfiles>
+</settings>
+EOF
+
+  compile
+
+  assertCapturedSuccess
+  assertCaptured "Installing custom settings.xml"
+  assertCaptured "Downloading:
+http://repository.jboss.org/nexus/content/groups/public"
 }

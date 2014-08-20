@@ -68,11 +68,19 @@ if [ ! -d .maven ]; then
   echo " done"
 fi
 
-echo -n "-----> Installing settings.xml..."
 if [ -f .m2/settings.xml ]; then
   rm .m2/settings.xml
 fi
-curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
+
+if [ -f $BUILD_DIR/settings.xml ]; then
+  echo -n "-----> Installing custom settings.xml..."
+  cp $BUILD_DIR/settings.xml .m2/settings.xml
+else
+  echo -n "-----> Installing default settings.xml..."
+  curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
+fi
+
+SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
 echo " done"
 
 # change to build dir to run maven
@@ -81,7 +89,7 @@ cd $BUILD_DIR
 export MAVEN_OPTS="-Xmx512m"
 
 # build app
-BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository -s $CACHE_DIR/.m2/settings.xml -DskipTests=true clean install"
+BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository $SETTINGS_OPT -DskipTests=true clean install"
 echo "-----> executing $BUILDCMD"
 
 $BUILDCMD 2>&1 | sed -u 's/^/       /'
