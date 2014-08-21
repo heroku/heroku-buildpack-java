@@ -4,6 +4,8 @@ branches:
   only:
     - master
 
+install: true
+
 env:
   global:
     - IS_RUNNING_ON_TRAVIS=true
