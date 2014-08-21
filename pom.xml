@@ -125,7 +125,7 @@
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>json</artifactId>
-        <version>1.6.7</version>
+        <version>1.8.0</version>
         <type>gem</type>
       </dependency>
       <dependency>
