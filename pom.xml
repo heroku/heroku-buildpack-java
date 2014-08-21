@@ -83,7 +83,7 @@
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>thor</artifactId>
-        <version>0.19.1</version>
+        <version>0.15.4</version>
         <type>gem</type>
       </dependency>
       <dependency>
