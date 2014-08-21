@@ -12,6 +12,8 @@ env:
     - HATCHET_RETRIES=3
     - HATCHET_DEPLOY_STRATEGY=git
     - SHUNIT_HOME="/tmp/shunit2-2.1.6"
+    # HEROKU_API_KEY 
+    - secure: RrlqbcEpNVu4Eo+Ay/gic/I9o1MyWwtO7LZwuRJIFz++67V5TDVGvrH/muHTPyI4gZup5sKYm17PlgxWEGO+nlMsuXodoUDhIdy/q080zO+OuWmOWfovEdTvvvfen0/SCnV8AdH2ujuFcawaZXti2fu5AWy01B1O5y04/pzyHyM=
   matrix:
     - TEST_CMD="mvn verify"
     - TEST_CMD="/tmp/testrunner/bin/run -c ."
