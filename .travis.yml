@@ -13,6 +13,8 @@ install: true
 
 script: $TEST_CMD
 
+after_script: heroku keys:remove
+
 env:
   global:
     - IS_RUNNING_ON_TRAVIS=true
