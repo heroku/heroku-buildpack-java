@@ -1,4 +1,4 @@
-CONFIG_SSH= <<EOF
+CONFIG_SSH=<<EOF
 Host heroku.com
     StrictHostKeyChecking no
     CheckHostIP no
