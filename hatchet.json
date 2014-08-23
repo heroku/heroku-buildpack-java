@@ -4,5 +4,9 @@
   },
   "java": [
     "kissaten/java-servlets-sample"
+  ],
+  "spring": [
+    "kissaten/spring-boot-webapp-runner",
+    "kissaten/spring-boot-executable"
   ]
 }

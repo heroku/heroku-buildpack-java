@@ -44,6 +44,9 @@ def create_file_with_size_in(size, dir)
   Pathname.new name
 end
 
+def jdk_versions
+  ["1.6"] #, "1.7", "1.8"]
+end
 
 ReplRunner.register_commands(:console)  do |config|
   config.terminate_command "exit"          # the command you use to end the 'rails console'
