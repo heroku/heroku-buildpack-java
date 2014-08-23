@@ -2,12 +2,7 @@ require_relative 'spec_helper'
 
 describe "Spring" do
   before(:each) do
-    Dir.chdir(app.directory) do
-      File.open('system.properties', 'w') do |f|
-        f.puts "java.runtime.version=#{jdk_version}"
-      end
-      `git commit -am "setting jdk version"`
-    end
+    set_java_version(app.directory, jdk_version)
   end
 
   ["1.6", "1.7", "1.8"].each do |version|

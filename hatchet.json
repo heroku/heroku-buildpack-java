@@ -9,5 +9,8 @@
   "spring": [
     "kissaten/spring-boot-webapp-runner",
     "kissaten/spring-boot-executable"
+  ],
+  "db": [
+    "kissaten/java-apache-dbcp-sample"
   ]
 }
