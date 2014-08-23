@@ -3,6 +3,15 @@
     "directory": "spec/fixtures"
   },
   "java": [
-    "kissaten/java-servlets-sample"
+    "kissaten/java-servlets-sample",
+    "kissaten/webapp-runner-sample",
+    "kissaten/korvan"
+  ],
+  "spring": [
+    "kissaten/spring-boot-webapp-runner",
+    "kissaten/spring-boot-executable"
+  ],
+  "db": [
+    "kissaten/java-apache-dbcp-sample"
   ]
 }
