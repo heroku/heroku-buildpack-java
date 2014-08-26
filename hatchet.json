@@ -4,6 +4,7 @@
   },
   "java": [
     "kissaten/java-servlets-sample",
+    "kissaten/webapp-runner-sample",
     "kissaten/korvan"
   ],
   "spring": [

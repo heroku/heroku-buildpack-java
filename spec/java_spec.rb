@@ -16,6 +16,7 @@ describe "Java" do
           expect(app.output).to include("Installing Maven 3.0.3")
           expect(app.output).not_to include("Installing settings.xml")
           expect(app.output).not_to include("BUILD FAILURE")
+          expect(app.output).to include("BUILD SUCCESS")
 
           expect(successful_body(app)).to eq("Hello from Java!")
         end
@@ -60,6 +61,41 @@ describe "Java" do
                 and include(%q{name:eth0 (eth0)}).
                 and include(%q{name:lo (lo)})
 
+          end
+        end
+      end
+    end
+  end
+
+  ["1.6", "1.7", "1.8"].each do |version|
+    context "#{version} with webapp-runner" do
+      let(:app) { Hatchet::Runner.new("webapp-runner-sample") }
+      let(:jdk_version) { version }
+
+      context "and expanded war" do
+        before do
+          Dir.chdir(app.directory) do
+            File.open('Procfile', 'w') do |f|
+              f.puts <<-EOF
+              web: java $JAVA_OPTS -jar target/dependency/webapp-runner.jar --expand-war --port $PORT target/*.war
+              EOF
+            end
+            `git commit -am "adding --expand-war to Procfile"`
+          end
+        end
+
+        it "expands war" do
+          app.deploy do |app|
+            expect(app).to be_deployed
+            expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+            expect(app.output).to include("Installing Maven 3.0.3")
+            expect(app.output).to match(%r{Building war: /tmp/.*/target/.*.war})
+            expect(app.output).not_to match(%r{Building jar: /tmp/.*/target/.*.jar})
+            expect(app.output).not_to include("Installing settings.xml")
+            expect(app.output).not_to include("BUILD FAILURE")
+            expect(app.output).to include("BUILD SUCCESS")
+
+            expect(successful_body(app)).to eq("Hello from Java!")
           end
         end
       end
