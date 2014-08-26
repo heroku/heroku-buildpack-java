@@ -1,6 +1,15 @@
 require_relative 'spec_helper'
 
 describe "Java" do
+
+  def expect_successful_maven(jdk_version)
+    expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+    expect(app.output).to include("Installing Maven 3.0.5")
+    expect(app.output).not_to include("Installing settings.xml")
+    expect(app.output).not_to include("BUILD FAILURE")
+    expect(app.output).to include("BUILD SUCCESS")
+  end
+
   before(:each) do
     set_java_version(app.directory, jdk_version)
   end
@@ -11,12 +20,7 @@ describe "Java" do
       let(:jdk_version) { version }
       it "should not install settings.xml" do
         app.deploy do |app|
-          expect(app).to be_deployed
-          expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-          expect(app.output).to include("Installing Maven 3.0.5")
-          expect(app.output).not_to include("Installing settings.xml")
-          expect(app.output).not_to include("BUILD FAILURE")
-          expect(app.output).to include("BUILD SUCCESS")
+          expect_successful_maven(jdk_version)
 
           expect(successful_body(app)).to eq("Hello from Java!")
         end
@@ -43,11 +47,7 @@ describe "Java" do
         let(:jdk_version) { version }
         it "runs commands" do
           app.deploy do |app|
-            expect(app).to be_deployed
-            expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-            expect(app.output).to include("Installing Maven 3.0.5")
-            expect(app.output).not_to include("Installing settings.xml")
-            expect(app.output).not_to include("BUILD FAILURE")
+            expect_successful_maven(jdk_version)
 
             expect(successful_body(app)).to eq("/1")
 
@@ -67,7 +67,7 @@ describe "Java" do
     end
   end
 
-  ["1.6", "1.7", "1.8"].each do |version|
+  %w{1.6 1.7 1.8}.each do |version|
     context "#{version} with webapp-runner" do
       let(:app) { Hatchet::Runner.new("webapp-runner-sample") }
       let(:jdk_version) { version }
@@ -84,16 +84,11 @@ describe "Java" do
           end
         end
 
-        it "expands war" do
+        it "expands war", :retry => 3, :retry_wait => 5 do
           app.deploy do |app|
-            expect(app).to be_deployed
-            expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-            expect(app.output).to include("Installing Maven 3.0.5")
+            expect_successful_maven(jdk_version)
             expect(app.output).to match(%r{Building war: /tmp/.*/target/.*.war})
             expect(app.output).not_to match(%r{Building jar: /tmp/.*/target/.*.jar})
-            expect(app.output).not_to include("Installing settings.xml")
-            expect(app.output).not_to include("BUILD FAILURE")
-            expect(app.output).to include("BUILD SUCCESS")
 
             expect(successful_body(app)).to eq("Hello from Java!")
           end
