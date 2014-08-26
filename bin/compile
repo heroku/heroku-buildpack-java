@@ -36,12 +36,12 @@ fi
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
 
-# create default system.properties 
+# create default system.properties
 if [ ! -f ${BUILD_DIR}/system.properties ]; then
   echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
 fi
 
-# install JDK 
+# install JDK
 javaVersion=$(detect_java_version ${BUILD_DIR})
 echo -n "-----> Installing OpenJDK ${javaVersion}..."
 install_java ${BUILD_DIR} ${javaVersion}
@@ -55,7 +55,7 @@ cd $CACHE_DIR
 MAVEN_URL="http://heroku-jvm-langpack-java.s3.amazonaws.com/maven.central.tar.gz"
 
 if [ ! -d .maven ]; then
-  echo -n "-----> Installing Maven 3.0.3..."
+  echo -n "-----> Installing Maven 3.0.5..."
   curl --silent --max-time 60 --location $MAVEN_URL | tar xz
   chmod +x .maven/bin/mvn
   echo " done"
