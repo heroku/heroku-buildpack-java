@@ -15,7 +15,7 @@ describe "Spring" do
           app.deploy do |app|
             expect(app).to be_deployed
             expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-            expect(app.output).to include("Installing Maven 3.0.3")
+            expect(app.output).to include("Installing Maven 3.0.5")
             expect(app.output).to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
             expect(app.output).not_to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
             expect(app.output).not_to include("Installing settings.xml")
@@ -32,7 +32,7 @@ describe "Spring" do
           app.deploy do |app|
             expect(app).to be_deployed
             expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-            expect(app.output).to include("Installing Maven 3.0.3")
+            expect(app.output).to include("Installing Maven 3.0.5")
             expect(app.output).not_to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
             expect(app.output).to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
             expect(app.output).not_to include("Installing settings.xml")

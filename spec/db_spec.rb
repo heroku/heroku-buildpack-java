@@ -13,7 +13,7 @@ describe "Java" do
         app.deploy do |app|
           expect(app).to be_deployed
           expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-          expect(app.output).to include("Installing Maven 3.0.3")
+          expect(app.output).to include("Installing Maven 3.0.5")
           expect(app.output).not_to include("Installing settings.xml")
           expect(app.output).not_to include("BUILD FAILURE")
           expect(app.output).to include("BUILD SUCCESS")
