@@ -15,7 +15,7 @@ ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
-curl --silent --location http://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
+curl --silent --location http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common.tar.gz | tar xz
 . bin/util
 . bin/java
 
