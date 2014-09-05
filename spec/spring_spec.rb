@@ -9,7 +9,7 @@ describe "Spring" do
     context "on jdk-#{version}" do
       let(:jdk_version) { version }
 
-      context "spring-boot-webapp-runner", :retry => 2, :retry_wait => 10 do
+      context "spring-boot-webapp-runner", :retry => 3, :retry_wait => 10 do
         let(:app) { Hatchet::Runner.new("spring-boot-webapp-runner") }
         it "builds a war" do
           app.deploy do |app|
@@ -26,7 +26,7 @@ describe "Spring" do
         end
       end
 
-      context "spring-boot-executable", :retry => 2, :retry_wait => 10 do
+      context "spring-boot-executable", :retry => 3, :retry_wait => 10 do
         let(:app) { Hatchet::Runner.new("spring-boot-executable") }
         it "builds an executable jar" do
           app.deploy do |app|
