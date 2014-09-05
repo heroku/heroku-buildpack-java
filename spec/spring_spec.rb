@@ -13,6 +13,7 @@ describe "Spring" do
         let(:app) { Hatchet::Runner.new("spring-boot-webapp-runner") }
         it "builds a war" do
           app.deploy do |app|
+            sleep(10) # :(
             expect(app).to be_deployed
             expect(app.output).to include("Installing OpenJDK #{jdk_version}")
             expect(app.output).to include("Installing Maven 3.0.5")
@@ -30,6 +31,7 @@ describe "Spring" do
         let(:app) { Hatchet::Runner.new("spring-boot-executable") }
         it "builds an executable jar" do
           app.deploy do |app|
+            sleep(10) # :(
             expect(app).to be_deployed
             expect(app.output).to include("Installing OpenJDK #{jdk_version}")
             expect(app.output).to include("Installing Maven 3.0.5")
