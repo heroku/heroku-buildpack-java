@@ -25,8 +25,8 @@ describe "Java" do
 
           `git commit -am "redeploy" --allow-empty`
           app.push!
-          
-          expect_successful_maven(jdk_version)
+          expect(app.output).not_to include("Installing Maven 3.0.5")
+          expect(app.output).to include("BUILD SUCCESS")
           expect(successful_body(app)).to eq("Hello from Java!")
         end
       end
