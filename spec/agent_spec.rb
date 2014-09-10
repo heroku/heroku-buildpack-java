@@ -35,7 +35,7 @@ describe "JavaAgent" do
         expect(successful_body(app)).to eq("Hello from Java!")
       end
 
-      it "logs memory usage", :retry => 5, :retry_wait => 5 do
+      it "logs memory usage", :retry => 10, :retry_wait => 5 do
         logs = `heroku logs -a #{app.name}`
         expect(logs).
             to include("measure.mem.jvm.heap.used=").
