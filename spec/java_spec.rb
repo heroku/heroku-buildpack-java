@@ -21,7 +21,12 @@ describe "Java" do
       it "should not install settings.xml" do
         app.deploy do |app|
           expect_successful_maven(jdk_version)
+          expect(successful_body(app)).to eq("Hello from Java!")
 
+          `git commit -am "redeploy" --allow-empty`
+          app.push!
+          
+          expect_successful_maven(jdk_version)
           expect(successful_body(app)).to eq("Hello from Java!")
         end
       end
