@@ -9,10 +9,9 @@ testCompileGetsDefaultSystemProperties() {
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.0.5"
-  assertFileMD5 "7d2bdb60388da32ba499f953389207fe"  ${CACHE_DIR}/.maven/bin/mvn
+  assertCaptured "Installing Maven 3.2.3"
+  assertFileMD5 "e253abb4b65b95544a56c39b4284c854"  ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
 
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS"
@@ -96,8 +95,8 @@ testCompile()
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.0.5"
-  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
+  assertCaptured "Installing Maven 3.2.3"
+  assertFileMD5 "e253abb4b65b95544a56c39b4284c854" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
@@ -118,8 +117,12 @@ testDownloadCaching()
   createPom
 
   # simulate a primed cache
-  mkdir -p ${CACHE_DIR}/.maven
   mkdir -p ${CACHE_DIR}/.m2
+  mkdir -p ${CACHE_DIR}/.maven/bin
+  cat > ${CACHE_DIR}/.maven/bin/mvn <<EOF
+echo "Apache Maven 3.2.3"
+EOF
+  chmod +x ${CACHE_DIR}/.maven/bin/mvn
 
   compile
 
@@ -224,4 +227,44 @@ testIgnoreSettingsOptConfig()
   compile
   assertCapturedSuccess
   unset MAVEN_SETTINGS_OPT
+}
+
+testMaven311()
+{
+  cat > ${BUILD_DIR}/system.properties <<EOF
+maven.version=3.1.1
+EOF
+
+  createPom "$(withDependency)"
+
+  compile
+
+  assertCapturedSuccess
+
+  assertCaptured "Installing Maven 3.1.1"
+  assertFileMD5 "08a6e3ab11f4add00d421dfa57ef4c85" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+}
+
+testMaven305()
+{
+  cat > ${BUILD_DIR}/system.properties <<EOF
+maven.version=3.0.5
+EOF
+
+  createPom "$(withDependency)"
+
+  compile
+
+  assertCapturedSuccess
+
+  assertCaptured "Installing Maven 3.0.5"
+  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
 }
