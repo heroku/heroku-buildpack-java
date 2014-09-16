@@ -43,7 +43,6 @@ mkdir -p $CACHE_DIR
 if [ ! -f ${BUILD_DIR}/system.properties ]; then
   cat > ${BUILD_DIR}/system.properties <<EOF
 java.runtime.version=1.6
-maven.version=3.2.3
 EOF
 fi
 

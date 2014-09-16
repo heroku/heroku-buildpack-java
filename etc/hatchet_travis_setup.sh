@@ -1,4 +1,4 @@
-if [ "$TEST_CMD" == "mvn verify" ]; then
+if [[ "$TEST_CMD" =~ "mvn verify" ]]; then
   if [ -n "`git config --get user.email`" ]; then
     echo 'already set'; else `git config --global user.email 'buildpack@example.com'`
   fi

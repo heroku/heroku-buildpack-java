@@ -11,7 +11,7 @@ before_install:
 
 install: true
 
-script: $TEST_CMD
+script: eval $TEST_CMD
 
 after_script: heroku keys:remove ~/.ssh/id_rsa
 
@@ -25,5 +25,5 @@ env:
     # HEROKU_API_KEY
     - secure: RrlqbcEpNVu4Eo+Ay/gic/I9o1MyWwtO7LZwuRJIFz++67V5TDVGvrH/muHTPyI4gZup5sKYm17PlgxWEGO+nlMsuXodoUDhIdy/q080zO+OuWmOWfovEdTvvvfen0/SCnV8AdH2ujuFcawaZXti2fu5AWy01B1O5y04/pzyHyM=
   matrix:
-    - TEST_CMD="mvn verify"
+    - TEST_CMD='[ "$TRAVIS_PULL_REQUEST" = "false" ] && mvn verify || echo "Skipping Hatchet tests..."'
     - TEST_CMD="/tmp/testrunner/bin/run -c ."
