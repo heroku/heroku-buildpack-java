@@ -29,10 +29,10 @@ describe "JavaAgent" do
       end
 
       it "deploys successfully" do
-        expect(app).to be_deployed
         expect(app.output).to include("BUILD SUCCESS")
         sleep(10) # :( for the logs really
         expect(successful_body(app)).to eq("Hello from Java!")
+        expect(app).to be_deployed
       end
 
       it "logs memory usage", :retry => 10, :retry_wait => 5 do

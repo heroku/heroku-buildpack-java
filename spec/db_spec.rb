@@ -11,7 +11,6 @@ describe "Java" do
       let(:jdk_version) { version }
       it "should use connection pool" do
         app.deploy do |app|
-          expect(app).to be_deployed
           expect(app.output).to include("Installing OpenJDK #{jdk_version}")
           expect(app.output).to include("Installing Maven 3.0.5")
           expect(app.output).not_to include("Installing settings.xml")
@@ -19,6 +18,8 @@ describe "Java" do
           expect(app.output).to include("BUILD SUCCESS")
 
           expect(successful_body(app, :path => "db")).to match("Read from DB:")
+
+          expect(app).to be_deployed
         end
       end
     end

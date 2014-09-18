@@ -14,7 +14,6 @@ describe "Spring" do
         it "builds a war" do
           app.deploy do |app|
             sleep(10) # :(
-            expect(app).to be_deployed
             expect(app.output).to include("Installing OpenJDK #{jdk_version}")
             expect(app.output).to include("Installing Maven 3.0.5")
             expect(app.output).to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
@@ -23,6 +22,7 @@ describe "Spring" do
             expect(app.output).not_to include("BUILD FAILURE")
 
             expect(successful_body(app)).to include("Create a New Appointment")
+            expect(app).to be_deployed
           end
         end
       end
@@ -32,7 +32,6 @@ describe "Spring" do
         it "builds an executable jar" do
           app.deploy do |app|
             sleep(10) # :(
-            expect(app).to be_deployed
             expect(app.output).to include("Installing OpenJDK #{jdk_version}")
             expect(app.output).to include("Installing Maven 3.0.5")
             expect(app.output).not_to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
@@ -41,6 +40,7 @@ describe "Spring" do
             expect(app.output).not_to include("BUILD FAILURE")
 
             expect(successful_body(app)).to include("Create a New Appointment")
+            expect(app).to be_deployed
           end
         end
       end
