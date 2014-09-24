@@ -46,7 +46,7 @@ describe "Java" do
   end
 
   context "korvan" do
-    ["1.6", "1.7"].each do |version|
+    ["1.6", "1.7", "1.8"].each do |version|
       let(:app) { Hatchet::Runner.new("korvan") }
       context "on jdk-#{version}" do
         let(:jdk_version) { version }
@@ -59,13 +59,16 @@ describe "Java" do
             expect(app.run("jce")).
                 to include("Picked up JAVA_TOOL_OPTIONS:  -Djava.rmi.server.useCodebaseOnly=true -Djava.rmi.server.useCodebaseOnly=true").
                 and include(%q{Encrypting, "Test"}).
-                and include(%q{Decrypted: Test})
+                and include(%q{Decrypted: Test}) unless jdk_version == "1.8"
 
             expect(app.run("netpatch")).
                 to include("Picked up JAVA_TOOL_OPTIONS:  -Djava.rmi.server.useCodebaseOnly=true -Djava.rmi.server.useCodebaseOnly=true").
                 and include(%q{name:eth0 (eth0)}).
                 and include(%q{name:lo (lo)})
 
+            expect(app.run("https")).
+                to include("Successfully invoked HTTPS service.").
+                and include(%q{"X-Forwarded-Proto": "https"})
           end
         end
       end
