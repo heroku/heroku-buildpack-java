@@ -35,7 +35,7 @@ describe "JavaAgent" do
         expect(app).to be_deployed
       end
 
-      it "logs memory usage", :retry => 10, :retry_wait => 5 do
+      it "logs memory usage", :retry => 10, :retry_wait => 10 do
         logs = `heroku logs -a #{app.name}`
         expect(logs).
             to include("measure.mem.jvm.heap.used=").
