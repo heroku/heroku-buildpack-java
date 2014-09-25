@@ -30,28 +30,4 @@ describe "Maven" do
       end
     end
   end
-
-  context "on jdk-1.6" do
-    let(:app) { Hatchet::Runner.new("java-servlets-sample") }
-    let(:jdk_version) { "1.6" }
-
-    it "should not force and upgrade" do
-      set_java_and_maven_versions(app.directory, jdk_version, "3.0.5")
-
-      app.deploy do |app|
-        expect(app.output).to include("Installing Maven 3.0.5")
-        expect(app.output).to include("BUILD SUCCESS")
-        expect(successful_body(app)).to eq("Hello from Java!")
-
-        `git rm system.properties`
-        `git commit -m "removed system properties"`
-        sleep(20)
-        
-        app.push!
-        expect(app.output).not_to include("Installing Maven")
-        expect(app.output).to include("BUILD SUCCESS")
-        expect(successful_body(app)).to eq("Hello from Java!")
-      end
-    end
-  end
 end

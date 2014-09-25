@@ -268,3 +268,73 @@ EOF
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS"
 }
+
+testMavenUpgrade()
+{
+  cat > ${BUILD_DIR}/system.properties <<EOF
+maven.version=3.0.5
+EOF
+
+  createPom "$(withDependency)"
+
+  compile
+
+  assertCapturedSuccess
+
+  assertCaptured "Installing Maven 3.0.5"
+  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+
+  rm ${BUILD_DIR}/system.properties
+
+  cat > ${BUILD_DIR}/system.properties <<EOF
+maven.version=3.2.3
+EOF
+
+  compile
+
+  assertCapturedSuccess
+
+  assertCaptured "Installing Maven 3.2.3"
+  assertFileMD5 "e253abb4b65b95544a56c39b4284c854" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+}
+
+testMavenSkipUpgrade()
+{
+  cat > ${BUILD_DIR}/system.properties <<EOF
+maven.version=3.0.5
+EOF
+
+  createPom "$(withDependency)"
+
+  compile
+
+  assertCapturedSuccess
+
+  assertCaptured "Installing Maven 3.0.5"
+  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+
+  rm ${BUILD_DIR}/system.properties
+
+  compile
+
+  assertCapturedSuccess
+
+  assertNotCaptured "Installing Maven"
+  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+}
