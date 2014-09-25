@@ -7,7 +7,7 @@ if [ ! -z "$1" ]; then
   git clone git@github.com:heroku/heroku-buildpack-java.git &&
   cd heroku-buildpack-java &&
   git checkout master &&
-  find . ! -name '.' ! -name '..' ! -name 'bin' -maxdepth 1 -print0 | xargs -0 rm -rf --
+  find . ! -name '.' ! -name '..' ! -name 'bin' -maxdepth 1 -print0 | xargs -0 rm -rf -- &&
   heroku buildpacks:publish $1/java
   popd > /dev/null 2>&1
   echo "Cleaning up..."
