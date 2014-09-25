@@ -45,7 +45,8 @@ describe "Maven" do
 
         `git rm system.properties`
         `git commit -m "removed system properties"`
-
+        sleep(20)
+        
         app.push!
         expect(app.output).not_to include("Installing Maven")
         expect(app.output).to include("BUILD SUCCESS")
