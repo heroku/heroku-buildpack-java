@@ -54,6 +54,16 @@ def set_java_version(d, v)
   end
 end
 
+def set_java_and_maven_versions(d, java_version, maven_version)
+  Dir.chdir(d) do
+    File.open('system.properties', 'w') do |f|
+      f.puts "java.runtime.version=#{java_version}"
+      f.puts "maven.version=#{maven_version}"
+    end
+    `git commit -am "setting jdk and maven versions"`
+  end
+end
+
 ReplRunner.register_commands(:console)  do |config|
   config.terminate_command "exit"          # the command you use to end the 'rails console'
   config.startup_timeout 60                # seconds to boot

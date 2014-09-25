@@ -7,6 +7,7 @@ set -e
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
 
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+. $BIN_DIR/common
 
 # parse args
 BUILD_DIR=$1
@@ -40,7 +41,9 @@ mkdir -p $CACHE_DIR
 
 # create default system.properties
 if [ ! -f ${BUILD_DIR}/system.properties ]; then
-  echo "java.runtime.version=1.6" > ${BUILD_DIR}/system.properties
+  cat > ${BUILD_DIR}/system.properties <<EOF
+java.runtime.version=1.6
+EOF
 fi
 
 # install JDK
@@ -52,16 +55,7 @@ echo " done"
 
 # change to cache dir to install maven
 cd $CACHE_DIR
-
-# install maven with base repository
-MAVEN_URL="http://heroku-jvm-langpack-java.s3.amazonaws.com/maven.central.tar.gz"
-
-if [ ! -d .maven ]; then
-  echo -n "-----> Installing Maven 3.0.5..."
-  curl --silent --max-time 60 --location $MAVEN_URL | tar xz
-  chmod +x .maven/bin/mvn
-  echo " done"
-fi
+install_maven ${CACHE_DIR} ${BUILD_DIR}
 
 if [ -n "$MAVEN_SETTINGS_PATH" ]; then
   MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
