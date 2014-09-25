@@ -2,25 +2,6 @@
 
 . ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
 
-testCompileGetsDefaultSystemProperties() {
-  createPom "$(withDependency)"
-
-  compile
-
-  assertCapturedSuccess
-
-  assertCaptured "Installing Maven 3.2.3"
-  assertFileMD5 "e253abb4b65b95544a56c39b4284c854"  ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
-  assertCaptured "Installing OpenJDK 1.6"
-  assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
-  assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
-  assertTrue "System properties file should be present in build dir." "[ -f ${BUILD_DIR}/system.properties ]"
-}
-
 createPom()
 {
   cat > ${BUILD_DIR}/pom.xml <<EOF
@@ -86,6 +67,50 @@ createSettingsXml()
 EOF
 }
 
+# Helpers
+
+_assertMaven305() {
+  assertCaptured "Installing Maven 3.0.5"
+  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+}
+
+_assertMaven311() {
+  assertCaptured "Installing Maven 3.1.1"
+  assertFileMD5 "08a6e3ab11f4add00d421dfa57ef4c85" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+}
+
+_assertMaven323() {
+  assertCaptured "Installing Maven 3.2.3"
+  assertFileMD5 "e253abb4b65b95544a56c39b4284c854" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+}
+
+# Tests
+
+testCompileGetsDefaultSystemProperties() {
+  createPom "$(withDependency)"
+
+  compile
+
+  assertCapturedSuccess
+
+  _assertMaven323
+  assertCaptured "Installing OpenJDK 1.6"
+  assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
+  assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
+  assertTrue "System properties file should be present in build dir." "[ -f ${BUILD_DIR}/system.properties ]"
+}
 
 testCompile()
 {
@@ -95,12 +120,7 @@ testCompile()
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.2.3"
-  assertFileMD5 "e253abb4b65b95544a56c39b4284c854" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
+  _assertMaven323
 }
 
 testCompilationFailure()
@@ -241,12 +261,7 @@ EOF
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.1.1"
-  assertFileMD5 "08a6e3ab11f4add00d421dfa57ef4c85" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
+  _assertMaven311
 }
 
 testMaven305()
@@ -261,12 +276,7 @@ EOF
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.0.5"
-  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
+  _assertMaven305
 }
 
 testMavenUpgrade()
@@ -281,14 +291,7 @@ EOF
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.0.5"
-  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
-
-  rm ${BUILD_DIR}/system.properties
+  _assertMaven305
 
   cat > ${BUILD_DIR}/system.properties <<EOF
 maven.version=3.2.3
@@ -298,12 +301,7 @@ EOF
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.2.3"
-  assertFileMD5 "e253abb4b65b95544a56c39b4284c854" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
+  _assertMaven323
 }
 
 testMavenSkipUpgrade()
@@ -318,12 +316,7 @@ EOF
 
   assertCapturedSuccess
 
-  assertCaptured "Installing Maven 3.0.5"
-  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
+  _assertMaven305
 
   rm ${BUILD_DIR}/system.properties
 
@@ -334,7 +327,19 @@ EOF
   assertNotCaptured "Installing Maven"
   assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
   assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS"
+}
+
+testMavenInvalid()
+{
+  cat > ${BUILD_DIR}/system.properties <<EOF
+maven.version=9.9.9
+EOF
+
+  createPom "$(withDependency)"
+
+  compile
+
+  assertCapturedError "you have defined an unsupported Maven version"
 }
