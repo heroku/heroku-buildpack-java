@@ -9,7 +9,6 @@ testRelease()
 config_vars:
   PATH: /app/.jdk/bin:/usr/local/bin:/usr/bin:/bin
   JAVA_OPTS: -Xmx384m -Xss512k -XX:+UseCompressedOops
-  MAVEN_OPTS: -Xmx384m -Xss512k -XX:+UseCompressedOops
 addons:
   heroku-postgresql:hobby-dev
 EOF`
