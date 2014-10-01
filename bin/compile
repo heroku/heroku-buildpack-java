@@ -16,6 +16,7 @@ ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
+JDK_URL_1_8="http://lang-jvm.s3.amazonaws.com/jdk/openjdk1.8.0_20-standard.tar.gz"
 JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v3.tar.gz
 mkdir -p /tmp/jvm-common
 curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common
