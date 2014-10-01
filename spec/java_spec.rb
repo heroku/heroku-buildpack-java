@@ -59,7 +59,7 @@ describe "Java" do
             expect(app.run("jce")).
                 to include("Picked up JAVA_TOOL_OPTIONS:  -Djava.rmi.server.useCodebaseOnly=true -Djava.rmi.server.useCodebaseOnly=true").
                 and include(%q{Encrypting, "Test"}).
-                and include(%q{Decrypted: Test}) unless jdk_version == "1.8"
+                and include(%q{Decrypted: Test})
 
             expect(app.run("netpatch")).
                 to include("Picked up JAVA_TOOL_OPTIONS:  -Djava.rmi.server.useCodebaseOnly=true -Djava.rmi.server.useCodebaseOnly=true").

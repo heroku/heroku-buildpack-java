@@ -7,21 +7,23 @@ describe "Maven" do
     let(:jdk_version) { "1.7" }
 
     it "should upgrade and downgrade successfully" do
-      set_java_and_maven_versions(app.directory, jdk_version, "3.0.5")
+      Dir.chdir(app.directory) do
+        set_java_and_maven_versions(jdk_version, "3.0.5")
+      end
 
       app.deploy do |app|
         expect(app.output).to include("Installing Maven 3.0.5")
         expect(app.output).to include("BUILD SUCCESS")
         expect(successful_body(app)).to eq("Hello from Java!")
 
-        set_java_and_maven_versions(app.directory, jdk_version, "3.2.3")
+        set_java_and_maven_versions(jdk_version, "3.2.3")
 
         app.push!
         expect(app.output).to include("Installing Maven 3.2.3")
         expect(app.output).to include("BUILD SUCCESS")
         expect(successful_body(app)).to eq("Hello from Java!")
 
-        set_java_and_maven_versions(app.directory, jdk_version, "3.1.1")
+        set_java_and_maven_versions(jdk_version, "3.1.1")
 
         app.push!
         expect(app.output).to include("Installing Maven 3.1.1")
