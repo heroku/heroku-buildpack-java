@@ -19,6 +19,7 @@ describe "Java" do
       let(:app) { Hatchet::Runner.new("java-servlets-sample") }
       let(:jdk_version) { version }
       it "should not install settings.xml" do
+        app.heroku.put_stack(app.name, "cedar-14")
         app.deploy do |app|
           expect_successful_maven(jdk_version)
           expect(successful_body(app)).to eq("Hello from Java!")
@@ -37,6 +38,7 @@ describe "Java" do
     let(:app) { Hatchet::Runner.new("java-servlets-sample", allow_failure: true) }
     let(:jdk_version) { "1.6" }
     it "should not compile 1.7 source" do
+      app.heroku.put_stack(app.name, "cedar-14")
       app.deploy do |app|
         expect(app).not_to be_deployed
         expect(app.output).to include("javac: invalid target release: 1.7")
@@ -51,6 +53,7 @@ describe "Java" do
       context "on jdk-#{version}" do
         let(:jdk_version) { version }
         it "runs commands" do
+          app.heroku.put_stack(app.name, "cedar-14")
           app.deploy do |app|
             expect_successful_maven(jdk_version)
 
@@ -93,6 +96,7 @@ describe "Java" do
         end
 
         it "expands war", :retry => 3, :retry_wait => 5 do
+          app.heroku.put_stack(app.name, "cedar-14")
           app.deploy do |app|
             expect_successful_maven(jdk_version)
             expect(app.output).to match(%r{Building war: /tmp/.*/target/.*.war})
