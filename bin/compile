@@ -16,7 +16,7 @@ ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
-JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v3.tar.gz
+JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v6.tar.gz
 mkdir -p /tmp/jvm-common
 curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common
 . /tmp/jvm-common/bin/util
@@ -38,18 +38,6 @@ fi
 
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
-
-# create default system.properties
-if [ ! -f ${BUILD_DIR}/system.properties ]; then
-  if [ "$STACK" == "cedar" ]; then
-    defaultJdkVersion="1.6"
-  else
-    defaultJdkVersion="1.8"
-  fi
-  cat > ${BUILD_DIR}/system.properties <<EOF
-java.runtime.version=${defaultJdkVersion}
-EOF
-fi
 
 # install JDK
 javaVersion=$(detect_java_version ${BUILD_DIR})
