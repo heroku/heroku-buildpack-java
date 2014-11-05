@@ -1,7 +1,5 @@
 language: java
 
-jdk: openjdk8
-
 branches:
   only:
     - master
@@ -19,7 +17,6 @@ after_script: heroku keys:remove ~/.ssh/id_rsa
 
 env:
   global:
-    - IS_RUNNING_ON_TRAVIS=true
     - HATCHET_RETRIES=3
     - HATCHET_DEPLOY_STRATEGY=git
     - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
