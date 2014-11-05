@@ -12,7 +12,11 @@ script: eval $TEST_CMD
 after_script: heroku keys:remove ~/.ssh/id_rsa
 env:
   global:
-    secure: nsRONXFMe0VjngK3koRSC0ICKgxAS2mxortoN2QLn87y0ZNU94ZfUwgNtOO2r3GbygXIcthcYfHWoTEFbmJs3xUz4xGYlve4KvwescHBvAlHIoexa0nQAK58FINxjT4kAjR4RkKTORaZRz2jK60yJQ2YkR1EdW0zC7oVgc1Z084=
+  - HATCHET_RETRIES=3
+  - HATCHET_DEPLOY_STRATEGY=git
+  - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
+  - SHUNIT_HOME="/tmp/shunit2-2.1.6"
+  - secure: nsRONXFMe0VjngK3koRSC0ICKgxAS2mxortoN2QLn87y0ZNU94ZfUwgNtOO2r3GbygXIcthcYfHWoTEFbmJs3xUz4xGYlve4KvwescHBvAlHIoexa0nQAK58FINxjT4kAjR4RkKTORaZRz2jK60yJQ2YkR1EdW0zC7oVgc1Z084=
   matrix:
   - TEST_CMD='[ "$TRAVIS_PULL_REQUEST" = "false" ] && mvn verify || true'
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
