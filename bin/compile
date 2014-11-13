@@ -16,7 +16,7 @@ ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
-JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v6.tar.gz
+JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v7.tar.gz
 mkdir -p /tmp/jvm-common
 curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common
 . /tmp/jvm-common/bin/util
@@ -91,29 +91,5 @@ if [ "true" == $KEEP_M2_CACHE ]; then
     cp -r $CACHE_DIR/$DIR $DIR
   done
 fi
-
-PROFILE_PATH="$BUILD_DIR/.profile.d/java.sh"
-mkdir -p $(dirname $PROFILE_PATH)
-cat << EOF > $PROFILE_PATH
-export PATH="/app/.jdk/bin:$PATH"
-
-limit=\$(ulimit -u)
-case \$limit in
-256)   # 1X Dyno
-  heap=384
-  ;;
-512)   # 2X Dyno
-  heap=768
-  ;;
-32768) # PX Dyno
-  heap=6144
-  ;;
-*)
-  heap=384
-  ;;
-esac
-
-export JAVA_TOOL_OPTIONS="-Xmx\${heap}m $JAVA_TOOL_OPTIONS -Djava.rmi.server.useCodebaseOnly=true"
-EOF
 
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end $LOGGER_FLAGS"
