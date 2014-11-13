@@ -59,13 +59,13 @@ describe "Java" do
             expect(successful_body(app)).to eq("/1")
 
             expect(app.run("jce")).
-                #to include("Picked up JAVA_TOOL_OPTIONS: -Xmx384m -Djava.rmi.server.useCodebaseOnly=true").
-                to include(%q{Encrypting, "Test"}).
+                to include("Picked up JAVA_TOOL_OPTIONS: -Xmx384m  -Djava.rmi.server.useCodebaseOnly=true").
+                and include(%q{Encrypting, "Test"}).
                 and include(%q{Decrypted: Test})
 
             expect(app.run("netpatch")).
-                #to include("Picked up JAVA_TOOL_OPTIONS: -Xmx384m -Djava.rmi.server.useCodebaseOnly=true").
-                to include(%q{name:eth0 (eth0)}).
+                to include("Picked up JAVA_TOOL_OPTIONS: -Xmx384m  -Djava.rmi.server.useCodebaseOnly=true").
+                and include(%q{name:eth0 (eth0)}).
                 and include(%q{name:lo (lo)})
 
             expect(app.run("https")).
