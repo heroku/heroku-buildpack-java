@@ -9,7 +9,7 @@ before_install:
 - "./etc/hatchet_travis_setup.sh"
 install: true
 script: eval $TEST_CMD
-after_script: heroku keys:remove ~/.ssh/id_rsa
+after_script: heroku keys:remove $USER@`hostname`
 env:
   global:
   - HATCHET_RETRIES=3
