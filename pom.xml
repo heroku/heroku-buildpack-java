@@ -212,6 +212,18 @@
         <version>0.3.0</version>
         <type>gem</type>
       </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rrrretry</artifactId>
+        <version>1.0.0</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>repl_runner</artifactId>
+        <version>0.0.3</version>
+        <type>gem</type>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
