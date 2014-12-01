@@ -75,10 +75,10 @@ export MAVEN_OPTS="-Xmx1024m"
 
 #$BUILDCMD 2>&1 | sed -u 's/^/       /'
 
-if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  echo " !     Failed to build app with Maven"
-  exit 1
-fi
+#if [ "${PIPESTATUS[*]}" != "0 0" ]; then
+#  echo " !     Failed to build app with Maven"
+#  exit 1
+#fi
 
 # finalize cache
 if [ "false" == $KEEP_M2_CACHE ]; then
