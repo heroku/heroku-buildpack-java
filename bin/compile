@@ -70,7 +70,13 @@ cd $BUILD_DIR
 export MAVEN_OPTS="-Xmx1024m"
 
 # build app
-BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository $MAVEN_SETTINGS_OPT -DskipTests=true clean install"
+BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B"
+BUILDCMD="$BUILDCMD -Duser.home=$BUILD_DIR"
+BUILDCMD="$BUILDCMD -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
+BUILDCMD="$BUILDCMD $MAVEN_SETTINGS_OPT"
+BUILDCMD="$BUILDCMD ${MAVEN_CUSTOM_OPTS:-"-DskipTests=true"}"
+BUILDCMD="$BUILDCMD ${MAVEN_CUSTOM_GOALS:-"clean install"}"
+
 echo "-----> executing $BUILDCMD"
 
 $BUILDCMD 2>&1 | sed -u 's/^/       /'
