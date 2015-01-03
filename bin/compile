@@ -16,7 +16,7 @@ ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
-JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v8.tar.gz
+JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v10-SNAPSHOT.tar.gz
 mkdir -p /tmp/jvm-common
 curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common
 . /tmp/jvm-common/bin/util
@@ -41,10 +41,10 @@ mkdir -p $CACHE_DIR
 
 # install JDK
 javaVersion=$(detect_java_version ${BUILD_DIR})
-echo -n "-----> Installing OpenJDK ${javaVersion}..."
+status_pending "Installing OpenJDK ${javaVersion}"
 install_java ${BUILD_DIR} ${javaVersion}
 jdk_overlay ${BUILD_DIR}
-echo " done"
+status_done
 
 # change to cache dir to install maven
 cd $CACHE_DIR
@@ -53,10 +53,10 @@ install_maven ${CACHE_DIR} ${BUILD_DIR}
 if [ -n "$MAVEN_SETTINGS_PATH" ]; then
   MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
 elif [ -n "$MAVEN_SETTINGS_URL" ]; then
-  echo -n "-----> Installing settings.xml..."
+  status_pending "Installing settings.xml"
   mkdir -p .m2
   curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
-  echo " done"
+  status_done
   MAVEN_SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
 elif [ -f $BUILD_DIR/settings.xml ]; then
   MAVEN_SETTINGS_OPT="-s $BUILD_DIR/settings.xml"
@@ -77,13 +77,12 @@ BUILDCMD="$BUILDCMD $MAVEN_SETTINGS_OPT"
 BUILDCMD="$BUILDCMD ${MAVEN_CUSTOM_OPTS:-"-DskipTests=true"}"
 BUILDCMD="$BUILDCMD ${MAVEN_CUSTOM_GOALS:-"clean install"}"
 
-echo "-----> executing $BUILDCMD"
+status "executing $BUILDCMD"
 
 $BUILDCMD 2>&1 | sed -u 's/^/       /'
 
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  echo " !     Failed to build app with Maven"
-  exit 1
+  error "Failed to build app with Maven"
 fi
 
 # finalize cache
