@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # fail hard
-set -o pipefail
+#set -o pipefail
 # fail harder
-set -eu
+#set -eu
 
 VENDOR_DIR=$(cd $(dirname $0); pwd)
 TMPDIR=$(mktemp -d -t maven-build)

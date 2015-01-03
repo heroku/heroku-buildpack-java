@@ -96,6 +96,15 @@ _assertMaven323() {
   assertCaptured "BUILD SUCCESS"
 }
 
+_assertMavenLatest() {
+  assertCaptured "Installing Maven 3.2.5"
+  assertFileMD5 "9d4c6b79981a342940b9eff660070748" ${CACHE_DIR}/.maven/bin/mvn
+  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
+
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "BUILD SUCCESS"
+}
+
 # Tests
 
 testCompileWithoutSystemProperties() {
@@ -106,7 +115,7 @@ testCompileWithoutSystemProperties() {
 
   assertCapturedSuccess
 
-  _assertMaven323
+  _assertMavenLatest
   assertCaptured "Installing OpenJDK 1.8"
   assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
   assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
@@ -120,7 +129,7 @@ testCompile()
 
   assertCapturedSuccess
 
-  _assertMaven323
+  _assertMavenLatest
 }
 
 testCompilationFailure()

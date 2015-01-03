@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEFAULT_MAVEN_VERSION="3.2.3"
+DEFAULT_MAVEN_VERSION="3.2.5"
 
 install_maven() {
   local installDir=$1
@@ -20,7 +20,7 @@ install_maven() {
     else
       echo " failed"
       echo " !      Error, you have defined an unsupported Maven version in the system.properties file."
-      echo " !      The list of known supported versions are 3.0.5, 3.1.1, and 3.2.3."
+      echo " !      The list of known supported versions are 3.0.5, 3.1.1, and 3.2.5."
       return 1
     fi
   fi
@@ -31,13 +31,15 @@ download_maven() {
   local installDir=$2
   local mavenHome=$3
   rm -rf $mavenHome
-  curl --silent --max-time 60 --location ${mavenUrl} | tar xz -C $installDir
+  curl --silent --max-time 60 --location ${mavenUrl} | tar xzm -C $installDir
   chmod +x $mavenHome/bin/mvn
 }
 
 is_supported_maven_version() {
   local mavenVersion=${1}
   if [ "$mavenVersion" = "$DEFAULT_MAVEN_VERSION" ]; then
+    return 0
+  elif [ "$mavenVersion" = "3.2.3" ]; then
     return 0
   elif [ "$mavenVersion" = "3.1.1" ]; then
     return 0
