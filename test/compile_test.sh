@@ -87,15 +87,6 @@ _assertMaven311() {
   assertCaptured "BUILD SUCCESS"
 }
 
-_assertMaven323() {
-  assertCaptured "Installing Maven 3.2.3"
-  assertFileMD5 "e253abb4b65b95544a56c39b4284c854" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
-}
-
 _assertMavenLatest() {
   assertCaptured "Installing Maven 3.2.5"
   assertFileMD5 "9d4c6b79981a342940b9eff660070748" ${CACHE_DIR}/.maven/bin/mvn
