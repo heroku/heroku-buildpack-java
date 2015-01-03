@@ -4,7 +4,7 @@ describe "Java" do
 
   def expect_successful_maven(jdk_version)
     expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-    expect(app.output).to include("Installing Maven 3.2.3")
+    expect(app.output).to include("Installing Maven 3.2.5")
     expect(app.output).not_to include("Installing settings.xml")
     expect(app.output).not_to include("BUILD FAILURE")
     expect(app.output).to include("BUILD SUCCESS")
