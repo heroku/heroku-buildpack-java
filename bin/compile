@@ -16,14 +16,13 @@ ENV_DIR=$3
 
 LOGGER_FLAGS=""
 
-#JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v10.tar.gz
-JVM_COMMON_BUILDPACK=https://github.com/heroku/heroku-buildpack-jvm-common/tarball/smart-unpack
+export_env_dir $ENV_DIR
+
+JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v10.tar.gz}
 mkdir -p /tmp/jvm-common
-curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common $([[ $JVM_COMMON_BUILDPACK =~ "github.com" ]] && echo "--strip-components=1")
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
-
-export_env_dir $ENV_DIR
 
 KEEP_M2_CACHE="true"
 
