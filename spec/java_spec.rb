@@ -12,8 +12,7 @@ describe "Java" do
 
   before(:each) do
     set_java_version(app.directory, jdk_version)
-    app.setup!
-    app.heroku.put_stack(app.name, "cedar-14")
+    init_app(app)
   end
 
   ["1.7", "1.8"].each do |version|
@@ -59,18 +58,17 @@ describe "Java" do
             expect(successful_body(app)).to eq("/1")
 
             expect(app.run("jce")).
-                to include("Picked up JAVA_TOOL_OPTIONS: -Xmx384m  -Djava.rmi.server.useCodebaseOnly=true").
+                to match(%r{Picked up JAVA_TOOL_OPTIONS: -Xmx384m\s+-Djava.rmi.server.useCodebaseOnly=true}).
                 and include(%q{Encrypting, "Test"}).
                 and include(%q{Decrypted: Test})
 
             expect(app.run("netpatch")).
-                to include("Picked up JAVA_TOOL_OPTIONS: -Xmx384m  -Djava.rmi.server.useCodebaseOnly=true").
-                and include(%q{name:eth0 (eth0)}).
+                to include(%q{name:eth0 (eth0)}).
                 and include(%q{name:lo (lo)})
 
             expect(app.run("https")).
                 to include("Successfully invoked HTTPS service.").
-                and include(%q{"X-Forwarded-Proto": "https"})
+                and match(%r{"X-Forwarded-Proto(col)?": "https"})
           end
         end
       end

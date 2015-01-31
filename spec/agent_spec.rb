@@ -8,6 +8,7 @@ describe "JavaAgent" do
 
       before(:all) do
         @app = Hatchet::Runner.new("webapp-runner-sample")
+        init_app(@app)
         javaagent="heroku-javaagent-1.4.jar"
         Dir.chdir(@app.directory) do
           `curl --silent -O http://heroku-jvm-langpack-java.s3.amazonaws.com/#{javaagent}`

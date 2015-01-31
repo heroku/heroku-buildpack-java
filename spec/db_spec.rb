@@ -3,6 +3,7 @@ require_relative 'spec_helper'
 describe "Java" do
   before(:each) do
     set_java_version(app.directory, jdk_version)
+    init_app(app)
   end
 
   %w{1.7 1.8}.each do |version|
