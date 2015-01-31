@@ -181,21 +181,6 @@ testNonLegacyExistingAppsRemoveCache()
   assertFalse ".maven should not be copied to build dir" "[ -d ${BUILD_DIR}/.maven ]"
 }
 
-testLegacyAppsKeepM2Cache()
-{
-  createPom
-
-  assertTrue  "Precondition: Legacy apps should have a CACHE_DIR from a previous run" "[ -d ${CACHE_DIR} ]"
-  assertFalse "Precondition: Legacy apps should not have a removeM2Cache file" "[ -f ${CACHE_DIR}/removeM2Cache ]"
-
-  compile
-
-  assertCapturedSuccess
-  assertFalse "removeM2Cache file should not exist in cache" "[ -f ${CACHE_DIR}/removeM2Cache ]"
-  assertEquals ".m2 should be copied to build dir" "" "$(diff -r ${CACHE_DIR}/.m2 ${BUILD_DIR}/.m2)"
-  assertEquals ".maven should be copied to build dir" "" "$(diff -r ${CACHE_DIR}/.maven ${BUILD_DIR}/.maven)"
-}
-
 testCustomSettingsXml()
 {
   createPom "$(withDependency)"

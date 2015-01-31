@@ -90,11 +90,4 @@ if [ "false" == $KEEP_M2_CACHE ]; then
   touch $CACHE_DIR/removeM2Cache
 fi
 
-#copy .m2 and .maven if needed
-if [ "true" == $KEEP_M2_CACHE ]; then
-  for DIR in ".m2" ".maven" ; do
-    cp -r $CACHE_DIR/$DIR $DIR
-  done
-fi
-
 logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end $LOGGER_FLAGS"
