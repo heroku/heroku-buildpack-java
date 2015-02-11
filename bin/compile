@@ -4,8 +4,6 @@
 # fail fast
 set -e
 
-logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_start"
-
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 . $BIN_DIR/common
 
@@ -13,8 +11,6 @@ BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-
-LOGGER_FLAGS=""
 
 export_env_dir $ENV_DIR
 
@@ -24,27 +20,15 @@ curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --st
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
 
-KEEP_M2_CACHE="true"
-
-if [ ! -d $CACHE_DIR ]; then
-  KEEP_M2_CACHE="false"
-elif [ -f $CACHE_DIR/removeM2Cache ]; then
-  KEEP_M2_CACHE="false"
-fi
-
-if [ "true" == $KEEP_M2_CACHE ]; then
-  logger -p user.notice -t "slugc[$$]" "language_pack_java retain_m2_repo"
-fi
-
-#create the cache dir if it doesn't exist
-mkdir -p $CACHE_DIR
-
 # install JDK
 javaVersion=$(detect_java_version ${BUILD_DIR})
 status_pending "Installing OpenJDK ${javaVersion}"
 install_java ${BUILD_DIR} ${javaVersion}
 jdk_overlay ${BUILD_DIR}
 status_done
+
+#create the cache dir if it doesn't exist
+mkdir -p $CACHE_DIR
 
 # change to cache dir to install maven
 cd $CACHE_DIR
@@ -84,10 +68,3 @@ $BUILDCMD 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   error "Failed to build app with Maven"
 fi
-
-# finalize cache
-if [ "false" == $KEEP_M2_CACHE ]; then
-  touch $CACHE_DIR/removeM2Cache
-fi
-
-logger -p user.notice -t "slugc[$$]" "language_pack_java java_compile_end $LOGGER_FLAGS"
