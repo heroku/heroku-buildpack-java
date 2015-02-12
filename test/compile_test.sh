@@ -74,7 +74,7 @@ _assertMaven305() {
   assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -file.encoding=UTF-8 -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS"
 }
 
@@ -83,7 +83,7 @@ _assertMaven311() {
   assertFileMD5 "08a6e3ab11f4add00d421dfa57ef4c85" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -file.encoding=UTF-8 -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS"
 }
 
@@ -92,7 +92,7 @@ _assertMavenLatest() {
   assertFileMD5 "9d4c6b79981a342940b9eff660070748" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -file.encoding=UTF-8 -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS"
 }
 
@@ -314,7 +314,7 @@ EOF
   assertNotCaptured "Installing Maven"
   assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
+  assertCaptured "executing $CACHE_DIR/.maven/bin/mvn -B -file.encoding=UTF-8 -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository  -DskipTests=true clean install"
   assertCaptured "BUILD SUCCESS"
 }
 
