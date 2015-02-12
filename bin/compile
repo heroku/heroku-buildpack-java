@@ -55,6 +55,7 @@ export MAVEN_OPTS="-Xmx1024m"
 
 # build app
 BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B"
+BUILDCMD="$BUILDCMD -Dfile.encoding=UTF-8"
 BUILDCMD="$BUILDCMD -Duser.home=$BUILD_DIR"
 BUILDCMD="$BUILDCMD -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
 BUILDCMD="$BUILDCMD $MAVEN_SETTINGS_OPT"
