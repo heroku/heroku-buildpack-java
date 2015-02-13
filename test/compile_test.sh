@@ -2,6 +2,16 @@
 
 . ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
 
+assertCapturedSuccess() {
+  assertEquals 0 "${RETURN}"
+  if [ "$TRAVIS" = "true" ]; then
+    # Travis keeps injecting -Xmn option on JDK8 that causes a warning in STR_ERR
+    assertTrue true
+  else
+    assertEquals "" "$(cat ${STD_ERR})"
+  fi
+}
+
 createPom()
 {
   cat > ${BUILD_DIR}/pom.xml <<EOF
@@ -36,6 +46,8 @@ EOF
 
 createSettingsXml()
 {
+  [ "$TRAVIS" = "true" ] && rm -rf /home/travis/.m2/repository
+
   if [ ! -z "$1" ]; then
     SETTINGS_FILE=$1
   else
@@ -129,7 +141,8 @@ testCompilationFailure()
 
   compile
 
-  assertCapturedError "Failed to build app with Maven"
+  assertNotEquals 0 "${RETURN}"
+  assertContains "Failed to build app with Maven" "$(cat ${STD_OUT})"
 }
 
 testDownloadCaching()
@@ -171,7 +184,7 @@ testCustomSettingsXml()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Downloading: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading: http://repository.jboss.org/nexus/content/groups/public"
 }
 
 testCustomSettingsXmlWithPath()
@@ -185,7 +198,7 @@ testCustomSettingsXmlWithPath()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Downloading: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading: http://repository.jboss.org/nexus/content/groups/public"
 
   unset MAVEN_SETTINGS_PATH
 }
@@ -202,7 +215,7 @@ testCustomSettingsXmlWithUrl()
 
   assertCapturedSuccess
   assertCaptured "Installing settings.xml"
-  assertCaptured "Downloading: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading: http://repository.jboss.org/nexus/content/groups/public"
 
   unset MAVEN_SETTINGS_URL
 }
@@ -248,10 +261,6 @@ EOF
 
 testMavenUpgrade()
 {
-  # travis doesn't have openjdk8 yet, and some setting it uses causes maven
-  # to pick up -XX:MaxPermSize, which writes a warning to STD_OUT on jdk8,
-  # which causes this to fail.
-  if [ "$TRAVIS" != "true" ]; then
     cat > ${BUILD_DIR}/system.properties <<EOF
 maven.version=3.0.5
 EOF
@@ -270,7 +279,6 @@ EOF
     compile
 
     assertCapturedSuccess
-  fi
 }
 
 testMavenSkipUpgrade()
