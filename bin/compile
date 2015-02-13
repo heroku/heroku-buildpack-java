@@ -4,8 +4,8 @@
 # fail fast
 set -e
 
-BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
-. $BIN_DIR/common
+BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
+. $BP_DIR/lib/common.sh
 
 # parse args
 BUILD_DIR=$1
