@@ -51,21 +51,19 @@ fi
 # change to build dir to run maven
 cd $BUILD_DIR
 
-export MAVEN_OPTS="-Xmx1024m"
+export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
 
 # build app
-BUILDCMD="$CACHE_DIR/.maven/bin/mvn -B"
-BUILDCMD="$BUILDCMD -Dfile.encoding=UTF-8"
-BUILDCMD="$BUILDCMD -Duser.home=$BUILD_DIR"
-BUILDCMD="$BUILDCMD -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
-BUILDCMD="$BUILDCMD $MAVEN_SETTINGS_OPT"
-BUILDCMD="$BUILDCMD ${MAVEN_CUSTOM_OPTS:-"-DskipTests=true"}"
-BUILDCMD="$BUILDCMD ${MAVEN_CUSTOM_GOALS:-"clean install"}"
+mvnOpts="-B -Dfile.encoding=UTF-8"
+mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
+mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_OPTS:-"-DskipTests=true"}"
+mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_GOALS:-"clean install"}"
 
-status "executing $BUILDCMD"
-
-$BUILDCMD 2>&1 | sed -u 's/^/       /'
+status "Executing: mvn ${mvnOpts}"
+$CACHE_DIR/.maven/bin/mvn ${mvnOpts} | indent
 
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  error "Failed to build app with Maven"
+  error "Failed to build app with Maven
+We're sorry this build is failing! If you can't find the issue in application code,
+please submit a ticket so we can help: https://help.heroku.com/"
 fi
