@@ -12,9 +12,6 @@ script: eval $TEST_CMD
 after_script: heroku keys:remove $USER@`hostname`
 env:
   global:
-  - JAVA_OPTS=""
-  - JAVA_TOOL_OPTIONS=""
-  - MAVEN_OPTS=""
   - HATCHET_RETRIES=3
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
