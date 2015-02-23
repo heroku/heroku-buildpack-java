@@ -54,7 +54,7 @@ cd $BUILD_DIR
 export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
 
 # build app
-mvnOpts="-B -Dfile.encoding=UTF-8"
+mvnOpts="-B"
 mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
 mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_OPTS:-"-DskipTests=true"}"
 mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_GOALS:-"clean install"}"
