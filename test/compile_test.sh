@@ -110,7 +110,7 @@ _assertMaven325() {
 
 _assertMavenLatest() {
   assertCaptured "Installing Maven 3.3.1"
-  assertFileMD5 "9d4c6b79981a342940b9eff660070748" ${CACHE_DIR}/.maven/bin/mvn
+  assertFileMD5 "33b5239bdf488c9867f95dbb93ffc0a6" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
   assertCaptured "Executing: mvn -B -DskipTests=true clean install"
