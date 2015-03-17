@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEFAULT_MAVEN_VERSION="3.2.5"
+DEFAULT_MAVEN_VERSION="3.3.1"
 
 export_env_dir() {
   env_dir=$1
@@ -32,7 +32,7 @@ install_maven() {
       status_done
     else
       error_return "Error, you have defined an unsupported Maven version in the system.properties file.
-The list of known supported versions are 3.0.5, 3.1.1, and 3.2.5."
+The list of known supported versions are 3.0.5, 3.1.1, 3.2.5 and 3.3.1."
       return 1
     fi
   fi
@@ -50,6 +50,8 @@ download_maven() {
 is_supported_maven_version() {
   local mavenVersion=${1}
   if [ "$mavenVersion" = "$DEFAULT_MAVEN_VERSION" ]; then
+    return 0
+  elif [ "$mavenVersion" = "3.2.5" ]; then
     return 0
   elif [ "$mavenVersion" = "3.2.3" ]; then
     return 0
