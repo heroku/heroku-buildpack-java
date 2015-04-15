@@ -1,8 +1,8 @@
-Heroku buildpack: Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java)
+Heroku buildpack for Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java)
 =========================
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Java apps.
-It uses Maven 3.3.1 to build your application and OpenJDK 8 to run it (by default).
+This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Java apps.
+It uses Maven 3.3.1 to build your application and OpenJDK 8 to run it. However, the JDK version can be configured as described below.
 
 ## How it works
 
@@ -71,8 +71,7 @@ $ heroku config:set MAVEN_CUSTOM_OPTS="--update-snapshots -DskipTests=true"
 
 Other options are available for [defining custom a `settings.xml` file](https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml).
 
-## Hacking
-
+## Development
 
 To make changes to this buildpack, fork it on Github. Push up changes to your fork, then create a new Heroku app to test it, or configure an existing app to use your buildpack:
 
