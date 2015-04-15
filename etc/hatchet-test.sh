@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+gem install rspec-retry -v 0.4.0
+gem install heroku_hatchet -v 1.4.1
+
 #if [ -n "$JVM_COMMON_BRANCH" ]; then
   #jvmCommonUrl="https://api.github.com/repos/heroku/heroku-buildpack-jvm-common/tarball/${JVM_COMMON_BRANCH}"
 #elif [ -n "$JVM_COMMON_BUILDKIT" ]; then

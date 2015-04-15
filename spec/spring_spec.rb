@@ -6,7 +6,7 @@ describe "Spring" do
     init_app(app)
   end
 
-  ["1.6", "1.7", "1.8"].each do |version|
+  ["1.7", "1.8"].each do |version|
     context "on jdk-#{version}" do
       let(:jdk_version) { version }
 
