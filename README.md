@@ -71,7 +71,7 @@ $ heroku config:set MAVEN_CUSTOM_OPTS="--update-snapshots -DskipTests=true"
 $ heroku config:set MAVEN_JAVA_OPTS="-Xss2g"
 ```
 
-Other options are available for [defining custom a `settings.xml` file](https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml).
+Other options are available for [defining a custom `settings.xml` file](https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml).
 
 ## Development
 
