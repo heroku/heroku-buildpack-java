@@ -61,12 +61,14 @@ There are three config variables that can be used to customize the Maven executi
 
 + `MAVEN_CUSTOM_GOALS`: set to `clean install` by default
 + `MAVEN_CUSTOM_OPTS`: set to `-DskipTests=true` by default
++ `MAVEN_JAVA_OPTS`: set to `-Xmx1024m` by default
 
 These variables can be set like this:
 
 ```sh-session
 $ heroku config:set MAVEN_CUSTOM_GOALS="clean package"
 $ heroku config:set MAVEN_CUSTOM_OPTS="--update-snapshots -DskipTests=true"
+$ heroku config:set MAVEN_JAVA_OPTS="-Xss2g"
 ```
 
 Other options are available for [defining custom a `settings.xml` file](https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml).
