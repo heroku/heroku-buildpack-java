@@ -40,8 +40,7 @@ describe "Java" do
     it "should not compile 1.7 source" do
       app.deploy do |app|
         expect(app).not_to be_deployed
-        expect(app.output).to include("javac: invalid target release: 1.7")
-        expect(app.output).to include("BUILD FAILURE")
+        expect(app.output).to include("Unsupported major.minor version 51.0")
       end
     end
   end
