@@ -57,7 +57,7 @@ describe "Java" do
             expect(successful_body(app)).to eq("/1")
 
             expect(app.run("jce")).
-                to match(%r{Picked up JAVA_TOOL_OPTIONS: -Xmx384m -Xss512k -Dfile.encoding=UTF-8 -Djava.rmi.server.useCodebaseOnly=true}).
+                to match(%r{Picked up JAVA_TOOL_OPTIONS: -Xmx384m -Xss512k -Dfile.encoding=UTF-8}).
                 and include(%q{Encrypting, "Test"}).
                 and include(%q{Decrypted: Test})
 
