@@ -16,7 +16,7 @@ env:
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
-  - secure: Dc2Krf+ibOKTay2eAqgoaNx0IV8FJebO4gOhe+C0sHJqjEGryO8PjBq4k8bNT3tcYLdLq152FJgUxRI6nokiTpIIYJXVtq1LzeVmKUICLE031FnsfR9eItyejhmsYzK/zf3OZmrwrPYVRjazHWllI+THOKPHo3r0yQ2uQRoJPqg=
+  - secure: SF7wn8YaAinrJm+gWjvSYOe0behljFl0PpiHTqa4xCG10bIE0L+XaacGWAx8sACZCPeAhRUTUUxjisBCH9QCwnm4vSL2cPE+B4YlOnc5LluWuo0jkUR4B/h8nO80jbD+tNrYvZ7GLc/nQ65XSIkRHbqaqB6/fUxrIPZ/nFJbaJk=
   matrix:
   - TEST_CMD='[ "$TRAVIS_PULL_REQUEST" = "false" ] && mvn verify || true'
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
