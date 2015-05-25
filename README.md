@@ -82,10 +82,10 @@ To make changes to this buildpack, fork it on Github. Push up changes to your fo
 heroku create --buildpack <your-github-url>
 
 # Configure an existing Heroku app to use your buildpack
-heroku config:set BUILDPACK_URL=<your-github-url>
+heroku buildpacks:set <your-github-url>
 
 # You can also use a git branch!
-heroku config:set BUILDPACK_URL=<your-github-url>#your-branch
+heroku buildpacks:set <your-github-url>#your-branch
 ```
 
 For example if you want to have maven available to use at runtime in your application, you can copy it from the cache directory to the build directory by adding the following lines to the compile script:
