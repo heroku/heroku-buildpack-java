@@ -73,6 +73,18 @@ $ heroku config:set MAVEN_JAVA_OPTS="-Xss2g"
 
 Other options are available for [defining a custom `settings.xml` file](https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml).
 
+### Install Java Only
+
+Useful when you already have a built artifact, and you only need Java to launch it in an embedded server.
+
++ `JAVA_ONLY`: not set by default
+
+The variable must be set to `true` to skip running Maven:
+
+```sh-session
+$ heroku config:set JAVA_ONLY="true"
+```
+
 ## Development
 
 To make changes to this buildpack, fork it on Github. Push up changes to your fork, then create a new Heroku app to test it, or configure an existing app to use your buildpack:
