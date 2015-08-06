@@ -32,7 +32,7 @@ Example:
 
     $ echo "java.runtime.version=1.8" > system.properties
 
-    $ git add system.properties && git commit -m "Java 7"
+    $ git add system.properties && git commit -m "Java 8"
 
     $ git push heroku master
     ...
