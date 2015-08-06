@@ -23,7 +23,7 @@ For more information about using Java and buildpacks on Heroku, see these Dev Ce
 
 ### Choose a JDK
 
-Create a `system.properties` file in the root of your project directory and set `java.runtime.version=1.7`.
+Create a `system.properties` file in the root of your project directory and set `java.runtime.version=1.8`.
 
 Example:
 
@@ -48,7 +48,7 @@ The `system.properties` file also allows for `maven.version` entry
 (regardless of whether you specify a `java.runtime.version` entry). For example:
 
 ```
-java.runtime.version=1.7
+java.runtime.version=1.8
 maven.version=3.1.1
 ```
 
