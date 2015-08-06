@@ -30,7 +30,7 @@ Example:
     $ ls
     Procfile pom.xml src
 
-    $ echo "java.runtime.version=1.7" > system.properties
+    $ echo "java.runtime.version=1.8" > system.properties
 
     $ git add system.properties && git commit -m "Java 7"
 
@@ -39,7 +39,7 @@ Example:
     -----> Heroku receiving push
     -----> Fetching custom language pack... done
     -----> Java app detected
-    -----> Installing OpenJDK 1.7... done
+    -----> Installing OpenJDK 1.8... done
     ...
 
 ### Choose a Maven Version
@@ -52,7 +52,7 @@ java.runtime.version=1.7
 maven.version=3.1.1
 ```
 
-Supported versions of Maven include 3.0.5, 3.1.1, 3.2.5 and 3.3.1. You can request new
+Supported versions of Maven include 3.0.5, 3.1.1, 3.2.5 and 3.3.3. You can request new
 versions of Maven by submitting a pull request against `vendor/maven/sources.txt`.
 
 ### Customize Maven
