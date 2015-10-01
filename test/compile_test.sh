@@ -313,8 +313,8 @@ EOF
   assertNotCaptured "Installing Maven"
   assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-  assertCaptured "Executing: mvn -B -DskipTests=true clean install"
-  assertCaptured "BUILD SUCCESS"
+  assertCaptured "Wrong command was run" "Executing: mvn -B -DskipTests clean dependency:list install"
+  assertCaptured "Build not successful" "BUILD SUCCESS"
 }
 
 testMavenInvalid()
