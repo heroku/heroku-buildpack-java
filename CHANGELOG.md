@@ -1,5 +1,7 @@
 # Java Buildpack Changelog
 
++ Added dependency:list to maven commands
+
 ## v39
 
 Upgrade JDK and Maven

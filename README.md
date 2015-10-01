@@ -59,8 +59,8 @@ versions of Maven by submitting a pull request against `vendor/maven/sources.txt
 
 There are three config variables that can be used to customize the Maven execution:
 
-+ `MAVEN_CUSTOM_GOALS`: set to `clean install` by default
-+ `MAVEN_CUSTOM_OPTS`: set to `-DskipTests=true` by default
++ `MAVEN_CUSTOM_GOALS`: set to `clean dependency:list install` by default
++ `MAVEN_CUSTOM_OPTS`: set to `-DskipTests` by default
 + `MAVEN_JAVA_OPTS`: set to `-Xmx1024m` by default
 
 These variables can be set like this:
