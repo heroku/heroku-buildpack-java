@@ -1,5 +1,7 @@
 # Java Buildpack Changelog
 
+## v40
+
 + Added dependency:list to maven commands
 
 ## v39
