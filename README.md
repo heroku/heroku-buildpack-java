@@ -36,10 +36,9 @@ Example:
 
     $ git push heroku master
     ...
-    -----> Heroku receiving push
-    -----> Fetching custom language pack... done
     -----> Java app detected
     -----> Installing OpenJDK 1.8... done
+    -----> Installing Maven 3.3.3... done
     ...
 
 ### Choose a Maven Version
