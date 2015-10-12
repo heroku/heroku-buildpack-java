@@ -56,9 +56,6 @@ describe "Java" do
 
             expect(successful_body(app)).to eq("/1")
 
-            expect(app.run("echo $JAVA_TOOL_OPTIONS")).
-                to include(%q{-Xmx384m -Xss512k -Dfile.encoding=UTF-8})
-
             expect(app.run("echo $JAVA_OPTS")).
                 to include(%q{-Xmx384m -Xss512k})
 
