@@ -9,7 +9,7 @@ testRelease()
 config_vars:
   JAVA_OPTS: -XX:+UseCompressedOops
 addons:
-  heroku-postgresql:hobby-dev
+  heroku-postgresql
 EOF`
 
   release
