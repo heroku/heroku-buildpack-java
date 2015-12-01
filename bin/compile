@@ -16,7 +16,7 @@ export_env_dir $ENV_DIR
 
 JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz}
 mkdir -p /tmp/jvm-common
-curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
 
@@ -39,7 +39,7 @@ if [ -n "$MAVEN_SETTINGS_PATH" ]; then
 elif [ -n "$MAVEN_SETTINGS_URL" ]; then
   status_pending "Installing settings.xml"
   mkdir -p .m2
-  curl --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
+  curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
   status_done
   MAVEN_SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
 elif [ -f $BUILD_DIR/settings.xml ]; then
