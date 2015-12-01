@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEFAULT_MAVEN_VERSION="3.3.3"
+DEFAULT_MAVEN_VERSION="3.3.9"
 
 export_env_dir() {
   env_dir=$1

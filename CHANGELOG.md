@@ -1,5 +1,7 @@
 # Java Buildpack Changelog
 
++ Upgrade to Maven 3.3.9
+
 ## v40
 
 + Added dependency:list to maven commands

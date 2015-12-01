@@ -109,7 +109,7 @@ _assertMaven325() {
 }
 
 _assertMavenLatest() {
-  assertCaptured "Wrong Maven Installed" "Installing Maven 3.3.3"
+  assertCaptured "Wrong Maven Installed" "Installing Maven 3.3.9"
   assertFileMD5 "33b5239bdf488c9867f95dbb93ffc0a6" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
