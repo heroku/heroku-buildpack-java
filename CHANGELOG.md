@@ -1,6 +1,9 @@
 # Java Buildpack Changelog
 
+## v41
+
 + Upgrade to Maven 3.3.9
++ Add retry option to curl commands
 
 ## v40
 
