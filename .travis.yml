@@ -18,5 +18,5 @@ env:
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
   - secure: VJ4Hi78pm0QTnGIIcwiIeSckpNi3eIcuYQyHhmJGczTdjyhYPPbekkIQ4AoDosE251+aJ9IFyHhk/kwHWROowFFB1cfIibuusBWzKSnrgfhkkmJkvMySq4x8Dx7u052Tt1LdSUkuY6rGGl8dek9ekgi6/S2wuBSKsQA9uoBqLgw=
   matrix:
-  - TEST_CMD='[ "$TRAVIS_PULL_REQUEST" = "false" ] && mvn verify || true'
+  - TEST_CMD='mvn verify'
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
