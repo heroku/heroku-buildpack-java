@@ -209,7 +209,7 @@
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>rspec-retry</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
         <type>gem</type>
       </dependency>
       <dependency>
