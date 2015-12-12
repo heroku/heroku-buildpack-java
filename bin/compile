@@ -19,6 +19,7 @@ mkdir -p /tmp/jvm-common
 curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
+. /tmp/jvm-common/opt/jdbc.sh
 
 # install JDK
 javaVersion=$(detect_java_version ${BUILD_DIR})
