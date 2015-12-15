@@ -59,14 +59,17 @@ describe "Java" do
             expect(app.run("echo \$JAVA_OPTS")).
                 to include(%q{-Xmx350m -Xss512k})
 
+            sleep 1 # make sure the dynos don't overlap
             expect(app.run("jce")).
                 to include(%q{Encrypting, "Test"}).
                 and include(%q{Decrypted: Test})
 
+            sleep 1 # make sure the dynos don't overlap
             expect(app.run("netpatch")).
                 to include(%q{name:eth0 (eth0)}).
                 and include(%q{name:lo (lo)})
 
+            sleep 1 # make sure the dynos don't overlap
             expect(app.run("https")).
                 to include("Successfully invoked HTTPS service.").
                 and match(%r{"X-Forwarded-Proto(col)?": "https"})
