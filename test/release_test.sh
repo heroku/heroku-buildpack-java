@@ -6,10 +6,8 @@ testRelease()
 {
   expected_release_output=`cat <<EOF
 ---
-config_vars:
-  JAVA_OPTS: -XX:+UseCompressedOops
 addons:
-  heroku-postgresql
+  - heroku-postgresql
 EOF`
 
   release

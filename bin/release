@@ -5,8 +5,6 @@ BUILD_DIR=$1
 
 cat <<EOF
 ---
-config_vars:
-  JAVA_OPTS: -XX:+UseCompressedOops
 addons:
-  heroku-postgresql
+  - heroku-postgresql
 EOF
