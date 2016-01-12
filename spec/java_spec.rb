@@ -73,6 +73,10 @@ describe "Java" do
             expect(app.run("https")).
                 to include("Successfully invoked HTTPS service.").
                 and match(%r{"X-Forwarded-Proto(col)?": "https"})
+
+            sleep 1 # make sure the dynos don't overlap
+            expect(app.run("pgssl")).
+                to include("sslmode: require").
           end
         end
       end
