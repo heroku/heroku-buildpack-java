@@ -59,7 +59,7 @@ def set_java_version(d, v)
     File.open('system.properties', 'w') do |f|
       f.puts "java.runtime.version=#{v}"
     end
-    `git commit -am "setting jdk version"`
+    `git add system.properties && git commit -am "setting jdk version"`
   end
 end
 

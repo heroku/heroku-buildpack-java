@@ -76,7 +76,7 @@ describe "Java" do
 
             sleep 1 # make sure the dynos don't overlap
             expect(app.run("pgssl")).
-                to include("sslmode: require").
+                to include("sslmode: require")
           end
         end
       end
