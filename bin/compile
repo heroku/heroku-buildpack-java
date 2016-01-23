@@ -20,13 +20,7 @@ curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-c
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
 . /tmp/jvm-common/opt/jdbc.sh
-
-# install JDK
-javaVersion=$(detect_java_version ${BUILD_DIR})
-status_pending "Installing OpenJDK ${javaVersion}"
-install_java ${BUILD_DIR} ${javaVersion}
-jdk_overlay ${BUILD_DIR}
-status_done
+install_java_with_overlay ${BUILD_DIR}
 
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
