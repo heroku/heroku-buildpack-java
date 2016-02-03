@@ -63,6 +63,6 @@ We're sorry this build is failing! If you can't find the issue in application co
 please submit a ticket so we can help: https://help.heroku.com/"
 fi
 
-# Must do this at the end so that
-# dependency metadata is available
-_install_pgconfig
+# Must do this at the end so dependency metadata is available
+# and we can determine if postgresql driver is version 9.0 or 9.1
+install_pgconfig_91
