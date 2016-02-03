@@ -62,3 +62,7 @@ if [ "${PIPESTATUS[*]}" != "0 0" ]; then
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
 fi
+
+# Must do this at the end so that
+# dependency metadata is available
+_install_pgconfig
