@@ -22,19 +22,17 @@ install_maven() {
 
   definedMavenVersion=$(detect_maven_version $buildDir)
 
-  if is_maven_needed ${mavenHome} ${definedMavenVersion}; then
-    mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
+  mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
 
-    status_pending "Installing Maven ${mavenVersion}"
-    if is_supported_maven_version ${mavenVersion}; then
-      mavenUrl="http://lang-jvm.s3.amazonaws.com/maven-${mavenVersion}.tar.gz"
-      download_maven ${mavenUrl} ${installDir} ${mavenHome}
-      status_done
-    else
-      error_return "Error, you have defined an unsupported Maven version in the system.properties file.
+  status_pending "Installing Maven ${mavenVersion}"
+  if is_supported_maven_version ${mavenVersion}; then
+    mavenUrl="http://lang-jvm.s3.amazonaws.com/maven-${mavenVersion}.tar.gz"
+    download_maven ${mavenUrl} ${installDir} ${mavenHome}
+    status_done
+  else
+    error_return "Error, you have defined an unsupported Maven version in the system.properties file.
 The default supported version is ${DEFAULT_MAVEN_VERSION}"
-      return 1
-    fi
+    return 1
   fi
 }
 
@@ -61,22 +59,6 @@ is_supported_maven_version() {
     return 0
   else
     return 1
-  fi
-}
-
-is_maven_needed() {
-  local mavenHome=${1}
-  local newMavenVersion=${2}
-  if [ -d $mavenHome ]; then
-    if [ -z "$newMavenVersion" ]; then
-      return 1
-    else
-      mavenVersionLine=$($mavenHome/bin/mvn -v | sed -E -e 's/[ \t\r\n]//g')
-      mavenVersion=$(expr "$mavenVersionLine" : "ApacheMaven\(3\.[0-2]\.[0-9]\)")
-      test "$mavenVersion" != "$newMavenVersion"
-    fi
-  else
-    return 0
   fi
 }
 
