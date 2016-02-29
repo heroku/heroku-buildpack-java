@@ -290,33 +290,6 @@ EOF
     assertCapturedSuccess
 }
 
-testMavenSkipUpgrade()
-{
-  cat > ${BUILD_DIR}/system.properties <<EOF
-maven.version=3.0.5
-EOF
-
-  createPom "$(withDependency)"
-
-  compile
-
-  assertCapturedSuccess
-
-  _assertMaven305
-
-  rm ${BUILD_DIR}/system.properties
-
-  compile
-
-  assertCapturedSuccess
-
-  assertNotCaptured "Installing Maven"
-  assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
-  assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
-  assertCaptured "Wrong command was run" "Executing: mvn -B -DskipTests clean dependency:list install"
-  assertCaptured "Build not successful" "BUILD SUCCESS"
-}
-
 testMavenInvalid()
 {
   cat > ${BUILD_DIR}/system.properties <<EOF
