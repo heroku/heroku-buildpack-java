@@ -154,23 +154,6 @@ testCompilationFailure()
   assertContains "Failed to build app with Maven" "$(cat ${STD_OUT})"
 }
 
-testDownloadCaching()
-{
-  createPom
-
-  # simulate a primed cache
-  mkdir -p ${CACHE_DIR}/.m2
-  mkdir -p ${CACHE_DIR}/.maven/bin
-  cat > ${CACHE_DIR}/.maven/bin/mvn <<EOF
-echo "Apache Maven 3.2.3"
-EOF
-  chmod +x ${CACHE_DIR}/.maven/bin/mvn
-
-  compile
-
-  assertNotCaptured "Maven should not be installed again when already cached" "Installing Maven"
-}
-
 testNewAppsRemoveM2Cache()
 {
   createPom
