@@ -70,29 +70,6 @@ test_detect_maven_version_with_no_file() {
   assertCapturedEquals ""
 }
 
-test_is_maven_needed_nodir() {
-  capture is_maven_needed ${BUILD_DIR}/.maven "3.2.3"
-  assertCapturedSuccess
-}
-
-test_is_maven_needed_no() {
-  create_mvn
-  capture is_maven_needed ${BUILD_DIR}/.maven "3.2.1"
-  assertEquals 1 "${RETURN}"
-}
-
-test_is_maven_needed_undefined() {
-  mkdir -p ${BUILD_DIR}/.maven
-  capture is_maven_needed ${BUILD_DIR}/.maven ""
-  assertEquals 1 "${RETURN}"
-}
-
-test_is_maven_needed_yes() {
-  create_mvn
-  capture is_maven_needed ${BUILD_DIR}/.maven "3.2.3"
-  assertCapturedSuccess
-}
-
 test_is_supported_maven_version_default() {
   capture is_supported_maven_version "$DEFAULT_MAVEN_VERSION"
   assertCapturedSuccess
