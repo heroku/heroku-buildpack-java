@@ -16,7 +16,7 @@ env:
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
-  - secure: g4zM5jQxGiGvx8TYKj+EZZwJSzFeLd1hy54LV+Ch3m+35bKBHE7t7KN5V9FcCiSMksEyRTTvvPGvNAOm/ncvtIGg7WA3a1A1DXPVXrSYjJVETLixeH/KvHTlQvB92PrpG5nPz5B5V3+eB1ZfRaB/8D+0BvAOjQ9tpH4BQCbe5QE=
+  - secure: cfBE3oLKM0NfOfghTySv4PIXa25Y1s19Q6ImrHbufn2RarHKCJ354vXFPnRGf54Ncu2WTHwZOlptvUks2zeqxNoFqjYVwroNO1U6GuEqPXc5t3OrzkAtcPctHVIFTuGAhwYTCe0KkgHrjXRsj/nXkqIBCnpofZAKkxlhNxGT9iY=
   matrix:
   - TEST_CMD='mvn verify'
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
