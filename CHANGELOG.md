@@ -1,5 +1,9 @@
 # Java Buildpack Changelog
 
+## Master
+
++ Use latest version of Maven by default
+
 ## v41
 
 + Upgrade to Maven 3.3.9
