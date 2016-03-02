@@ -19,14 +19,15 @@ describe "Java" do
     context "on jdk-#{version}" do
       let(:app) { Hatchet::Runner.new("java-servlets-sample") }
       let(:jdk_version) { version }
-      it "should not install settings.xml" do
+      it "should reinstall maven" do
         app.deploy do |app|
           expect_successful_maven(jdk_version)
+          expect(app.output).to include("BUILD SUCCESS")
           expect(successful_body(app)).to eq("Hello from Java!")
 
           `git commit -am "redeploy" --allow-empty`
           app.push!
-          expect(app.output).not_to include("Installing Maven")
+          expect_successful_maven(jdk_version)
           expect(app.output).to include("BUILD SUCCESS")
           expect(successful_body(app)).to eq("Hello from Java!")
         end
