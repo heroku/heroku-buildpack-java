@@ -62,3 +62,7 @@ if [ "${PIPESTATUS[*]}" != "0 0" ]; then
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
 fi
+
+for DIR in ".m2" ".maven" ; do
+  cp -r $CACHE_DIR/$DIR $BUILD_DIR/$DIR
+done
