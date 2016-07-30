@@ -50,7 +50,7 @@ describe "Java" do
     ["1.7", "1.8", "1.7.0_111", "1.8.0_102"].each do |version|
       let(:app) { Hatchet::Runner.new("korvan") }
       context "on jdk-#{version}" do
-<        let(:jdk_version) { version }
+        let(:jdk_version) { version }
         it "runs commands" do
           app.deploy do |app|
             expect_successful_maven(jdk_version)
