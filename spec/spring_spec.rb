@@ -47,7 +47,7 @@ describe "Spring" do
 
         context "without a Procfile" do
           before do
-            Dir.chdir(d) do
+            Dir.chdir(app.directory) do
               `git rm -f Procfile && git commit -am "remove procfile"`
             end
           end
