@@ -61,6 +61,8 @@ describe "Spring" do
               expect(app.output).to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
               expect(app.output).not_to include("Installing settings.xml")
               expect(app.output).not_to include("BUILD FAILURE")
+              expect(app.output).to include("Procfile declares types     -> (none)")
+              expect(app.output).to include("Default types for buildpack -> web")
 
               expect(successful_body(app)).to include("Create a New Appointment")
               expect(app).to be_deployed
