@@ -3,8 +3,31 @@
 
 BUILD_DIR=$1
 
+is_spring_boot() {
+  local buildDir=${1}
+   test -f ${buildDir}/pom.xml &&
+    test -n "$(grep "<groupId>org.springframework.boot" ${buildDir}/pom.xml)" &&
+    test -n "$(grep "<artifactId>spring-boot" ${buildDir}/pom.xml)"
+}
+
+is_wildfly_swarm() {
+  local buildDir=${1}
+  test -f ${buildDir}/pom.xml &&
+    test -n "$(grep "<groupId>org.wildfly.swarm" ${buildDir}/pom.xml)"
+}
+
 cat <<EOF
 ---
 addons:
   - heroku-postgresql
 EOF
+
+if [ ! -f $BUILD_DIR/Procfile ]; then
+  if is_spring_boot $BUILD_DIR; then
+    echo "default_process_types:"
+    echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar target/*.jar"
+  elif is_wildfly_swarm $BUILD_DIR; then
+    echo "default_process_types:"
+    echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar target/*.jar"
+  fi
+fi

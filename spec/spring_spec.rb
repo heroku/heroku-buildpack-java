@@ -44,6 +44,29 @@ describe "Spring" do
             expect(app).to be_deployed
           end
         end
+
+        context "without a Procfile" do
+          before do
+            Dir.chdir(d) do
+              `git rm -f Procfile && git commit -am "remove procfile"`
+            end
+          end
+
+          it "creates a default process type" do
+            app.deploy do |app|
+              sleep(10) # :(
+              expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+              expect(app.output).to include("Installing Maven")
+              expect(app.output).not_to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
+              expect(app.output).to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
+              expect(app.output).not_to include("Installing settings.xml")
+              expect(app.output).not_to include("BUILD FAILURE")
+
+              expect(successful_body(app)).to include("Create a New Appointment")
+              expect(app).to be_deployed
+            end
+          end
+        end
       end
 
     end
