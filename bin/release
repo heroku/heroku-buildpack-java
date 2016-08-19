@@ -16,11 +16,21 @@ is_wildfly_swarm() {
     test -n "$(grep "<groupId>org.wildfly.swarm" ${buildDir}/pom.xml)"
 }
 
-cat <<EOF
----
+has_postgres() {
+  local buildDir=${1}
+  test -f ${buildDir}/pom.xml && (
+    test -n "$(grep "<groupId>org.postgresql" ${buildDir}/pom.xml)" ||
+    test -n "$(grep "<groupId>postgresql" ${buildDir}/pom.xml)")
+}
+
+echo "---"
+
+if has_postgres $BUILD_DIR; then
+  cat <<EOF
 addons:
   - heroku-postgresql
 EOF
+fi
 
 if [ ! -f $BUILD_DIR/Procfile ]; then
   if is_spring_boot $BUILD_DIR; then
