@@ -20,7 +20,8 @@ has_postgres() {
   local buildDir=${1}
   test -f ${buildDir}/pom.xml && (
     test -n "$(grep "<groupId>org.postgresql" ${buildDir}/pom.xml)" ||
-    test -n "$(grep "<groupId>postgresql" ${buildDir}/pom.xml)")
+    test -n "$(grep "<groupId>postgresql" ${buildDir}/pom.xml)" ||
+    test -n "$(grep "<groupId>com.impossibl.pgjdbc-ng" ${buildDir}/pom.xml)")
 }
 
 echo "---"
