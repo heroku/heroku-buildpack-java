@@ -6,8 +6,6 @@ testRelease()
 {
   expected_release_output=`cat <<EOF
 ---
-addons:
-  - heroku-postgresql
 EOF`
 
   release
