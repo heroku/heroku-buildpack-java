@@ -30,6 +30,9 @@ describe "Java" do
           expect_successful_maven(jdk_version)
           expect(app.output).to include("BUILD SUCCESS")
           expect(successful_body(app)).to eq("Hello from Java!")
+
+          expect(app.run("env")).
+              to include(%q{DATABASE_URL})
         end
       end
     end
@@ -59,6 +62,10 @@ describe "Java" do
 
             expect(app.run("echo \$JAVA_OPTS")).
                 to include(%q{-Xmx350m -Xss512k})
+
+            sleep 1
+            expect(app.run("env")).
+               not_to include(%q{DATABASE_URL})
 
             sleep 1 # make sure the dynos don't overlap
             expect(app.run("jce")).
