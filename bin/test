@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# bin/test <build-dir> <env-dir> <artifact-dir>
+
+# fail fast
+set -e
+
+cd "$1"
+
+mvn test

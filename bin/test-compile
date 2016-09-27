@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# bin/test-compile <build-dir> <cache-dir> <env-dir>
+
+# fail fast
+set -e
+
+BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
+. $BP_DIR/lib/common.sh
+
+# parse args
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+export_env_dir $ENV_DIR
+
+JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz}
+mkdir -p /tmp/jvm-common
+curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+. /tmp/jvm-common/bin/util
+. /tmp/jvm-common/bin/java
+. /tmp/jvm-common/opt/jdbc.sh
+install_java_with_overlay ${BUILD_DIR}
+
+#create the cache dir if it doesn't exist
+mkdir -p $CACHE_DIR
+
+# change to cache dir to install maven
+cd $CACHE_DIR
+install_maven ${CACHE_DIR} ${BUILD_DIR}
+
+if [ -n "$MAVEN_SETTINGS_PATH" ]; then
+  MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
+elif [ -n "$MAVEN_SETTINGS_URL" ]; then
+  status_pending "Installing settings.xml"
+  mkdir -p .m2
+  curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
+  status_done
+  MAVEN_SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
+elif [ -f $BUILD_DIR/settings.xml ]; then
+  MAVEN_SETTINGS_OPT="-s $BUILD_DIR/settings.xml"
+else
+  unset MAVEN_SETTINGS_OPT
+fi
+
+# change to build dir to run maven
+cd $BUILD_DIR
+
+export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
+
+# setup app
+mvnOpts="-B clean dependency:resolve"
+
+status "Executing: mvn ${mvnOpts}"
+$CACHE_DIR/.maven/bin/mvn ${mvnOpts} | indent
+
+if [ "${PIPESTATUS[*]}" != "0 0" ]; then
+  error "Failed to setup app with Maven
+We're sorry this build is failing! If you can't find the issue in application code,
+please submit a ticket so we can help: https://help.heroku.com/"
+fi
