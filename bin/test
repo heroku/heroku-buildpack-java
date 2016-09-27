@@ -4,9 +4,10 @@
 # fail fast
 set -e
 
-cd "$1"
+BUILD_DIR=$1
 
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
 
-$BUILD_DIR/.maven/bin/mvn -B test | indent
+cd $BUILD_DIR
+./.maven/bin/mvn -B test | indent
