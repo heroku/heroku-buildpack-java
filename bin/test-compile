@@ -22,12 +22,11 @@ curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-c
 . /tmp/jvm-common/opt/jdbc.sh
 install_java_with_overlay ${BUILD_DIR}
 
-#create the cache dir if it doesn't exist
-mkdir -p $CACHE_DIR
+# TODO unpack cache dir
 
 # change to cache dir to install maven
-cd $CACHE_DIR
-install_maven ${CACHE_DIR} ${BUILD_DIR}
+cd $BUILD_DIR
+install_maven ${BUILD_DIR} ${BUILD_DIR}
 
 if [ -n "$MAVEN_SETTINGS_PATH" ]; then
   MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
@@ -52,10 +51,12 @@ export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DI
 mvnOpts="-B clean dependency:resolve"
 
 status "Executing: mvn ${mvnOpts}"
-$CACHE_DIR/.maven/bin/mvn ${mvnOpts} | indent
+$BUILD_DIR/.maven/bin/mvn ${mvnOpts} | indent
 
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   error "Failed to setup app with Maven
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
 fi
+
+# put stuff into cache dir

@@ -6,4 +6,7 @@ set -e
 
 cd "$1"
 
-mvn test
+. /tmp/jvm-common/bin/util
+. /tmp/jvm-common/bin/java
+
+$BUILD_DIR/.maven/bin/mvn -B test | indent
