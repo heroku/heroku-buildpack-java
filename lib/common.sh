@@ -87,3 +87,14 @@ get_app_system_value() {
   grep -E ^$escaped_key[[:space:]=]+ $file | \
   sed -E -e "s/$escaped_key([\ \t]*=[\ \t]*|[\ \t]+)([A-Za-z0-9\.-]*).*/\2/g"
 }
+
+cache_copy() {
+  rel_dir=$1
+  from_dir=$2
+  to_dir=$3
+  rm -rf $to_dir/$rel_dir
+  if [ -d $from_dir/$rel_dir ]; then
+    mkdir -p $to_dir/$rel_dir
+    cp -pr $from_dir/$rel_dir/. $to_dir/$rel_dir
+  fi
+}

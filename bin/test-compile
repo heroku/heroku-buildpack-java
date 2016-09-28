@@ -22,7 +22,11 @@ curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-c
 . /tmp/jvm-common/opt/jdbc.sh
 install_java_with_overlay ${BUILD_DIR}
 
-# TODO unpack cache dir
+# unpack cache
+CACHED_DIRS="$HOME/.m2 $HOME/.maven"
+for DIR in $CACHED_DIRS; do
+  cache_copy $DIR $CACHE_DIR $BUILD_DIR
+done
 
 # change to cache dir to install maven
 cd $BUILD_DIR
@@ -45,10 +49,12 @@ fi
 # change to build dir to run maven
 cd $BUILD_DIR
 
-export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DIR/.m2/repository"
+export MAVEN_OPTS="-Xmx1024m"
 
 # setup app
-mvnOpts="-B clean dependency:resolve"
+mvnOpts="-B"
+mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
+mvnOpts="${mvnOpts} clean dependency:resolve"
 
 status "Executing: mvn ${mvnOpts}"
 $BUILD_DIR/.maven/bin/mvn ${mvnOpts} | indent
@@ -59,4 +65,8 @@ We're sorry this build is failing! If you can't find the issue in application co
 please submit a ticket so we can help: https://help.heroku.com/"
 fi
 
-# put stuff into cache dir
+# repack cache
+mkdir -p $CACHE_DIR
+for DIR in $CACHED_DIRS; do
+  cache_copy $DIR $BUILD_DIR $CACHE_DIR
+done
