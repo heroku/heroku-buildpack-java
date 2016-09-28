@@ -24,7 +24,7 @@ install_java_with_overlay ${BUILD_DIR}
 
 cd $BUILD_DIR
 
-cache_copy ".m2" $CACHE_DIR $BUILD_DIR
+# cache_copy ".m2" $CACHE_DIR $BUILD_DIR
 
 install_maven ${BUILD_DIR} ${BUILD_DIR}
 
