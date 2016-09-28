@@ -50,7 +50,7 @@ export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DI
 # setup app
 mvnOpts="-B"
 mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
-mvnOpts="${mvnOpts} clean process-test-resources"
+mvnOpts="${mvnOpts} clean dependency:resolve dependency:resolve-plugins process-test-resources"
 
 status "Executing: mvn ${mvnOpts}"
 .maven/bin/mvn ${mvnOpts} | indent
