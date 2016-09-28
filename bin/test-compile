@@ -62,7 +62,6 @@ please submit a ticket so we can help: https://help.heroku.com/"
 fi
 
 # repack cache
-mkdir -p $CACHE_DIR
 for DIR in $CACHED_DIRS; do
   cache_copy $DIR $BUILD_DIR $CACHE_DIR
 done

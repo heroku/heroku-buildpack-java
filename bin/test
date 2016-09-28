@@ -12,5 +12,8 @@ BUILD_DIR=$1
 cd $BUILD_DIR
 export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DIR/.m2/repository"
 
+pwd
+ls -al
+
 status "Executing: mvn test"
 ./.maven/bin/mvn -B test | indent
