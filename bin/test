@@ -10,5 +10,5 @@ BUILD_DIR=$1
 . /tmp/jvm-common/bin/java
 
 cd $BUILD_DIR
-export MAVEN_OPTS="-Xmx1024m"
+export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
 ./.maven/bin/mvn -B test | indent

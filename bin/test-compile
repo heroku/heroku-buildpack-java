@@ -23,12 +23,11 @@ curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-c
 install_java_with_overlay ${BUILD_DIR}
 
 # unpack cache
-CACHED_DIRS="$HOME/.m2 $HOME/.maven"
+CACHED_DIRS="$BUILD_DIR/.m2 $BUILD_DIR/.maven"
 for DIR in $CACHED_DIRS; do
   cache_copy $DIR $CACHE_DIR $BUILD_DIR
 done
 
-# change to cache dir to install maven
 cd $BUILD_DIR
 install_maven ${BUILD_DIR} ${BUILD_DIR}
 
@@ -46,10 +45,7 @@ else
   unset MAVEN_SETTINGS_OPT
 fi
 
-# change to build dir to run maven
-cd $BUILD_DIR
-
-export MAVEN_OPTS="-Xmx1024m"
+export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
 
 # setup app
 mvnOpts="-B"
@@ -57,7 +53,7 @@ mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
 mvnOpts="${mvnOpts} clean dependency:resolve"
 
 status "Executing: mvn ${mvnOpts}"
-$BUILD_DIR/.maven/bin/mvn ${mvnOpts} | indent
+.maven/bin/mvn ${mvnOpts} | indent
 
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   error "Failed to setup app with Maven
