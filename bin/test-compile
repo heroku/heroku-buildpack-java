@@ -65,3 +65,9 @@ fi
 for DIR in $CACHED_DIRS; do
   cache_copy $DIR $BUILD_DIR $CACHE_DIR
 done
+
+echo "====> commons-collections"
+ls -al .m2/repository/commons-collections/commons-collections
+
+echo "====> junit"
+ls -al .m2/repository/junit/junit

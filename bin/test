@@ -15,7 +15,11 @@ export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DI
 pwd
 ls -al
 
-ls -al .m2/repository/org/apache/maven/maven-plugin-api
+echo "====> commons-collections"
+ls -al .m2/repository/commons-collections/commons-collections
+
+echo "====> junit"
+ls -al .m2/repository/junit/junit
 
 status "Executing: mvn test"
 ./.maven/bin/mvn -B test | indent
