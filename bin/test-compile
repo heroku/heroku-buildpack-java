@@ -47,7 +47,7 @@ export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DI
 # setup app
 mvnOpts="-B"
 mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
-mvnOpts="${mvnOpts} clean test-compile"
+mvnOpts="${mvnOpts} clean dependency:resolve-plugins test-compile"
 
 status "Executing: mvn ${mvnOpts}"
 .maven/bin/mvn ${mvnOpts} | indent
