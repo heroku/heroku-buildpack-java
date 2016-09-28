@@ -12,14 +12,5 @@ BUILD_DIR=$1
 cd $BUILD_DIR
 export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DIR/.m2/repository"
 
-pwd
-ls -al
-
-echo "====> commons-collections"
-ls -al .m2/repository/commons-collections/commons-collections
-
-echo "====> junit"
-ls -al .m2/repository/junit/junit
-
 status "Executing: mvn test"
 ./.maven/bin/mvn -B test | indent
