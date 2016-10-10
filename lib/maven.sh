@@ -31,7 +31,7 @@ _mvn_cmd_opts() {
 run_mvn() {
   local scope=${1}
   local home=${2}
-  local mvnDir=${3}
+  local mvnBinDir=${3}/.maven/bin
 
   if [ -n "$MAVEN_SETTINGS_PATH" ]; then
     MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
@@ -50,7 +50,7 @@ run_mvn() {
   export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home})"
 
   status "Executing: mvn ${mvnOpts}"
-  ${mvnDir}/bin/mvn -DoutputFile=target/mvn-dependency-list.log $(_mvn_cmd_opts ${scope}) | indent
+  ${mvnBinDir}/mvn -DoutputFile=target/mvn-dependency-list.log $(_mvn_cmd_opts ${scope}) | indent
 
   if [ "${PIPESTATUS[*]}" != "0 0" ]; then
     error "Failed to setup app with Maven
@@ -60,11 +60,11 @@ please submit a ticket so we can help: https://help.heroku.com/"
 }
 
 write_mvn_profile() {
-  local buildDir=${1}
-  local mavenDir=${buildDir}/.maven
-  mkdir -p ${buildDir}/.profile.d
-  cat << EOF > ${buildDir}/.profile.d/maven.sh
+  local home=${1}
+  local mvnBinDir=${buildDir}/.maven/bin
+  mkdir -p ${home}/.profile.d
+  cat << EOF > ${home}/.profile.d/maven.sh
 export MAVEN_OPTS="$(_mvn_java_opts "test")"
-export PATH="${mavenDir}/bin:\$PATH"
+export PATH="${mvnBinDir}:\$PATH"
 EOF
 }
