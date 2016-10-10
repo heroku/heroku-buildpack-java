@@ -28,7 +28,7 @@ _mvn_cmd_opts() {
   fi
 }
 
-run_maven() {
+run_mvn() {
   local scope=${1}
   local home=${2}
   local mvnDir=${3}
