@@ -17,14 +17,13 @@ _mvn_java_opts() {
 _mvn_cmd_opts() {
   local scope=${1}
 
-  echo -n "-B"
   if [ "$scope" = "compile" ]; then
     echo -n " ${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
     echo -n " ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
   elif [ "$scope" = "test-compile" ]; then
     echo -n " ${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
   else
-    echo -n "clean"
+    echo -n ""
   fi
 }
 
@@ -49,8 +48,9 @@ run_mvn() {
 
   export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home})"
 
+  local mvnOpts="$(_mvn_cmd_opts ${scope})"
   status "Executing: mvn ${mvnOpts}"
-  ${mvnBinDir}/mvn -DoutputFile=target/mvn-dependency-list.log $(_mvn_cmd_opts ${scope}) | indent
+  ${mvnBinDir}/mvn -DoutputFile=target/mvn-dependency-list.log -B ${mvnOpts} | indent
 
   if [ "${PIPESTATUS[*]}" != "0 0" ]; then
     error "Failed to setup app with Maven
