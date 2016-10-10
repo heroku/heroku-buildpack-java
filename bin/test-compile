@@ -6,6 +6,7 @@ set -e
 
 BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
 . $BP_DIR/lib/common.sh
+. $BP_DIR/lib/maven.sh
 
 # parse args
 BUILD_DIR=$1
@@ -24,38 +25,8 @@ install_java_with_overlay ${BUILD_DIR}
 
 cd $BUILD_DIR
 
-# cache_copy ".m2" $CACHE_DIR $BUILD_DIR
-
+cache_copy ".m2" $CACHE_DIR $BUILD_DIR
 install_maven ${BUILD_DIR} ${BUILD_DIR}
-
-if [ -n "$MAVEN_SETTINGS_PATH" ]; then
-  MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
-elif [ -n "$MAVEN_SETTINGS_URL" ]; then
-  status_pending "Installing settings.xml"
-  mkdir -p .m2
-  curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
-  status_done
-  MAVEN_SETTINGS_OPT="-s $BUILD_DIR/.m2/settings.xml"
-elif [ -f $BUILD_DIR/settings.xml ]; then
-  MAVEN_SETTINGS_OPT="-s $BUILD_DIR/settings.xml"
-else
-  unset MAVEN_SETTINGS_OPT
-fi
-
-export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DIR/.m2/repository"
-
-# setup app
-mvnOpts="-B"
-mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
-mvnOpts="${mvnOpts} clean dependency:resolve-plugins test-compile"
-
-status "Executing: mvn ${mvnOpts}"
-.maven/bin/mvn ${mvnOpts} | indent
-
-if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  error "Failed to setup app with Maven
-We're sorry this build is failing! If you can't find the issue in application code,
-please submit a ticket so we can help: https://help.heroku.com/"
-fi
-
+run_mvn "test-compile" $BUILD_DIR $BUILD_DIR
+write_mvn_profile $BUILD_DIR
 cache_copy ".m2" $BUILD_DIR $CACHE_DIR
