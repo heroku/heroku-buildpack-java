@@ -2,16 +2,8 @@
 # bin/test <build-dir> <env-dir> <artifact-dir>
 
 # fail fast
-# set -e
-
-# BUILD_DIR=$1
-
-# . /tmp/jvm-common/bin/util
-# . /tmp/jvm-common/bin/java
-
-# cd $BUILD_DIR
-# export MAVEN_OPTS="-Xmx1024m -Duser.home=$BUILD_DIR -Dmaven.repo.local=$BUILD_DIR/.m2/repository"
+set -e
 
 cd ${1}
-status "Executing: mvn test"
-mvn -B test | indent
+echo "Executing: mvn -B test"
+mvn -B test
