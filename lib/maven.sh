@@ -61,10 +61,11 @@ please submit a ticket so we can help: https://help.heroku.com/"
 
 write_mvn_profile() {
   local home=${1}
-  local mvnBinDir=${buildDir}/.maven/bin
+  local mvnBinDir=${home}/.maven/bin
   mkdir -p ${home}/.profile.d
   cat << EOF > ${home}/.profile.d/maven.sh
-export MAVEN_OPTS="$(_mvn_java_opts "test")"
+export M2_HOME="${home}/.maven"
+export MAVEN_OPTS="$(_mvn_java_opts "test" ${home})"
 export PATH="${mvnBinDir}:\$PATH"
 EOF
 }

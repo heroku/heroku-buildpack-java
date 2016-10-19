@@ -5,5 +5,4 @@
 set -e
 
 cd ${1}
-echo "Executing: mvn -B test"
 mvn -B test
