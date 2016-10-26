@@ -25,9 +25,13 @@ install_java_with_overlay ${BUILD_DIR}
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
 
-# change to cache dir to install maven
-cd $CACHE_DIR
-install_maven ${CACHE_DIR} ${BUILD_DIR}
+BUILDCMD="./mvnw"
+if [ ! -f $BUILD_DIR/mvnw ] ; then
+  # change to cache dir to install maven
+  cd $CACHE_DIR
+  install_maven ${CACHE_DIR} ${BUILD_DIR}
+  BUILDCMD="mvn"
+fi
 
 if [ -n "$MAVEN_SETTINGS_PATH" ]; then
   MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
@@ -54,8 +58,8 @@ mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
 mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
 mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
 
-status "Executing: mvn ${mvnOpts}"
-$CACHE_DIR/.maven/bin/mvn -DoutputFile=target/mvn-dependency-list.log ${mvnOpts} | indent
+status "Executing: ${BUILDCMD} ${mvnOpts}"
+${BUILDCMD} -DoutputFile=target/mvn-dependency-list.log ${mvnOpts} | indent
 
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   error "Failed to build app with Maven
