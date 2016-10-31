@@ -32,7 +32,7 @@ else
   # change to cache dir to install maven
   cd $CACHE_DIR
   install_maven ${CACHE_DIR} ${BUILD_DIR}
-  BUILDCMD="mvn"
+  BUILDCMD="$CACHE_DIR/.maven/bin/mvn"
 fi
 
 if [ -n "$MAVEN_SETTINGS_PATH" ]; then
