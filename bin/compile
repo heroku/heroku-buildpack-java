@@ -28,13 +28,12 @@ mkdir -p $CACHE_DIR
 if [ -f $BUILD_DIR/mvnw ]; then
   cache_copy ".m2/wrapper" $CACHE_DIR $BUILD_DIR
   BUILDCMD="./mvnw"
-  buildCmdForStatus="$BUILDCMD"
 else
   # change to cache dir to install maven
   cd $CACHE_DIR
   install_maven ${CACHE_DIR} ${BUILD_DIR}
-  BUILDCMD="$CACHE_DIR/.maven/bin/mvn"
-  buildCmdForStatus="mvn"
+  PATH="$CACHE_DIR/.maven/bin:$PATH"
+  BUILDCMD="mvn"
 fi
 
 if [ -n "$MAVEN_SETTINGS_PATH" ]; then
@@ -62,7 +61,7 @@ mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
 mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
 mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
 
-status "Executing: ${buildCmdForStatus} ${mvnOpts}"
+status "Executing: ${BUILDCMD} ${mvnOpts}"
 ${BUILDCMD} -DoutputFile=target/mvn-dependency-list.log ${mvnOpts} | indent
 
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
