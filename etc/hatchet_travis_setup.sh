@@ -1,18 +1,9 @@
 if [[ "$TEST_CMD" =~ "mvn verify" ]] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-  if [ -n "`git config --get user.email`" ]; then
-    echo 'already set'; else `git config --global user.email 'buildpack@example.com'`
-  fi
-  if [ -n "`git config --get user.name`" ]; then
-    echo 'already set'; else `git config --global user.name 'BuildpackTester'`
-  fi
-
-  cat <<EOF > ~/.ssh/config
-Host heroku.com
-    StrictHostKeyChecking no
-    CheckHostIP no
-    UserKnownHostsFile=/dev/null
-Host github.com
-    StrictHostKeyChecking no
+  # create netrc
+  cat >> $HOME/.netrc <<EOF
+machine git.heroku.com
+  login buildpack@example.com
+  password $HEROKU_API_KEY
 EOF
 
   curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 --max-time 30 https://toolbelt.heroku.com/install-ubuntu.sh | sh
