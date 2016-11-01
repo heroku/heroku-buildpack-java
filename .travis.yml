@@ -5,7 +5,11 @@ branches:
 before_install:
 - curl --silent https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz | tar xz -C /tmp/
 - git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
-- "./etc/hatchet_travis_setup.sh"
+- echo "machine git.heroku.com" >> ~/.netrc
+- echo "  login ${HEROKU_API_USER:-"buildpack@example.com"}" >> ~/.netrc
+- echo "  password ${HEROKU_API_KEY:-"password"}" >> ~/.netrc
+- curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 --max-time 30 https://toolbelt.heroku.com/install-ubuntu.sh | sh
+- yes | heroku keys:add
 install: true
 script: eval $TEST_CMD
 after_script: heroku keys:remove $USER@`hostname`
@@ -14,7 +18,7 @@ env:
   - HATCHET_RETRIES=3
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
-  - HATCHET_APP_LIMIT=2
+  - HATCHET_APP_LIMIT=20
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
   - secure: TxnRX5U4nvJJoN07IZ8J+ToRQI1r6aE059/Ixyff1tUWEKNam/S6wR1Ce2N1R5aqgCR2M5VDXkMlHaROU7aOzhAGDlJ98YT2bOLTAH3igZ4thBzKS/awmqs65uqiX9U6gmncrcNCitp5qXsZE5ObiHE+guuLdpDUouS3JEJio6E=
   matrix:

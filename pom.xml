@@ -72,7 +72,7 @@
                 </goals>
                 <phase>integration-test</phase>
                 <configuration>
-                  <execArgs>${project.build.directory}/rubygems/bin/rspec</execArgs>
+                  <execArgs>${project.build.directory}/rubygems/bin/rspec --format documentation --fail-fast</execArgs>
                 </configuration>
               </execution>
             </executions>
@@ -87,7 +87,7 @@
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>heroku_hatchet</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3</version>
         <type>gem</type>
       </dependency>
       <dependency>
