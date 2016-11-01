@@ -27,6 +27,7 @@ mkdir -p $CACHE_DIR
 
 if [ -f $BUILD_DIR/mvnw ]; then
   cache_copy ".m2/wrapper" $CACHE_DIR $BUILD_DIR
+  chmod +x $BUILD_DIR/mvnw
   BUILDCMD="./mvnw"
 else
   # change to cache dir to install maven
