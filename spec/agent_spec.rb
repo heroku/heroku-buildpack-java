@@ -17,10 +17,11 @@ describe "JavaAgent" do
           # edit the procfile
           File.open('Procfile', 'w') do |f|
             f.puts <<-EOF
-            web: java $JAVA_OPTS -javaagent:#{javaagent}=stdout=true,lxmem=true -jar target/dependency/webapp-runner.jar --port $PORT target/*.war
-            EOF
+web: java $JAVA_OPTS -javaagent:#{javaagent}=stdout=true,lxmem=true -jar target/dependency/webapp-runner.jar --port $PORT target/*.war
+EOF
           end
-          `git commit -am "adding java agent"`
+          `git add Procfile`
+          `git commit -m "adding java agent"`
         end
         @app.deploy
       end
