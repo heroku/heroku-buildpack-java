@@ -6,7 +6,7 @@ describe "JavaAgent" do
     context "on #{version}" do
       let(:app) { @app }
 
-      before(:all) do
+      before(:each) do
         @app = Hatchet::Runner.new("webapp-runner-sample")
         init_app(@app)
         javaagent="heroku-javaagent-1.5.jar"
@@ -26,18 +26,16 @@ EOF
         @app.deploy
       end
 
-      after(:all) do
+      after(:each) do
         @app.teardown!
       end
 
-      it "deploys successfully" do
+      it "logs memory usage", :retry => 5, :retry_wait => 5 do
         expect(app.output).to include("BUILD SUCCESS")
         sleep(10) # :( for the logs really
         expect(successful_body(app)).to eq("Hello from Java!")
         expect(app).to be_deployed
-      end
 
-      it "logs memory usage", :retry => 5, :retry_wait => 5 do
         logs = `heroku logs -a #{app.name}`
         expect(logs).
             to include("measure.mem.jvm.heap.used=").
