@@ -8,4 +8,4 @@ export HATCHET_DEPLOY_STRATEGY=git
 export HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
 export HATCHET_BUILDPACK_BRANCH=$(git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)#\1#')
 
-mvn verify
+./mvnw verify

@@ -2,14 +2,7 @@ language: java
 branches:
   only:
   - master
-before_install:
-- curl --silent https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz | tar xz -C /tmp/
-- git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
-- echo "machine git.heroku.com" >> ~/.netrc
-- echo "  login ${HEROKU_API_USER:-"buildpack@example.com"}" >> ~/.netrc
-- echo "  password ${HEROKU_API_KEY:-"password"}" >> ~/.netrc
-- curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 --max-time 30 https://toolbelt.heroku.com/install-ubuntu.sh | sh
-- yes | heroku keys:add
+before_install: bash opt/travis-setup.sh
 install: true
 script: eval $TEST_CMD
 after_script: heroku keys:remove $USER@`hostname`
