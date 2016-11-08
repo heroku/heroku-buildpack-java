@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[ "$TRAVIS" != "true" ] && echo "Not running on Travis!" && exit 1
+
 curl --silent https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz | tar xz -C /tmp/
 git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
 
