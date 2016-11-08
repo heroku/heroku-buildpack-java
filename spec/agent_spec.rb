@@ -9,9 +9,9 @@ describe "JavaAgent" do
       before(:all) do
         @app = Hatchet::Runner.new("webapp-runner-sample")
         init_app(@app)
-        javaagent="heroku-javaagent-1.4.jar"
+        javaagent="heroku-javaagent-1.5.jar"
         Dir.chdir(@app.directory) do
-          `curl --silent -O http://heroku-jvm-langpack-java.s3.amazonaws.com/#{javaagent}`
+          `curl --silent -O -L http://repo1.maven.org/maven2/com/heroku/agent/heroku-javaagent/1.5/#{javaagent}`
           `git add #{javaagent}`
 
           # edit the procfile
@@ -37,7 +37,7 @@ EOF
         expect(app).to be_deployed
       end
 
-      it "logs memory usage", :retry => 10, :retry_wait => 10 do
+      it "logs memory usage", :retry => 5, :retry_wait => 5 do
         logs = `heroku logs -a #{app.name}`
         expect(logs).
             to include("measure.mem.jvm.heap.used=").
