@@ -2,7 +2,7 @@ language: java
 branches:
   only:
   - master
-before_install: bash opt/travis-setup.sh
+before_install: bash etc/travis-setup.sh
 install: true
 script: eval $TEST_CMD
 after_script: heroku keys:remove $USER@`hostname`
