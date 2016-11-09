@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe "JavaAgent" do
 
-  %w{1.6 1.7 1.8}.each do |version|
+  %w{1.7 1.8}.each do |version|
     context "on #{version}" do
       let(:app) { @app }
 
