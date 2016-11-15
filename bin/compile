@@ -25,7 +25,10 @@ install_java_with_overlay ${BUILD_DIR}
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
 
-if [ -f $BUILD_DIR/mvnw ] && [ -z "$(detect_maven_version $BUILD_DIR)"]; then
+if [ -f $BUILD_DIR/mvnw ] &&
+    [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.jar ] &&
+    [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.properties ] &&
+    [ -z "$(detect_maven_version $BUILD_DIR)"]; then
   cache_copy ".m2/wrapper" $CACHE_DIR $BUILD_DIR
   chmod +x $BUILD_DIR/mvnw
   BUILDCMD="./mvnw"
