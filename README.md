@@ -1,7 +1,7 @@
 Heroku buildpack for Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java)
 =========================
 
-![java](https://cloud.githubusercontent.com/assets/51578/13712749/6c3e995e-e793-11e5-8f30-121afa2a7096.png)
+![java](https://cloud.githubusercontent.com/assets/2006658/20320840/e914a798-ab38-11e6-8ddd-61d42c2f977c.png)
 
 This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Java apps.
 It uses Maven 3.3.9 to build your application and OpenJDK 8 to run it. However, the JDK version can be configured as described below.
