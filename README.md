@@ -45,16 +45,18 @@ Example:
 
 ### Choose a Maven Version
 
-The `system.properties` file also allows for `maven.version` entry
+You can define a specific version of Maven for Heroku to use by adding the
+[Maven Wrapper](https://github.com/takari/maven-wrapper) to your project. When
+this buildpack detects the precense of a `mvnw` script and a `.mvn` directory,
+it will run the Maven Wrapper instead of the default `mvn` command.
+
+If you need to override this, the `system.properties` file also allows for a `maven.version` entry
 (regardless of whether you specify a `java.runtime.version` entry). For example:
 
 ```
 java.runtime.version=1.8
-maven.version=3.1.1
+maven.version=3.3.9
 ```
-
-Supported versions of Maven include 3.0.5, 3.1.1, 3.2.5 and 3.3.9. You can request new
-versions of Maven by submitting a pull request against `vendor/maven/sources.txt`.
 
 ### Customize Maven
 
