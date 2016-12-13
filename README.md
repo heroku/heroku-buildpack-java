@@ -1,7 +1,7 @@
 Heroku buildpack for Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java)
 =========================
 
-![](https://cloud.githubusercontent.com/assets/51578/11042261/15358c86-86e4-11e5-8798-58473f89e6c6.jpg)
+![java](https://cloud.githubusercontent.com/assets/871315/20325947/f3544014-ab43-11e6-9c51-8240ce161939.png)
 
 This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Java apps.
 It uses Maven 3.3.9 to build your application and OpenJDK 8 to run it. However, the JDK version can be configured as described below.
@@ -45,16 +45,18 @@ Example:
 
 ### Choose a Maven Version
 
-The `system.properties` file also allows for `maven.version` entry
+You can define a specific version of Maven for Heroku to use by adding the
+[Maven Wrapper](https://github.com/takari/maven-wrapper) to your project. When
+this buildpack detects the precense of a `mvnw` script and a `.mvn` directory,
+it will run the Maven Wrapper instead of the default `mvn` command.
+
+If you need to override this, the `system.properties` file also allows for a `maven.version` entry
 (regardless of whether you specify a `java.runtime.version` entry). For example:
 
 ```
 java.runtime.version=1.8
-maven.version=3.1.1
+maven.version=3.3.9
 ```
-
-Supported versions of Maven include 3.0.5, 3.1.1, 3.2.5 and 3.3.9. You can request new
-versions of Maven by submitting a pull request against `vendor/maven/sources.txt`.
 
 ### Customize Maven
 

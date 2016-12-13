@@ -2,11 +2,7 @@ language: java
 branches:
   only:
   - master
-before_install:
-- curl --silent https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar xz -C
-  /tmp/
-- git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
-- "./etc/hatchet_travis_setup.sh"
+before_install: bash etc/travis-setup.sh
 install: true
 script: eval $TEST_CMD
 after_script: heroku keys:remove $USER@`hostname`
@@ -15,9 +11,9 @@ env:
   - HATCHET_RETRIES=3
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
-  - HATCHET_APP_LIMIT=2
+  - HATCHET_APP_LIMIT=20
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
-  - secure: DLdcaw69sPdcnhoBlW12jUDfTB0ikJokhby1fsp+d3SHAaw1tjY7hmwLU2A9GCBEgeKt5TOLUO7zeiQZEDFavE/c0zNE8o7m1qOmpVSP1946HtI6iFeYLPyIYYXTH2rL+V6Ua1fCXl8zYaqZ+YabWbIuSwgCPm3P4afUe0qL7aI=
+  - secure: YjVlEmHqEhJrt14XnYTr7K7tD19GD3BSgwdeURsbxabBaIuhXnsUF74uB2sunUZ8nFWj94gE4ONM+G8wu/Dxrm/Xrj663QO7Qojb6PJH0OUcG15y3c80bTtic7yaMbRv43pVR0C1e58qAj4Lc0ELcagd+6FOpqwgVaqGC51geis=
   matrix:
-  - TEST_CMD='mvn verify'
+  - TEST_CMD='./mvnw verify'
   - TEST_CMD="/tmp/testrunner/bin/run -c ."

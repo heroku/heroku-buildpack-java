@@ -10,8 +10,8 @@
   <properties>
     <version.jruby-maven-plugins>1.0.5</version.jruby-maven-plugins>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gem.home>${session.executionRootDirectory}/target/rubygems</gem.home>
-    <gem.path>${session.executionRootDirectory}/target/rubygems</gem.path>
+    <gem.home>${basedir}/target/rubygems</gem.home>
+    <gem.path>${basedir}/target/rubygems</gem.path>
   </properties>
 
   <dependencies>
@@ -39,45 +39,55 @@
     </repository>
   </repositories>
 
-  <build>
-    <defaultGoal>verify</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <version>${version.jruby-maven-plugins}</version>
-        <executions>
-          <execution>
-            <id>hatchet-install</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <execArgs>${project.build.directory}/rubygems/bin/hatchet install</execArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>rspec</id>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <phase>integration-test</phase>
-            <configuration>
-              <execArgs>${project.build.directory}/rubygems/bin/rspec</execArgs>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  <profiles>
+    <profile>
+      <id>heroku-api-key-set</id>
+      <activation>
+        <property>
+          <name>env.HEROKU_API_KEY</name>
+        </property>
+      </activation>
+      <build>
+        <defaultGoal>verify</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>gem-maven-plugin</artifactId>
+            <version>${version.jruby-maven-plugins}</version>
+            <executions>
+              <execution>
+                <id>hatchet-install</id>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <phase>integration-test</phase>
+                <configuration>
+                  <execArgs>${project.build.directory}/rubygems/bin/hatchet install</execArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>rspec</id>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <phase>integration-test</phase>
+                <configuration>
+                  <execArgs>${project.build.directory}/rubygems/bin/rspec --format documentation --fail-fast</execArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>heroku_hatchet</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.3</version>
         <type>gem</type>
       </dependency>
       <dependency>

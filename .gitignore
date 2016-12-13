@@ -1,3 +1,5 @@
+.idea/
 *.swp
 spec/fixtures/repos/*
 target
+*.iml

@@ -4,7 +4,6 @@ describe "Java" do
 
   def expect_successful_maven(jdk_version)
     expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-    expect(app.output).to include("Installing Maven 3.3.9")
     expect(app.output).not_to include("Installing settings.xml")
     expect(app.output).not_to include("BUILD FAILURE")
     expect(app.output).to include("BUILD SUCCESS")
@@ -15,7 +14,7 @@ describe "Java" do
     init_app(app)
   end
 
-  ["1.7", "1.8", "1.7.0_111", "1.8.0_102"].each do |version|
+  ["1.7", "1.8", "1.7.0_111", "1.8.0_112"].each do |version|
     context "on jdk-#{version}" do
       let(:app) { Hatchet::Runner.new("java-servlets-sample") }
       let(:jdk_version) { version }
@@ -28,6 +27,7 @@ describe "Java" do
           `git commit -am "redeploy" --allow-empty`
           app.push!
           expect_successful_maven(jdk_version)
+          expect(app.output).not_to include("Installing Maven")
           expect(app.output).to include("BUILD SUCCESS")
           expect(successful_body(app)).to eq("Hello from Java!")
 
@@ -50,7 +50,7 @@ describe "Java" do
   end
 
   context "korvan" do
-    ["1.7", "1.8", "1.7.0_111", "1.8.0_102"].each do |version|
+    ["1.7", "1.8", "1.7.0_111", "1.8.0_112"].each do |version|
       let(:app) { Hatchet::Runner.new("korvan") }
       context "on jdk-#{version}" do
         let(:jdk_version) { version }
@@ -91,7 +91,7 @@ describe "Java" do
     end
   end
 
-  %w{1.7 1.8 1.7.0_111 1.8.0_102}.each do |version|
+  %w{1.7 1.8 1.7.0_111 1.8.0_112}.each do |version|
     context "#{version} with webapp-runner" do
       let(:app) { Hatchet::Runner.new("webapp-runner-sample") }
       let(:jdk_version) { version }

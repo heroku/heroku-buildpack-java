@@ -34,10 +34,10 @@ EOF
 fi
 
 if [ ! -f $BUILD_DIR/Procfile ]; then
-  if is_spring_boot $BUILD_DIR; then
+  if is_spring_boot $BUILD_DIR && [ -f $BUILD_DIR/target/*.jar ]; then
     echo "default_process_types:"
     echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar target/*.jar"
-  elif is_wildfly_swarm $BUILD_DIR; then
+  elif is_wildfly_swarm $BUILD_DIR && [ -f $BUILD_DIR/target/*.jar ]; then
     echo "default_process_types:"
     echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar target/*.jar"
   fi
