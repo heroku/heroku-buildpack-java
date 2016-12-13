@@ -27,45 +27,55 @@ _mvn_cmd_opts() {
   fi
 }
 
+has_maven_wrapper() {
+  local home=${1}
+  if [ -f $home/mvnw ] &&
+      [ -f $home/.mvn/wrapper/maven-wrapper.jar ] &&
+      [ -f $home/.mvn/wrapper/maven-wrapper.properties ] &&
+      [ -z "$(detect_maven_version $home)"]; then
+    return 0;
+  else
+    return 1;
+  fi
+}
+
 run_mvn() {
   local scope=${1}
   local home=${2}
-  local mvnBinDir=${3}/.maven/bin
+  local mavenInstallDir=${3}
 
-  if [ -f $BUILD_DIR/mvnw ] &&
-      [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.jar ] &&
-      [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.properties ] &&
-      [ -z "$(detect_maven_version $BUILD_DIR)"]; then
-    cache_copy ".m2/wrapper" $CACHE_DIR $BUILD_DIR
-    chmod +x $BUILD_DIR/mvnw
-    local buildCmd="./mvnw"
+  if has_maven_wrapper $home; then
+    cache_copy ".m2/wrapper" $mavenInstallDir $home
+    chmod +x $home/mvnw
+    local mavenExe="./mvnw"
   else
-    # change to cache dir to install maven
-    cd $CACHE_DIR
-    install_maven ${CACHE_DIR} ${BUILD_DIR}
-    PATH="$CACHE_DIR/.maven/bin:$PATH"
-    local buildCmd="mvn"
+    cd $mavenInstallDir
+    install_maven ${mavenInstallDir} ${home}
+    PATH="${mavenInstallDir}/.maven/bin:$PATH"
+    local mavenExe="mvn"
+    cd $home
   fi
 
   if [ -n "$MAVEN_SETTINGS_PATH" ]; then
     MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
   elif [ -n "$MAVEN_SETTINGS_URL" ]; then
     status_pending "Installing settings.xml"
-    mkdir -p .m2
-    curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
+    mkdir -p ${mavenInstallDir}/.m2
+    curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${mavenInstallDir}/.m2/settings.xml
     status_done
-    MAVEN_SETTINGS_OPT="-s $home/.m2/settings.xml"
-  elif [ -f $home/settings.xml ]; then
-    MAVEN_SETTINGS_OPT="-s $home/settings.xml"
+    MAVEN_SETTINGS_OPT="-s $mavenInstallDir/.m2/settings.xml"
+  elif [ -f ${home}/settings.xml ]; then
+    MAVEN_SETTINGS_OPT="-s ${home}/settings.xml"
   else
     unset MAVEN_SETTINGS_OPT
   fi
 
   export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home})"
 
+  cd $home
   local mvnOpts="$(_mvn_cmd_opts ${scope})"
-  status "Executing: ${buildCmd} ${mvnOpts}"
-  ${buildCmd} -DoutputFile=target/mvn-dependency-list.log -B ${mvnOpts} | indent
+  status "Executing: ${mavenExe} ${mvnOpts}"
+  ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvnOpts} | indent
 
   if [ "${PIPESTATUS[*]}" != "0 0" ]; then
     error "Failed to setup app with Maven

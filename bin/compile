@@ -6,6 +6,7 @@ set -e
 
 BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
 . $BP_DIR/lib/common.sh
+. $BP_DIR/lib/maven.sh
 
 # parse args
 BUILD_DIR=$1
@@ -25,54 +26,7 @@ install_java_with_overlay ${BUILD_DIR}
 #create the cache dir if it doesn't exist
 mkdir -p $CACHE_DIR
 
-if [ -f $BUILD_DIR/mvnw ] &&
-    [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.jar ] &&
-    [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.properties ] &&
-    [ -z "$(detect_maven_version $BUILD_DIR)"]; then
-  cache_copy ".m2/wrapper" $CACHE_DIR $BUILD_DIR
-  chmod +x $BUILD_DIR/mvnw
-  BUILDCMD="./mvnw"
-else
-  # change to cache dir to install maven
-  cd $CACHE_DIR
-  install_maven ${CACHE_DIR} ${BUILD_DIR}
-  PATH="$CACHE_DIR/.maven/bin:$PATH"
-  BUILDCMD="mvn"
-fi
-
-if [ -n "$MAVEN_SETTINGS_PATH" ]; then
-  MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
-elif [ -n "$MAVEN_SETTINGS_URL" ]; then
-  status_pending "Installing settings.xml"
-  mkdir -p .m2
-  curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output .m2/settings.xml
-  status_done
-  MAVEN_SETTINGS_OPT="-s $CACHE_DIR/.m2/settings.xml"
-elif [ -f $BUILD_DIR/settings.xml ]; then
-  MAVEN_SETTINGS_OPT="-s $BUILD_DIR/settings.xml"
-else
-  unset MAVEN_SETTINGS_OPT
-fi
-
-# change to build dir to run maven
-cd $BUILD_DIR
-
-export MAVEN_OPTS="-Xmx1024m ${MAVEN_JAVA_OPTS} -Duser.home=$BUILD_DIR -Dmaven.repo.local=$CACHE_DIR/.m2/repository"
-
-# build app
-mvnOpts="-B"
-mvnOpts="${mvnOpts}${MAVEN_SETTINGS_OPT:+ $MAVEN_SETTINGS_OPT}"
-mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
-mvnOpts="${mvnOpts} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
-
-status "Executing: ${BUILDCMD} ${mvnOpts}"
-${BUILDCMD} -DoutputFile=target/mvn-dependency-list.log ${mvnOpts} | indent
-
-if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  error "Failed to build app with Maven
-We're sorry this build is failing! If you can't find the issue in application code,
-please submit a ticket so we can help: https://help.heroku.com/"
-fi
+run_mvn "compile" $BUILD_DIR $CACHE_DIR
 
 if [ -f $BUILD_DIR/mvnw ]; then
   cache_copy ".m2/wrapper" $BUILD_DIR $CACHE_DIR
