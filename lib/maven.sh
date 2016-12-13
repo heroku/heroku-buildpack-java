@@ -32,6 +32,21 @@ run_mvn() {
   local home=${2}
   local mvnBinDir=${3}/.maven/bin
 
+  if [ -f $BUILD_DIR/mvnw ] &&
+      [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.jar ] &&
+      [ -f $BUILD_DIR/.mvn/wrapper/maven-wrapper.properties ] &&
+      [ -z "$(detect_maven_version $BUILD_DIR)"]; then
+    cache_copy ".m2/wrapper" $CACHE_DIR $BUILD_DIR
+    chmod +x $BUILD_DIR/mvnw
+    local buildCmd="./mvnw"
+  else
+    # change to cache dir to install maven
+    cd $CACHE_DIR
+    install_maven ${CACHE_DIR} ${BUILD_DIR}
+    PATH="$CACHE_DIR/.maven/bin:$PATH"
+    local buildCmd="mvn"
+  fi
+
   if [ -n "$MAVEN_SETTINGS_PATH" ]; then
     MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
   elif [ -n "$MAVEN_SETTINGS_URL" ]; then
@@ -49,8 +64,8 @@ run_mvn() {
   export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home})"
 
   local mvnOpts="$(_mvn_cmd_opts ${scope})"
-  status "Executing: mvn ${mvnOpts}"
-  ${mvnBinDir}/mvn -DoutputFile=target/mvn-dependency-list.log -B ${mvnOpts} | indent
+  status "Executing: ${buildCmd} ${mvnOpts}"
+  ${buildCmd} -DoutputFile=target/mvn-dependency-list.log -B ${mvnOpts} | indent
 
   if [ "${PIPESTATUS[*]}" != "0 0" ]; then
     error "Failed to setup app with Maven
