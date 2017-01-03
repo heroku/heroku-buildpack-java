@@ -28,7 +28,7 @@ mkdir -p $CACHE_DIR
 
 run_mvn "compile" $BUILD_DIR $CACHE_DIR
 
-if [ -f $BUILD_DIR/mvnw ]; then
+if has_maven_wrapper $BUILD_DIR; then
   cache_copy ".m2/wrapper" $BUILD_DIR $CACHE_DIR
   rm -rf $BUILD_DIR/.m2
 fi
