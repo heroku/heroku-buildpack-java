@@ -164,7 +164,7 @@ testNewAppsRemoveM2Cache()
   compile
 
   assertCapturedSuccess
-  assertFalse ".m2 should not be copied to build dir" "[ -d ${BUILD_DIR}/.m2 ]"
+  assertFalse ".m2 should not be copied to build dir" "[ -d ${BUILD_DIR}/.m2/repository ]"
   assertFalse ".maven should not be copied to build dir" "[ -d ${BUILD_DIR}/.maven ]"
 }
 

@@ -3,6 +3,7 @@
 _mvn_java_opts() {
   local scope=${1}
   local home=${2}
+  local cache=${3}
 
   echo -n "-Xmx1024m"
   if [ "$scope" = "compile" ]; then
@@ -11,7 +12,7 @@ _mvn_java_opts() {
     echo -n ""
   fi
 
-  echo -n " -Duser.home=$home -Dmaven.repo.local=$home/.m2/repository"
+  echo -n " -Duser.home=$home -Dmaven.repo.local=$cache/.m2/repository"
 }
 
 _mvn_cmd_opts() {
@@ -70,7 +71,7 @@ run_mvn() {
     unset MAVEN_SETTINGS_OPT
   fi
 
-  export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home})"
+  export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home} ${mavenInstallDir})"
 
   cd $home
   local mvnOpts="$(_mvn_cmd_opts ${scope})"
