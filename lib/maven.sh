@@ -18,10 +18,10 @@ _mvn_cmd_opts() {
   local scope=${1}
 
   if [ "$scope" = "compile" ]; then
-    echo -n " ${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
+    echo -n "${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
     echo -n " ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
   elif [ "$scope" = "test-compile" ]; then
-    echo -n " ${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
+    echo -n "${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
   else
     echo -n ""
   fi
