@@ -86,7 +86,7 @@ _assertMaven305() {
   assertFileMD5 "7d2bdb60388da32ba499f953389207fe" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
-  assertCaptured "Bad mvn command" "Executing: mvn -B -DskipTests clean dependency:list install"
+  assertCaptured "Unexpected mvn command" "Executing: mvn -DskipTests clean dependency:list install"
   assertCaptured "Build was not successful" "BUILD SUCCESS"
 }
 
@@ -95,7 +95,7 @@ _assertMaven311() {
   assertFileMD5 "08a6e3ab11f4add00d421dfa57ef4c85" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
-  assertCaptured "Bad mvn command" "Executing: mvn -B -DskipTests clean dependency:list install"
+  assertCaptured "Unexpected mvn command" "Executing: mvn -DskipTests clean dependency:list install"
   assertCaptured "Build was not successful" "BUILD SUCCESS"
 }
 
@@ -104,7 +104,7 @@ _assertMaven325() {
   assertFileMD5 "9d4c6b79981a342940b9eff660070748" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
-  assertCaptured "Bad mvn command" "Executing: mvn -B -DskipTests clean dependency:list install"
+  assertCaptured "Unexpected mvn command" "Executing: mvn -DskipTests clean dependency:list install"
   assertCaptured "Build was not successful" "BUILD SUCCESS"
 }
 
@@ -113,7 +113,7 @@ _assertMavenLatest() {
   assertFileMD5 "b34974f4c849ec2ae6481651e1f24ef1" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
-  assertCaptured "Bad mvn command" "Executing: mvn -B -DskipTests clean dependency:list install"
+  assertCaptured "Unexpected mvn command" "Executing: mvn -DskipTests clean dependency:list install"
   assertCaptured "Build was not successful" "BUILD SUCCESS"
 }
 
