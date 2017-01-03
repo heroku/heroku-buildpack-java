@@ -58,17 +58,15 @@ run_mvn() {
   fi
 
   if [ -n "$MAVEN_SETTINGS_PATH" ]; then
-    MAVEN_SETTINGS_OPT="-s $MAVEN_SETTINGS_PATH"
+    local mvn_settings_opt="-s $MAVEN_SETTINGS_PATH"
   elif [ -n "$MAVEN_SETTINGS_URL" ]; then
     status_pending "Installing settings.xml"
     mkdir -p ${mavenInstallDir}/.m2
     curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${mavenInstallDir}/.m2/settings.xml
     status_done
-    MAVEN_SETTINGS_OPT="-s $mavenInstallDir/.m2/settings.xml"
+    local mvn_settings_opt="-s $mavenInstallDir/.m2/settings.xml"
   elif [ -f ${home}/settings.xml ]; then
-    MAVEN_SETTINGS_OPT="-s ${home}/settings.xml"
-  else
-    unset MAVEN_SETTINGS_OPT
+    local mvn_settings_opt="-s ${home}/settings.xml"
   fi
 
   export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home} ${mavenInstallDir})"
@@ -76,7 +74,7 @@ run_mvn() {
   cd $home
   local mvnOpts="$(_mvn_cmd_opts ${scope})"
   status "Executing: ${mavenExe} ${mvnOpts}"
-  ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvnOpts} | indent
+  ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent
 
   if [ "${PIPESTATUS[*]}" != "0 0" ]; then
     error "Failed to build app with Maven
