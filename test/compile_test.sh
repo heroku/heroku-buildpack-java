@@ -151,7 +151,7 @@ testCompilationFailure()
   compile
 
   assertNotEquals 0 "${RETURN}"
-  assertContains "Failed to build app with Maven" "$(cat ${STD_OUT})"
+  assertContains "Build was unexpectedly successful" "Failed to build app with Maven" "$(cat ${STD_OUT})"
 }
 
 testNewAppsRemoveM2Cache()

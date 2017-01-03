@@ -78,7 +78,7 @@ run_mvn() {
   ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvnOpts} | indent
 
   if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-    error "Failed to setup app with Maven
+    error "Failed to build app with Maven
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
   fi
