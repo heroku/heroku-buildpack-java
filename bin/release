@@ -34,7 +34,8 @@ EOF
 fi
 
 if [ ! -f $BUILD_DIR/Procfile ] && [ -d $BUILD_DIR/target ]; then
-  for jarFile in $(find $BUILD_DIR/target -name *.jar -type f); do
+  cd $BUILD_DIR
+  for jarFile in $(find target -name *.jar -type f); do
     if is_spring_boot $BUILD_DIR; then
       echo "default_process_types:"
       echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar $jarFile"
