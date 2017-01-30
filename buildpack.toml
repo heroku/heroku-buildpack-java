@@ -1,0 +1,17 @@
+[buildpack]
+name = "Java"
+
+  [publish.Ignore]
+  files = [
+    ".mvn/",
+    "etc/",
+    "spec/",
+    "test/",
+    "vendor/",
+    ".gitignore",
+    ".travis.yml",
+    "hatchet.json",
+    "mvnw",
+    "mvnw.cmd",
+    "pom.xml",
+  ]
