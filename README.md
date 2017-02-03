@@ -21,6 +21,11 @@ For more information about using Java and buildpacks on Heroku, see these Dev Ce
 *  [Using a Custom Maven Settings File](https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml)
 *  [Using Grunt with Java and Maven to Automate JavaScript Tasks](https://devcenter.heroku.com/articles/using-grunt-with-java-and-maven-to-automate-javascript-tasks)
 
+## Examples
+
+* [Tomcat Webapp-Runner Example](https://github.com/kissaten/webapp-runner-minimal)
+* [Spring Boot Example](https://github.com/kissaten/spring-boot-heroku-demo)
+
 ## Configuration
 
 ### Choose a JDK
