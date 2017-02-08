@@ -16,5 +16,5 @@ env:
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
   - secure: YjVlEmHqEhJrt14XnYTr7K7tD19GD3BSgwdeURsbxabBaIuhXnsUF74uB2sunUZ8nFWj94gE4ONM+G8wu/Dxrm/Xrj663QO7Qojb6PJH0OUcG15y3c80bTtic7yaMbRv43pVR0C1e58qAj4Lc0ELcagd+6FOpqwgVaqGC51geis=
   matrix:
-  - TEST_CMD='if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$HEROKU_API_KEY" ]; then ./mvnw verify; else; echo "Skipping hatchet tests for third-party PR"; fi'
+  - TEST_CMD='if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$HEROKU_API_KEY" ]; then ./mvnw verify; else echo "Skipping hatchet tests for third-party PR"; fi'
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
