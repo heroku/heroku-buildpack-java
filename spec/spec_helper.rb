@@ -43,6 +43,7 @@ def add_database(app, heroku)
 end
 
 def successful_body(app, options = {})
+  sleep 5
   retry_limit = options[:retry_limit] || 50
   path = options[:path] ? "/#{options[:path]}" : ''
   Excon.get("http://#{app.name}.herokuapp.com#{path}", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
