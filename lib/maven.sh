@@ -89,7 +89,7 @@ write_mvn_profile() {
   mkdir -p ${home}/.profile.d
   cat << EOF > ${home}/.profile.d/maven.sh
 export M2_HOME="${home}/.maven"
-export MAVEN_OPTS="$(_mvn_java_opts "test" ${home})"
+export MAVEN_OPTS="$(_mvn_java_opts "test" ${home} ${home})"
 export PATH="${mvnBinDir}:\$PATH"
 EOF
 }
