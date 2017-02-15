@@ -29,6 +29,8 @@ describe "Java" do
           expect_successful_maven(jdk_version)
           expect(app.output).not_to include("Installing Maven")
           expect(app.output).to include("BUILD SUCCESS")
+
+          sleep 5
           expect(successful_body(app)).to eq("Hello from Java!")
 
           expect(app.run("env")).
@@ -58,6 +60,7 @@ describe "Java" do
           app.deploy do |app|
             expect_successful_maven(jdk_version)
 
+            sleep 5
             expect(successful_body(app)).to eq("/1")
 
             expect(app.run("echo \$JAVA_OPTS")).
@@ -114,6 +117,7 @@ describe "Java" do
             expect(app.output).to match(%r{Building war: /tmp/.*/target/.*.war})
             expect(app.output).not_to match(%r{Building jar: /tmp/.*/target/.*.jar})
 
+            sleep 5
             expect(successful_body(app)).to eq("Hello from Java!")
           end
         end
