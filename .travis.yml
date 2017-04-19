@@ -15,5 +15,5 @@ env:
   - HATCHET_APP_LIMIT=20
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
   matrix:
-  - TEST_CMD='if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "$HEROKU_API_KEY" ]; then ./mvnw verify; else echo "Skipping hatchet tests for third-party PR"; fi'
+  - TEST_CMD='if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./mvnw verify; else echo "Skipping hatchet tests for third-party PR"; fi'
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
