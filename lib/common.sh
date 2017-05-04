@@ -1,19 +1,7 @@
 #!/usr/bin/env bash
 
-DEFAULT_MAVEN_VERSION="3.3.9"
-
-export_env_dir() {
-  env_dir=$1
-  whitelist_regex=${2:-''}
-  blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|JAVA_OPTS|JAVA_TOOL_OPTIONS)$'}
-  if [ -d "$env_dir" ]; then
-    for e in $(ls $env_dir); do
-      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
-      export "$e=$(cat $env_dir/$e)"
-      :
-    done
-  fi
-}
+export DEFAULT_MAVEN_VERSION="3.3.9"
+export BUILDPACK_STDLIB_URL="https://lang-common.s3.amazonaws.com/buildpack-stdlib/v6/stdlib.sh"
 
 install_maven() {
   local installDir=$1
@@ -23,6 +11,7 @@ install_maven() {
   definedMavenVersion=$(detect_maven_version $buildDir)
 
   mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
+  mcount "mvn.version.${mavenVersion}"
 
   status_pending "Installing Maven ${mavenVersion}"
   if is_supported_maven_version ${mavenVersion}; then
@@ -97,4 +86,21 @@ cache_copy() {
     mkdir -p $to_dir/$rel_dir
     cp -pr $from_dir/$rel_dir/. $to_dir/$rel_dir
   fi
+}
+
+install_jdk() {
+  local install_dir=${1}
+
+  let start=$(nowms)
+  JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz}
+  mkdir -p /tmp/jvm-common
+  curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+  source /tmp/jvm-common/bin/util
+  source /tmp/jvm-common/bin/java
+  source /tmp/jvm-common/opt/jdbc.sh
+  mtime "jvm-common.install.time" "${start}"
+
+  let start=$(nowms)
+  install_java_with_overlay ${install_dir}
+  mtime "jvm.install.time" "${start}"
 }

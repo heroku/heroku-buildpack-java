@@ -45,13 +45,17 @@ run_mvn() {
   local home=${2}
   local mavenInstallDir=${3}
 
+  mkdir -p ${mavenInstallDir}
   if has_maven_wrapper $home; then
     cache_copy ".m2/wrapper" $mavenInstallDir $home
     chmod +x $home/mvnw
     local mavenExe="./mvnw"
+    mcount "mvn.version.wrapper"
   else
     cd $mavenInstallDir
+    let start=$(nowms)
     install_maven ${mavenInstallDir} ${home}
+    mtime "mvn.${scope}.time" "${start}"
     PATH="${mavenInstallDir}/.maven/bin:$PATH"
     local mavenExe="mvn"
     cd $home
@@ -59,14 +63,19 @@ run_mvn() {
 
   if [ -n "$MAVEN_SETTINGS_PATH" ]; then
     local mvn_settings_opt="-s $MAVEN_SETTINGS_PATH"
+    mcount "mvn.settings.path"
   elif [ -n "$MAVEN_SETTINGS_URL" ]; then
     status_pending "Installing settings.xml"
     mkdir -p ${mavenInstallDir}/.m2
     curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${mavenInstallDir}/.m2/settings.xml
     status_done
     local mvn_settings_opt="-s $mavenInstallDir/.m2/settings.xml"
+    mcount "mvn.settings.url"
   elif [ -f ${home}/settings.xml ]; then
     local mvn_settings_opt="-s ${home}/settings.xml"
+    mcount "mvn.settings.file"
+  else
+    mcount "mvn.settings.default"
   fi
 
   export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home} ${mavenInstallDir})"
@@ -74,6 +83,8 @@ run_mvn() {
   cd $home
   local mvnOpts="$(_mvn_cmd_opts ${scope})"
   status "Executing: ${mavenExe} ${mvnOpts}"
+
+  let start=$(nowms)
   ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent
 
   if [ "${PIPESTATUS[*]}" != "0 0" ]; then
@@ -81,6 +92,8 @@ run_mvn() {
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
   fi
+
+  mtime "mvn.${scope}.time" "${start}"
 }
 
 write_mvn_profile() {

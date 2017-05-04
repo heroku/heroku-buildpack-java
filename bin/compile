@@ -4,27 +4,20 @@
 # fail fast
 set -e
 
-BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
-. $BP_DIR/lib/common.sh
-. $BP_DIR/lib/maven.sh
+BPLOG_PREFIX="buildpack.java"
 
-# parse args
+BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-export_env_dir $ENV_DIR
+source $BP_DIR/lib/common.sh
+source $BP_DIR/lib/maven.sh
+source <(curl -s --retry 3 -L $BUILDPACK_STDLIB_URL)
 
-JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz}
-mkdir -p /tmp/jvm-common
-curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
-. /tmp/jvm-common/bin/util
-. /tmp/jvm-common/bin/java
-. /tmp/jvm-common/opt/jdbc.sh
-install_java_with_overlay ${BUILD_DIR}
+export_env "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
-#create the cache dir if it doesn't exist
-mkdir -p $CACHE_DIR
+install_jdk ${BUILD_DIR}
 
 run_mvn "compile" $BUILD_DIR $CACHE_DIR
 
