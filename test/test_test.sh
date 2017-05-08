@@ -40,10 +40,12 @@ test_test_compile() {
   createTestPom
 
   capture_test_compile
-  assertCapturedSuccess
+  assertEquals "Expected captured exit code to be 0; was <${RETURN}>" "0" "${RETURN}"
+  assertCaptured "Build was not successful" "BUILD SUCCESS"
   assertTrue "mvn should be executable" "[ -x ${BUILD_DIR}/.maven/bin/mvn ]"
   assertTrue "mvn profile should exist" "[ -f ${BUILD_DIR}/.profile.d/maven.sh ]"
 
   capture_test
   assertEquals "Expected captured exit code to be 0; was <${RETURN}>" "0" "${RETURN}"
+  assertCaptured "Build was not successful" "BUILD SUCCESS"
 }
