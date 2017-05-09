@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 . ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
+. ${BUILDPACK_HOME}/test/stdlib_stubs.sh
 
 capture_test()
 {
@@ -40,8 +41,8 @@ test_test_compile() {
   createTestPom
 
   capture_test_compile
-  assertEquals "Expected captured exit code to be 0; was <${RETURN}>" "0" "${RETURN}"
   assertCaptured "Build was not successful" "BUILD SUCCESS"
+  assertEquals "Expected captured exit code to be 0; was <${RETURN}>" "0" "${RETURN}"
   assertTrue "mvn should be executable" "[ -x ${BUILD_DIR}/.maven/bin/mvn ]"
   assertTrue "mvn profile should exist" "[ -f ${BUILD_DIR}/.profile.d/maven.sh ]"
 
