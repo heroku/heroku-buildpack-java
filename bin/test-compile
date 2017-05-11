@@ -15,7 +15,7 @@ source $BP_DIR/lib/common.sh
 source $BP_DIR/lib/maven.sh
 source <(curl -s --retry 3 -L $BUILDPACK_STDLIB_URL)
 
-export_env "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+export_env $ENV_DIR "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 install_jdk ${BUILD_DIR}
 
