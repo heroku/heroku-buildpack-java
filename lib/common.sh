@@ -15,7 +15,7 @@ install_maven() {
 
   status_pending "Installing Maven ${mavenVersion}"
   if is_supported_maven_version ${mavenVersion}; then
-    mavenUrl="http://lang-jvm.s3.amazonaws.com/maven-${mavenVersion}.tar.gz"
+    mavenUrl="https://lang-jvm.s3.amazonaws.com/maven-${mavenVersion}.tar.gz"
     download_maven ${mavenUrl} ${installDir} ${mavenHome}
     status_done
   else
