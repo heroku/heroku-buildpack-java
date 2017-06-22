@@ -1,4 +1,4 @@
-Heroku buildpack for Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java) [![Circle CI](https://circleci.com/gh/heroku/heroku-buildpack-java/tree/master.svg?style=svg)](https://circleci.com/gh/heroku/heroku-buildpack-java/tree/master)
+Heroku buildpack for Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java) [![CircleCI](https://circleci.com/gh/heroku/heroku-buildpack-java.svg?style=svg)](https://circleci.com/gh/heroku/heroku-buildpack-java)
 =========================
 
 ![java](https://cloud.githubusercontent.com/assets/871315/20325947/f3544014-ab43-11e6-9c51-8240ce161939.png)
