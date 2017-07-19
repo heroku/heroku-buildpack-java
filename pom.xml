@@ -243,7 +243,7 @@
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>rspec</artifactId>
-        <version>3.4.1</version>
+        <version>3.4.0</version>
         <type>gem</type>
       </dependency>
       <dependency>
