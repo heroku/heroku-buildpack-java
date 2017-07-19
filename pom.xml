@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <version.jruby-maven-plugins>1.0.5</version.jruby-maven-plugins>
+    <version.jruby-maven-plugins>1.1.5</version.jruby-maven-plugins>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <gem.home>${basedir}/target/rubygems</gem.home>
     <gem.path>${basedir}/target/rubygems</gem.path>
