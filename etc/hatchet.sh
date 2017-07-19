@@ -13,9 +13,11 @@ else
   export HATCHET_BUILDPACK_BRANCH=$(git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)#\1#')
 fi
 
+bundle exec hatchet install
+
 export HATCHET_RETRIES=3
 export HATCHET_APP_LIMIT=20
 export HATCHET_DEPLOY_STRATEGY=git
 export HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-java.git"
 
-./mvnw verify
+bundle exec rspec $@
