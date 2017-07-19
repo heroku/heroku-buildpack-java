@@ -13,6 +13,8 @@ else
   export HATCHET_BUILDPACK_BRANCH=$(git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)#\1#')
 fi
 
+gem install bundler
+bundle install
 bundle exec hatchet install
 
 export HATCHET_RETRIES=3
