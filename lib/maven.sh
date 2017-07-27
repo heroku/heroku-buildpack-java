@@ -33,7 +33,7 @@ has_maven_wrapper() {
   if [ -f $home/mvnw ] &&
       [ -f $home/.mvn/wrapper/maven-wrapper.jar ] &&
       [ -f $home/.mvn/wrapper/maven-wrapper.properties ] &&
-      [ -z "$(detect_maven_version $home)"]; then
+      [ -z "$(detect_maven_version $home)" ]; then
     return 0;
   else
     return 1;
