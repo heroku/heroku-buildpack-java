@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # bin/use <build-dir>
 
-if [ -f $1/pom.xml ] || [ -f $1/pom.yaml ] ; then
-   echo "Java" && exit 0
+if [ -f $1/pom.xml ] ||
+   [ -f $1/pom.atom ] ||
+   [ -f $1/pom.clj ] ||
+   [ -f $1/pom.groovy ] ||
+   [ -f $1/pom.rb ] ||
+   [ -f $1/pom.scala ] ||
+   [ -f $1/pom.yaml ] ||
+   [ -f $1/pom.yml ] ; then
+  echo "Java" && exit 0
 else
   echo "no" && exit 1
 fi
