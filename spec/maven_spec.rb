@@ -2,6 +2,21 @@ require_relative 'spec_helper'
 
 describe "Maven" do
 
+  context "polyglot" do
+    let(:app) { Hatchet::Runner.new("maven-polyglot") }
+    let(:jdk_version) { "1.8" }
+    it "detects and deploys" do
+      app.deploy do |app|
+        expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+        expect(app.output).to include(".polyglot.pom.yaml")
+        expect(app.output).not_to include("Installing settings.xml")
+        expect(app.output).not_to include("BUILD FAILURE")
+        expect(app.output).to include("BUILD SUCCESS")
+        expect(successful_body(app)).to eq("Hello from Java!")
+      end
+    end
+  end
+
   context "on jdk-1.8" do
     let(:app) { Hatchet::Runner.new("java-servlets-sample") }
     let(:jdk_version) { "1.8" }

@@ -5,7 +5,8 @@
   "java": [
     "kissaten/java-servlets-sample",
     "kissaten/webapp-runner-sample",
-    "kissaten/korvan"
+    "kissaten/korvan",
+    "kissaten/maven-polyglot"
   ],
   "spring": [
     "kissaten/spring-boot-webapp-runner",
