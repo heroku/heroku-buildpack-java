@@ -79,7 +79,7 @@ testNoDetectMissingPomFile()
 {
   detect
 
-  assertNoAppDetected
+  assertEquals "1" "${RETURN}"
 }
 
 testNoDetectPomFileAsDir()
@@ -88,5 +88,5 @@ testNoDetectPomFileAsDir()
 
   detect
 
-  assertNoAppDetected
+  assertEquals "1" "${RETURN}"
 }
