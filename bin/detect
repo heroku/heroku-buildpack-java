@@ -9,7 +9,9 @@ if [ -f $1/pom.xml ] ||
    [ -f $1/pom.scala ] ||
    [ -f $1/pom.yaml ] ||
    [ -f $1/pom.yml ] ; then
-  echo "Java" && exit 0
+  echo "Java"
+  exit 0
 else
-  echo "no" && exit 1
+  (>&2 echo "Could not find a pom.xml file! Please check that it exists and is committed to Git.")
+  exit 1
 fi
