@@ -2,6 +2,12 @@
 
 ## Master
 
+## v55
+
++ Added message when pom.xml is not found
+
+## v42
+
 + Use latest version of Maven by default
 
 ## v41
