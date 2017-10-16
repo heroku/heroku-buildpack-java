@@ -40,6 +40,15 @@ has_maven_wrapper() {
   fi
 }
 
+get_cache_status() {
+  local cacheDir=${1}
+  if [ ! -d ${cacheDir}/.m2 ]; then
+    echo "not-found"
+  else
+    echo "valid"
+  fi
+}
+
 run_mvn() {
   local scope=${1}
   local home=${2}
@@ -84,6 +93,7 @@ run_mvn() {
   local mvnOpts="$(_mvn_cmd_opts ${scope})"
   status "Executing: ${mavenExe} ${mvnOpts}"
 
+  local cache_status="$(get_cache_status ${mavenInstallDir})"
   let start=$(nowms)
   ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent
 
@@ -94,6 +104,7 @@ please submit a ticket so we can help: https://help.heroku.com/"
   fi
 
   mtime "mvn.${scope}.time" "${start}"
+  mtime "mvn.${scope}.time.cache.${cache_status}" "${start}"
 }
 
 write_mvn_profile() {
