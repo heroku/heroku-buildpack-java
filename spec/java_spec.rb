@@ -83,9 +83,11 @@ describe "Java" do
                 to include("Successfully invoked HTTPS service.").
                 and match(%r{"X-Forwarded-Proto(col)?": "https"})
 
-            sleep 1 # make sure the dynos don't overlap
-            expect(app.run("pgssl")).
-                to include("sslmode: require")
+            if !jdk_version.match(/^9/)
+              sleep 1 # make sure the dynos don't overlap
+              expect(app.run("pgssl")).
+                  to include("sslmode: require")
+            end
           end
         end
       end
