@@ -2,6 +2,10 @@
 
 ## Master
 
+## v57
+
++ Added measurement of build time with and without cache
+
 ## v55
 
 + Added message when pom.xml is not found
