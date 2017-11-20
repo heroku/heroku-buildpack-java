@@ -11,4 +11,4 @@ test:
     - bash etc/hatchet.sh
     - /tmp/testrunner/bin/run -c .
   post:
-    - if [ -n "$HEROKU_API_KEY" ]; then heroku keys:remove $USER@`hostname | sed -e "s/\.localdomain//g"`; fi
+    - if [ -n "$HEROKU_API_KEY" ]; then heroku keys:remove $USER@`hostname | sed -e "s/\.localdomain//g"`; fi; exit 0
