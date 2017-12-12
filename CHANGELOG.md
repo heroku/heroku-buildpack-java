@@ -2,6 +2,8 @@
 
 ## Master
 
++ PR #92: Fix some Bash issues
+
 ## v57
 
 + Added measurement of build time with and without cache
