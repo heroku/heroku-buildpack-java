@@ -15,7 +15,7 @@ describe "Spring" do
         it "builds a war" do
           app.deploy do |app|
             sleep(10) # :(
-            expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+            expect(app.output).to include("Installing JDK #{jdk_version}")
             expect(app.output).to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
             expect(app.output).not_to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
             expect(app.output).not_to include("Installing settings.xml")
@@ -32,7 +32,7 @@ describe "Spring" do
         it "builds an executable jar" do
           app.deploy do |app|
             sleep(10) # :(
-            expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+            expect(app.output).to include("Installing JDK #{jdk_version}")
             expect(app.output).not_to include("Installing Maven")
             expect(app.output).not_to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
             expect(app.output).to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
@@ -56,7 +56,7 @@ describe "Spring" do
           it "creates a default process type" do
             app.deploy do |app|
               sleep(10) # :(
-              expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+              expect(app.output).to include("Installing JDK #{jdk_version}")
               expect(app.output).not_to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
               expect(app.output).to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
               expect(app.output).not_to include("Installing settings.xml")

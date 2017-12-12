@@ -7,7 +7,7 @@ describe "Maven" do
     let(:jdk_version) { "1.8" }
     it "detects and deploys" do
       app.deploy do |app|
-        expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+        expect(app.output).to include("Installing JDK #{jdk_version}")
         expect(app.output).to include(".polyglot.pom.yaml")
         expect(app.output).not_to include("Installing settings.xml")
         expect(app.output).not_to include("BUILD FAILURE")

@@ -130,7 +130,7 @@ testCompileWithoutSystemProperties() {
   assertCapturedSuccess
 
   _assertMavenLatest
-  assertCaptured "Installing OpenJDK 1.8"
+  assertCaptured "Installing JDK 1.8"
   assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
   assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
 }
