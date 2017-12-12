@@ -14,7 +14,7 @@ describe "Java" do
     init_app(app)
   end
 
-  ["1.7", "1.8", "1.7.0_131", "1.8.0_144"].each do |version|
+  ["1.7", "1.8", "1.7.0_161", "1.8.0_144"].each do |version|
     context "on jdk-#{version}" do
       let(:app) { Hatchet::Runner.new("java-servlets-sample") }
       let(:jdk_version) { version }
@@ -51,7 +51,7 @@ describe "Java" do
   end
 
   context "korvan" do
-    ["1.7", "1.8", "1.7.0_131", "1.8.0_152", "9", "9.0.1"].each do |version|
+    ["1.7", "1.8", "1.7.0_161", "1.8.0_152", "9", "9.0.1"].each do |version|
       let(:app) { Hatchet::Runner.new("korvan") }
       context "on jdk-#{version}" do
         let(:jdk_version) { version }
@@ -94,7 +94,7 @@ describe "Java" do
     end
   end
 
-  %w{1.7 1.8 1.7.0_131 1.8.0_144}.each do |version|
+  %w{1.7 1.8 1.7.0_161 1.8.0_144}.each do |version|
     context "#{version} with webapp-runner" do
       let(:app) { Hatchet::Runner.new("webapp-runner-sample") }
       let(:jdk_version) { version }
