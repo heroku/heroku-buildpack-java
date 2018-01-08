@@ -1,6 +1,6 @@
 # Java Buildpack Changelog
 
-## Master
+## v58
 
 + Added mcount of kotlin and groovy files in the repo
 + PR #92: Fix some Bash issues
