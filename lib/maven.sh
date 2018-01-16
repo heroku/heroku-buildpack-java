@@ -28,6 +28,27 @@ _mvn_cmd_opts() {
   fi
 }
 
+_mvn_settings_opt() {
+  local home="${1}"
+  local mavenInstallDir="${2}"
+
+  if [ -n "$MAVEN_SETTINGS_PATH" ]; then
+    mcount "mvn.settings.path"
+    echo -n "-s $MAVEN_SETTINGS_PATH"
+  elif [ -n "$MAVEN_SETTINGS_URL" ]; then
+    mkdir -p ${mavenInstallDir}/.m2
+    curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${mavenInstallDir}/.m2/settings.xml
+    mcount "mvn.settings.url"
+    echo -n "-s ${mavenInstallDir}/.m2/settings.xml"
+  elif [ -f ${home}/settings.xml ]; then
+    mcount "mvn.settings.file"
+    echo -n "-s ${home}/settings.xml"
+  else
+    mcount "mvn.settings.default"
+    echo -n ""
+  fi
+}
+
 has_maven_wrapper() {
   local home=${1}
   if [ -f $home/mvnw ] &&
@@ -70,22 +91,7 @@ run_mvn() {
     cd $home
   fi
 
-  if [ -n "$MAVEN_SETTINGS_PATH" ]; then
-    local mvn_settings_opt="-s $MAVEN_SETTINGS_PATH"
-    mcount "mvn.settings.path"
-  elif [ -n "$MAVEN_SETTINGS_URL" ]; then
-    status_pending "Installing settings.xml"
-    mkdir -p ${mavenInstallDir}/.m2
-    curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${mavenInstallDir}/.m2/settings.xml
-    status_done
-    local mvn_settings_opt="-s $mavenInstallDir/.m2/settings.xml"
-    mcount "mvn.settings.url"
-  elif [ -f ${home}/settings.xml ]; then
-    local mvn_settings_opt="-s ${home}/settings.xml"
-    mcount "mvn.settings.file"
-  else
-    mcount "mvn.settings.default"
-  fi
+  local mvn_settings_opt="$(_mvn_settings_opt ${home} ${mavenInstallDir})"
 
   export MAVEN_OPTS="$(_mvn_java_opts ${scope} ${home} ${mavenInstallDir})"
 

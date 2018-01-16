@@ -9,7 +9,6 @@ describe "Maven" do
       app.deploy do |app|
         expect(app.output).to include("Installing JDK #{jdk_version}")
         expect(app.output).to include(".polyglot.pom.yaml")
-        expect(app.output).not_to include("Installing settings.xml")
         expect(app.output).not_to include("BUILD FAILURE")
         expect(app.output).to include("BUILD SUCCESS")
         expect(successful_body(app)).to eq("Hello from Java!")

@@ -14,7 +14,6 @@ describe "Java" do
         app.deploy do |app|
           expect(app.output).to include("Installing JDK #{jdk_version}")
           expect(app.output).to include("Installing Maven")
-          expect(app.output).not_to include("Installing settings.xml")
           expect(app.output).not_to include("BUILD FAILURE")
           expect(app.output).to include("BUILD SUCCESS")
 
