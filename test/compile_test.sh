@@ -208,7 +208,6 @@ testCustomSettingsXmlWithUrl()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Installing settings.xml"
   assertCaptured "Should download from JBoss" "Downloading: http://repository.jboss.org/nexus/content/groups/public"
 
   unset MAVEN_SETTINGS_URL
