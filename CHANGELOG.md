@@ -1,5 +1,9 @@
 # Java Buildpack Changelog
 
+## v59
+
++ Add support for settings.xml in bin/test
+
 ## v58
 
 + Added mcount of kotlin and groovy files in the repo
