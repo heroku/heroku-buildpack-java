@@ -6,7 +6,7 @@ set -e
 
 BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
 BUILD_DIR=$1
-ENV_DIR=$3
+ENV_DIR=$2
 
 source $BP_DIR/lib/common.sh
 source $BP_DIR/lib/maven.sh
