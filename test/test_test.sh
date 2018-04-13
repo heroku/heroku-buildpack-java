@@ -5,7 +5,7 @@
 
 capture_test()
 {
-  . $BUILD_DIR/.profile.d/maven.sh
+  HOME=$BUILD_DIR . $BUILD_DIR/.profile.d/maven.sh
   capture ${BUILDPACK_HOME}/bin/test ${BUILD_DIR} ${ENV_DIR}
 }
 
