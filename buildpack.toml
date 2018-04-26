@@ -3,15 +3,15 @@ name = "Java"
 
   [publish.Ignore]
   files = [
-    ".mvn/",
     "etc/",
     "spec/",
     "test/",
     "vendor/",
     ".gitignore",
+    ".github/",
     ".travis.yml",
+    "circle.yml",
     "hatchet.json",
-    "mvnw",
-    "mvnw.cmd",
-    "pom.xml",
+    "Gemfile",
+    "Gemfile.lock"
   ]
