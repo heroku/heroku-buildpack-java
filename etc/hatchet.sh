@@ -28,7 +28,7 @@ if [ -n "$CIRCLE_BRANCH" ]; then
 elif [ -n "$TRAVIS_PULL_REQUEST_BRANCH" ]; then
   export HATCHET_BUILDPACK_BRANCH="$TRAVIS_PULL_REQUEST_BRANCH"
 else
-  export HATCHET_BUILDPACK_BRANCH=$(git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)#\1#')
+  export HATCHET_BUILDPACK_BRANCH=$(git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)#\1#' | sed -e 's/tags\///')
 fi
 
 gem install bundler
