@@ -36,10 +36,16 @@ _mvn_settings_opt() {
     mcount "mvn.settings.path"
     echo -n "-s $MAVEN_SETTINGS_PATH"
   elif [ -n "$MAVEN_SETTINGS_URL" ]; then
-    mkdir -p ${mavenInstallDir}/.m2
-    curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${mavenInstallDir}/.m2/settings.xml
+    local settingsXml="${mavenInstallDir}/.m2/settings.xml"
+    mkdir -p $(dirname ${settingsXml})
+    curl --retry 3 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${settingsXml}
     mcount "mvn.settings.url"
-    echo -n "-s ${mavenInstallDir}/.m2/settings.xml"
+    if [ -f ${settingsXml} ]; then
+      echo -n "-s ${settingsXml}"
+    else
+      mcount "mvn.settings.url.fail"
+      echo -n ""
+    fi
   elif [ -f ${home}/settings.xml ]; then
     mcount "mvn.settings.file"
     echo -n "-s ${home}/settings.xml"
