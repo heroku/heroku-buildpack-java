@@ -44,7 +44,8 @@ _mvn_settings_opt() {
       echo -n "-s ${settingsXml}"
     else
       mcount "mvn.settings.url.fail"
-      echo -n ""
+      error "Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!"
+      return 1
     fi
   elif [ -f ${home}/settings.xml ]; then
     mcount "mvn.settings.file"

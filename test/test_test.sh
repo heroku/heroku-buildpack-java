@@ -6,6 +6,7 @@
 capture_test()
 {
   HOME=$BUILD_DIR . $BUILD_DIR/.profile.d/maven.sh
+  HOME=$BUILD_DIR . $BUILD_DIR/.profile.d/jvmcommon.sh
   capture ${BUILDPACK_HOME}/bin/test ${BUILD_DIR} ${ENV_DIR}
 }
 
@@ -41,8 +42,8 @@ test_test_compile() {
   createTestPom
 
   capture_test_compile
-  assertCaptured "Build was not successful" "BUILD SUCCESS"
   assertEquals "Expected captured exit code to be 0; was <${RETURN}>" "0" "${RETURN}"
+  assertCaptured "Build was not successful" "BUILD SUCCESS"
   assertTrue "mvn should be executable" "[ -x ${BUILD_DIR}/.maven/bin/mvn ]"
   assertTrue "mvn profile should exist" "[ -f ${BUILD_DIR}/.profile.d/maven.sh ]"
 
