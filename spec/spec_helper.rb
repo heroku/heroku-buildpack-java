@@ -25,20 +25,12 @@ def git_repo
   "https://github.com/heroku/heroku-buildpack-java.git"
 end
 
-def init_app(app)
+def init_app(app, stack="heroku-16")
   app.setup!
-  #app.heroku.put_stack(app.name, "cedar-14")
+  app.platform_api.app.update(app.name, {"build_stack" => ENV["HEROKU_TEST_STACK"] || stack})
   unless ENV['JVM_COMMON_BUILDPACK'].nil? or ENV['JVM_COMMON_BUILDPACK'].empty?
     app.set_config("JVM_COMMON_BUILDPACK" => ENV['JVM_COMMON_BUILDPACK'])
     expect(app.get_config['JVM_COMMON_BUILDPACK']).to eq(ENV['JVM_COMMON_BUILDPACK'])
-  end
-end
-
-def add_database(app, heroku)
-  Hatchet::RETRIES.times.retry do
-    heroku.post_addon(app.name, 'heroku-postgresql:hobby-dev')
-    _, value = heroku.get_config_vars(app.name).body.detect {|key, value| key.match(/HEROKU_POSTGRESQL_[A-Z]+_URL/) }
-    heroku.put_config_vars(app.name, 'DATABASE_URL' => value)
   end
 end
 
