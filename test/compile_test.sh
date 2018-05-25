@@ -213,6 +213,19 @@ testCustomSettingsXmlWithUrl()
   unset MAVEN_SETTINGS_URL
 }
 
+testCustomSettingsXmlWithInvalidUrl()
+{
+  createPom
+
+  export MAVEN_SETTINGS_URL="https://example.com/ha7s8duysadfuhasjd/settings.xml"
+
+  compile
+
+  assertCapturedError
+
+  unset MAVEN_SETTINGS_URL
+}
+
 testIgnoreSettingsOptConfig()
 {
   createPom "$(withDependency)"
