@@ -82,6 +82,8 @@ describe "Java" do
                 to include("Successfully invoked HTTPS service.").
                 and match(%r{"X-Forwarded-Proto(col)?":\s?"https"})
 
+            # JDK 9 and 10 do not have the jre/lib/ext dir where we drop
+            # the pgconfig.jar
             if !jdk_version.match(/^9/) and !jdk_version.match(/^10/)
               sleep 1 # make sure the dynos don't overlap
               expect(app.run("pgssl")).
