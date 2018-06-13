@@ -1,5 +1,10 @@
 # Java Buildpack Changelog
 
+## master
+
++ Improved error behavior for MAVEN_SETTINGS_URL
++ Changed location of JVM common buildpack
+
 ## v59
 
 + Add support for settings.xml in bin/test
