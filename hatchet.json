@@ -6,7 +6,8 @@
     "kissaten/java-servlets-sample",
     "kissaten/webapp-runner-sample",
     "kissaten/korvan",
-    "kissaten/maven-polyglot"
+    "kissaten/maven-polyglot",
+    "kissaten/libpng-test"
   ],
   "spring": [
     "kissaten/spring-boot-webapp-runner",

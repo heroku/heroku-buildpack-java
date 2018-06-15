@@ -124,4 +124,18 @@ describe "Java" do
       end
     end
   end
+
+  %w{1.8 10}.each do |version|
+    context "#{version} libpng test" do
+      let(:app) { Hatchet::Runner.new("libpng-test") }
+      let(:jdk_version) { version }
+
+      it "returns a successful response", :retry => 3, :retry_wait => 5 do
+        app.deploy do |app|
+          expect_successful_maven(jdk_version)
+          expect(successful_body(app)).to eq("All Good!!!")
+        end
+      end
+    end
+  end
 end
