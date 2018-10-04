@@ -6,7 +6,12 @@
 capture_test()
 {
   HOME=$BUILD_DIR . $BUILD_DIR/.profile.d/maven.sh
-  HOME=$BUILD_DIR . $BUILD_DIR/.profile.d/jvmcommon.sh
+
+  # like jvmcommon but without 'ulimit -u', which doesn't work on Travis
+  export JAVA_HOME="$BUILD_DIR/.jdk"
+  export LD_LIBRARY_PATH="$JAVA_HOME/jre/lib/amd64/server:$LD_LIBRARY_PATH"
+  export PATH="$BUILD_DIR/.heroku/bin:$JAVA_HOME/bin:$PATH"
+
   capture ${BUILDPACK_HOME}/bin/test ${BUILD_DIR} ${ENV_DIR}
 }
 

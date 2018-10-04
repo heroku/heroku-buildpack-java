@@ -14,6 +14,13 @@ assertCapturedSuccess() {
   fi
 }
 
+setupJavaEnv() {
+  # like jvmcommon but without 'ulimit -u', which doesn't work on Travis
+  export JAVA_HOME="$BUILD_DIR/.jdk"
+  export LD_LIBRARY_PATH="$JAVA_HOME/jre/lib/amd64/server:$LD_LIBRARY_PATH"
+  export PATH="$BUILD_DIR/.heroku/bin:$JAVA_HOME/bin:$PATH"
+}
+
 createPom()
 {
   cat > ${BUILD_DIR}/pom.xml <<EOF
@@ -267,6 +274,8 @@ EOF
 
 testMavenUpgrade()
 {
+    setupJavaEnv
+
     cat > ${BUILD_DIR}/system.properties <<EOF
 maven.version=3.0.5
 EOF
