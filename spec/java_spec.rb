@@ -13,7 +13,7 @@ describe "Java" do
     init_app(app)
   end
 
-  ["1.7", "1.8", "1.7.0_161", "1.8.0_144"].each do |version|
+  ["1.7", "1.8", "1.7.0_161", "1.8.0_144", "11.0.2"].each do |version|
     context "on jdk-#{version}" do
       let(:app) { Hatchet::Runner.new("java-servlets-sample") }
       let(:jdk_version) { version }
