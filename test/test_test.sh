@@ -99,6 +99,7 @@ test_verify_compile() {
   assertCaptured "'mvn verify' did not run" "exec-verify-goal"
   assertCaptured "Build was not successful" "BUILD SUCCESS"
 
+  unset MAVEN_HEROKU_CI_GOAL
   unset M2_HOME
   unset MAVEN_OPTS
 }
