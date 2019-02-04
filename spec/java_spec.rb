@@ -13,7 +13,7 @@ describe "Java" do
     init_app(app)
   end
 
-  ["1.7", "1.8", "1.7.0_161", "1.8.0_144"].each do |version|
+  ["1.7", "1.8", "11"].each do |version|
     context "on jdk-#{version}" do
       let(:app) { Hatchet::Runner.new("java-servlets-sample") }
       let(:jdk_version) { version }
@@ -50,7 +50,7 @@ describe "Java" do
   end
 
   context "korvan" do
-    ["1.7", "1.8", "1.7.0_161", "1.8.0_152", "9", "9.0.1", "10"].each do |version|
+    ["1.8", "9", "10", "11"].each do |version|
       let(:app) { Hatchet::Runner.new("korvan") }
       context "on jdk-#{version}" do
         let(:jdk_version) { version }
@@ -82,9 +82,9 @@ describe "Java" do
                 to include("Successfully invoked HTTPS service.").
                 and match(%r{"X-Forwarded-Proto(col)?":\s?"https"})
 
-            # JDK 9 and 10 do not have the jre/lib/ext dir where we drop
+            # JDK 9, 10, and 11 do not have the jre/lib/ext dir where we drop
             # the pgconfig.jar
-            if !jdk_version.match(/^9/) and !jdk_version.match(/^10/)
+            if !jdk_version.match(/^9/) and !jdk_version.match(/^10/) and !jdk_version.match(/^11/)
               sleep 1 # make sure the dynos don't overlap
               expect(app.run("pgssl")).
                   to include("sslmode: require")
@@ -95,7 +95,7 @@ describe "Java" do
     end
   end
 
-  %w{1.7 1.8 1.7.0_161 1.8.0_144}.each do |version|
+  %w{1.7 1.8}.each do |version|
     context "#{version} with webapp-runner" do
       let(:app) { Hatchet::Runner.new("webapp-runner-sample") }
       let(:jdk_version) { version }
