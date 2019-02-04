@@ -50,7 +50,7 @@ describe "Java" do
   end
 
   context "korvan" do
-    ["1.7", "1.8", "9", "10", "11"].each do |version|
+    ["1.8", "9", "10", "11"].each do |version|
       let(:app) { Hatchet::Runner.new("korvan") }
       context "on jdk-#{version}" do
         let(:jdk_version) { version }
