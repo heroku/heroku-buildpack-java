@@ -2,6 +2,10 @@
 
 ## master
 
++ Add support for MAVEN_HEROKU_CI_GOAL
+
+## 62
+
 + Improved error behavior for MAVEN_SETTINGS_URL
 + Changed location of JVM common buildpack
 
