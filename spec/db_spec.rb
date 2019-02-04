@@ -6,7 +6,7 @@ describe "Java" do
     init_app(app)
   end
 
-  %w{1.7 1.8}.each do |version|
+  %w{1.8}.each do |version|
     context "on jdk-#{version}" do
       let(:app) { Hatchet::Runner.new("java-apache-dbcp-sample") }
       let(:jdk_version) { version }
