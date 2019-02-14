@@ -140,6 +140,7 @@ testCompileWithoutSystemProperties() {
   assertCaptured "Installing JDK 1.8"
   assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
   assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
+  assertTrue "system.properties was not cached" "[ -f $CACHE_DIR/system.properties ]"
 }
 
 testCompile()
@@ -151,6 +152,8 @@ testCompile()
   assertCapturedSuccess
 
   _assertMavenLatest
+  assertTrue "system.properties was not cached" "[ -f $CACHE_DIR/system.properties ]"
+  assertContains "system.properties contains the wrong version" "java.runtime.version=1.8" "$(cat $CACHE_DIR/system.properties)"
 }
 
 testCompilationFailure()
@@ -167,8 +170,8 @@ testNewAppsRemoveM2Cache()
 {
   createPom
   rm -r ${CACHE_DIR} # simulate a brand new app without a cache dir
-
   assertFalse "Precondition: New apps should not have a CACHE_DIR prior to running" "[ -d ${CACHE_DIR} ]"
+  mkdir ${CACHE_DIR}
 
   compile
 
