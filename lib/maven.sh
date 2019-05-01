@@ -82,6 +82,9 @@ run_mvn() {
   local home=${2}
   local mavenInstallDir=${3}
 
+  export JAVA_HOME=${home}/.jdk
+  export PATH="${JAVA_HOME}/bin:${PATH}"
+
   mkdir -p ${mavenInstallDir}
   if has_maven_wrapper $home; then
     cache_copy ".m2/wrapper" $mavenInstallDir $home
