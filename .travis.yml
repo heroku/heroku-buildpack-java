@@ -4,7 +4,7 @@ branches:
   - master
 before_install: bash etc/ci-setup.sh
 install: true
-script: /tmp/testrunner/bin/run -c . && bash etc/hatchet.sh
+script: /tmp/testrunner/bin/run -c . && bash etc/hatchet.sh spec/
 after_script: if [ -n "$HEROKU_API_KEY" ]; then heroku keys:remove $USER@`hostname`; fi
 env:
   global:
