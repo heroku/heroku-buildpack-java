@@ -39,7 +39,7 @@ is_supported_maven_version() {
   local mavenUrl=${2}
   if [ "$mavenVersion" = "$DEFAULT_MAVEN_VERSION" ]; then
     return 0
-  elif curl -I --retry 3 --fail --silent --max-time 5 --location ${mavenUrl}; then
+  elif curl -I --retry 3 --fail --silent --max-time 5 --location "${mavenUrl}" &> /dev/null; then
     return 0
   else
     return 1
