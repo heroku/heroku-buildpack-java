@@ -99,4 +99,5 @@ EOF
   capture install_maven ${BUILD_DIR} ${BUILD_DIR}
   assertEquals 1 "${RETURN}"
   assertCapturedError "Error, you have defined an unsupported Maven version in the system.properties file"
+  assertCaptured "Installing Maven 3.0.0"
 }
