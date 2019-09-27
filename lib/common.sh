@@ -14,9 +14,9 @@ install_maven() {
   mcount "mvn.version.${mavenVersion}"
 
   status_pending "Installing Maven ${mavenVersion}"
-  mavenUrl="https://lang-jvm.s3.amazonaws.com/maven-${mavenVersion}.tar.gz"
+  local mavenUrl="https://lang-jvm.s3.amazonaws.com/maven-${mavenVersion}.tar.gz"
   if is_supported_maven_version "${mavenVersion}" "${mavenUrl}"; then
-    download_maven ${mavenUrl} ${installDir} ${mavenHome}
+    download_maven "${mavenUrl}" "${installDir}" "${mavenHome}"
     status_done
   else
     error_return "Error, you have defined an unsupported Maven version in the system.properties file.
@@ -30,16 +30,16 @@ download_maven() {
   local installDir=$2
   local mavenHome=$3
   rm -rf $mavenHome
-  curl --retry 3 --silent --max-time 60 --location ${mavenUrl} | tar xzm -C $installDir
+  curl --retry 3 --silent --max-time 60 --location "${mavenUrl}" | tar xzm -C $installDir
   chmod +x $mavenHome/bin/mvn
 }
 
 is_supported_maven_version() {
   local mavenVersion=${1}
-  local mavenUrl=${2}
+  local mavenUrl=${2:?}
   if [ "$mavenVersion" = "$DEFAULT_MAVEN_VERSION" ]; then
     return 0
-  elif curl -I --retry 3 --fail --silent --max-time 5 --location "${mavenUrl}" &> /dev/null; then
+  elif curl -I --retry 3 --fail --silent --max-time 5 --location "${mavenUrl}" > /dev/null; then
     return 0
   else
     return 1
