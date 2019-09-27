@@ -72,17 +72,17 @@ test_detect_maven_version_with_no_file() {
 }
 
 test_is_supported_maven_version_default() {
-  capture is_supported_maven_version "$DEFAULT_MAVEN_VERSION"
+  capture is_supported_maven_version "$DEFAULT_MAVEN_VERSION" "https://lang-jvm.s3.amazonaws.com/maven-$DEFAULT_MAVEN_VERSION.tar.gz"
   assertCapturedSuccess
 }
 
 test_is_supported_maven_version_old() {
-  capture is_supported_maven_version "3.0.5"
+  capture is_supported_maven_version "3.6.2" "https://lang-jvm.s3.amazonaws.com/maven-3.6.2.tar.gz"
   assertCapturedSuccess
 }
 
 test_is_supported_maven_version_no() {
-  capture is_supported_maven_version "1.1.1"
+  capture is_supported_maven_version "1.1.1" "https://lang-jvm.s3.amazonaws.com/maven-1.1.1.tar.gz"
   assertEquals 1 "${RETURN}"
 }
 
@@ -98,5 +98,6 @@ maven.version=3.0.0
 EOF
   capture install_maven ${BUILD_DIR} ${BUILD_DIR}
   assertEquals 1 "${RETURN}"
+  assertCaptured "Installing Maven 3.0.0"
   assertCapturedError "Error, you have defined an unsupported Maven version in the system.properties file"
 }

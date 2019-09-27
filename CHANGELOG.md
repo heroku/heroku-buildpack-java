@@ -2,6 +2,10 @@
 
 ## master
 
++ Add support for Maven 3.5 and 3.6
+
+## 64
+
 + Cache system.properties file
 
 ## 63
