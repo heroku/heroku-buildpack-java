@@ -2,10 +2,11 @@
 
 ## master
 
-+ Add support for Maven 3.5 and 3.6
++ Upgrade default Maven version to 3.6.2
 
 ## 64
 
++ Add support for Maven 3.5 and 3.6
 + Cache system.properties file
 
 ## 63
