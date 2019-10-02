@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export DEFAULT_MAVEN_VERSION="3.3.9"
+export DEFAULT_MAVEN_VERSION="3.6.2"
 export BUILDPACK_STDLIB_URL="https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh"
 
 install_maven() {

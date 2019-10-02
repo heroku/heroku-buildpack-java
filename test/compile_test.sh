@@ -118,8 +118,8 @@ _assertMaven325() {
 }
 
 _assertMavenLatest() {
-  assertCaptured "Wrong Maven Installed" "Installing Maven 3.3.9"
-  assertFileMD5 "b34974f4c849ec2ae6481651e1f24ef1" ${CACHE_DIR}/.maven/bin/mvn
+  assertCaptured "Wrong Maven Installed" "Installing Maven 3.6.2"
+  assertFileMD5 "833f5bcc6ee59f6716223f866570bc88" ${CACHE_DIR}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${CACHE_DIR}/.maven/bin/mvn ]"
 
   assertCaptured "Unexpected mvn command" "Executing: mvn -DskipTests clean dependency:list install"
@@ -188,7 +188,7 @@ testCustomSettingsXml()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Should download from JBoss" "Downloading: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: http://repository.jboss.org/nexus/content/groups/public"
 }
 
 testCustomSettingsXmlWithPath()
@@ -202,7 +202,7 @@ testCustomSettingsXmlWithPath()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Should download from JBoss" "Downloading: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: http://repository.jboss.org/nexus/content/groups/public"
 
   unset MAVEN_SETTINGS_PATH
 }
@@ -218,7 +218,7 @@ testCustomSettingsXmlWithUrl()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Should download from JBoss" "Downloading: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: http://repository.jboss.org/nexus/content/groups/public"
 
   unset MAVEN_SETTINGS_URL
 }
