@@ -16,9 +16,10 @@ source "${bpDir}/lib/frameworks.sh"
 export_env $ENV_DIR "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 mavenLayerToml="$(bp_layer_metadata_create "false" "true" "false" "version=\"3.6.2\"")"
-mavenLayer="$(bp_layer_init "${layersDir}" "maven" "${mavenLayerToml}")"
+mavenLayer="$(bp_layer_init "$layersDir" "maven" "$mavenLayerToml")"
 
-run_mvn "compile" "${appDir}" "${mavenLayer}"
+run_mvn "compile" "$appDir" "$mavenLayer"
+remove_mvn "$appDir" "$mavenLayer"
 
 if [ -d target ]; then
   for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f); do

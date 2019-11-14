@@ -119,7 +119,11 @@ please submit a ticket so we can help: https://help.heroku.com/"
 
   mtime "mvn.${scope}.time" "${start}"
   mtime "mvn.${scope}.time.cache.${cache_status}" "${start}"
+}
 
+remove_mvn() {
+  local home=${1}
+  local mavenInstallDir=${2}
   if has_maven_wrapper $home; then
     cache_copy ".m2/wrapper" "$home" "$mavenInstallDir"
     rm -rf "$home/.m2"
