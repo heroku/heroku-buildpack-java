@@ -121,6 +121,16 @@ please submit a ticket so we can help: https://help.heroku.com/"
   mtime "mvn.${scope}.time.cache.${cache_status}" "${start}"
 }
 
+write_mvn_profile() {
+  local home=${1}
+  mkdir -p ${home}/.profile.d
+  cat << EOF > ${home}/.profile.d/maven.sh
+export M2_HOME="\$HOME/.maven"
+export MAVEN_OPTS="$(_mvn_java_opts "test" "\$HOME" "\$HOME")"
+export PATH="\$M2_HOME/bin:\$PATH"
+EOF
+}
+
 remove_mvn() {
   local home=${1}
   local mavenInstallDir=${2}

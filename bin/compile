@@ -12,7 +12,6 @@ CACHE_DIR=$2
 ENV_DIR=$3
 
 source $BP_DIR/lib/common.sh
-source $BP_DIR/lib/v2/maven.sh
 source $BP_DIR/lib/maven.sh
 source <(curl -s --retry 3 -L $BUILDPACK_STDLIB_URL)
 
