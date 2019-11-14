@@ -17,3 +17,7 @@ mtime() {
 mnow() {
   date +%s%3N
 }
+
+nowms() {
+  date +%s%3N
+}

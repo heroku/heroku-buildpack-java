@@ -1,4 +1,8 @@
+api = "0.2"
+
 [buildpack]
+id = "heroku/maven"
+version = "0.1"
 name = "Java"
 
   [publish.Ignore]
@@ -15,3 +19,6 @@ name = "Java"
     "Gemfile",
     "Gemfile.lock"
   ]
+
+[[stacks]]
+id = "heroku-18"

@@ -12,6 +12,7 @@ CACHE_DIR=$2
 ENV_DIR=$3
 
 source $BP_DIR/lib/common.sh
+source $BP_DIR/lib/v2/maven.sh
 source $BP_DIR/lib/maven.sh
 source <(curl -s --retry 3 -L $BUILDPACK_STDLIB_URL)
 
@@ -23,8 +24,3 @@ install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
 [ -n "$(find ${BUILD_DIR} -type f -name "*.groovy")" ] && mcount "groovy.source"
 
 run_mvn "compile" $BUILD_DIR $CACHE_DIR
-
-if has_maven_wrapper $BUILD_DIR; then
-  cache_copy ".m2/wrapper" $BUILD_DIR $CACHE_DIR
-  rm -rf $BUILD_DIR/.m2
-fi

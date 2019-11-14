@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+BUILDPACK_HOME="${BUILDPACK_HOME:-$(pwd)}"
+
+test_is_spring_boot() {
+  createPom "
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+"
+  capture is_spring_boot "$BUILD_DIR"
+  assertCapturedSuccess
+}
+
+test_is_spring_boot_fail() {
+  createPom "$(withDependency)"
+  capture is_spring_boot "$BUILD_DIR"
+  assertCapturedError
+}
+
+test_is_wildfly_swarm() {
+  createPom "
+<dependency>
+  <groupId>org.wildfly.swarm</groupId>
+  <artifactId>bom</artifactId>
+</dependency>
+"
+  capture is_wildfly_swarm "$BUILD_DIR"
+  assertCapturedSuccess
+}
+
+test_is_wildfly_swarm_fail() {
+  createPom "$(withDependency)"
+  capture is_wildfly_swarm "$BUILD_DIR"
+  assertCapturedError
+}
+
+test_has_postgres() {
+  createPom "
+<dependency>
+  <groupId>org.postgresql</groupId>
+  <artifactId>postgresql</artifactId>
+</dependency>
+"
+  capture has_postgres "$BUILD_DIR"
+  assertCapturedSuccess
+}
+
+test_has_postgres_fail() {
+  createPom "$(withDependency)"
+  capture has_postgres "$BUILD_DIR"
+  assertCapturedError
+}
+
+# the modules to be tested
+source "${BUILDPACK_HOME}/lib/common.sh"
+source "${BUILDPACK_HOME}/lib/maven.sh"
+source "${BUILDPACK_HOME}/lib/frameworks.sh"
+
+# testing utils
+source "${BUILDPACK_HOME}/test/utils"
+source "${BUILDPACK_HOME}/test/helpers.sh"
+source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
+
+# import the testing framework
+source "${BUILDPACK_HOME}/test/shunit2"
