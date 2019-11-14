@@ -2,6 +2,10 @@
 
 ## master
 
+* Add support for Cloud Native Buildpacks API
+
+## v65
+
 + Upgrade default Maven version to 3.6.2
 
 ## 64
