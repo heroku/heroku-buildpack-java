@@ -1,7 +1,11 @@
 api = "0.2"
 
 [buildpack]
+
+# The v2a buildpack id is "heroku/java". This value only defines the
+# v3 or Cloud Native Buildpack id.
 id = "heroku/maven"
+
 version = "0.1"
 name = "Java"
 
