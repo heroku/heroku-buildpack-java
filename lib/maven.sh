@@ -59,7 +59,6 @@ _mvn_settings_opt() {
 has_maven_wrapper() {
   local home=${1}
   if [ -f $home/mvnw ] &&
-      [ -f $home/.mvn/wrapper/maven-wrapper.jar ] &&
       [ -f $home/.mvn/wrapper/maven-wrapper.properties ] &&
       [ -z "$(detect_maven_version $home)" ]; then
     return 0;
