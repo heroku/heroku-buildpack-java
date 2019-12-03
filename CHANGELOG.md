@@ -2,6 +2,10 @@
 
 ## master
 
++ Add support for Maven wrapper without binary JAR by removing check for .mvn/wrapper/maven-wrapper.jar
+
+## v65
+
 + Upgrade default Maven version to 3.6.2
 
 ## 64
