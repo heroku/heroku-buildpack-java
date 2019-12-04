@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
-# bin/use <build-dir>
 
-if [ -f $1/pom.xml ] ||
-   [ -f $1/pom.atom ] ||
-   [ -f $1/pom.clj ] ||
-   [ -f $1/pom.groovy ] ||
-   [ -f $1/pom.rb ] ||
-   [ -f $1/pom.scala ] ||
-   [ -f $1/pom.yaml ] ||
-   [ -f $1/pom.yml ] ; then
-  echo "Java"
+if [ -n "${CNB_STACK_ID:-}" ]; then
+  buildDir="$(pwd)"
+  name="Maven"
+else
+  buildDir="${1:?}"
+  name="Java"
+fi
+
+if [ -f "${buildDir}/pom.xml" ] ||
+    [ -f "${buildDir}/pom.atom" ] ||
+    [ -f "${buildDir}/pom.clj" ] ||
+    [ -f "${buildDir}/pom.groovy" ] ||
+    [ -f "${buildDir}/pom.rb" ] ||
+    [ -f "${buildDir}/pom.scala" ] ||
+    [ -f "${buildDir}/pom.yaml" ] ||
+    [ -f "${buildDir}/pom.yml" ] ; then
+  echo "$name"
   exit 0
 else
   (>&2 echo "Could not find a pom.xml file! Please check that it exists and is committed to Git.")
