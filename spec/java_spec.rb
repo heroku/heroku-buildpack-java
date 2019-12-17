@@ -38,17 +38,6 @@ describe "Java" do
     end
   end
 
-  context "on jdk-1.6" do
-    let(:app) { Hatchet::Runner.new("java-servlets-sample", allow_failure: true) }
-    let(:jdk_version) { "1.6" }
-    it "should not compile 1.7 source" do
-      app.deploy do |app|
-        expect(app).not_to be_deployed
-        expect(app.output).to include("Unsupported major.minor version 51.0")
-      end
-    end
-  end
-
   context "korvan" do
     ["1.8", "9", "10", "11"].each do |version|
       let(:app) { Hatchet::Runner.new("korvan") }
