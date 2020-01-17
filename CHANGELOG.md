@@ -4,6 +4,7 @@
 
 + Add support for Cloud Native Buildpacks API
 + Add support for Maven wrapper without binary JAR by removing check for .mvn/wrapper/maven-wrapper.jar
++ Add io.buildpacks.stacks.bionic as supported stack
 
 ## v65
 
