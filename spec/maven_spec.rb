@@ -22,32 +22,32 @@ describe "Maven" do
 
     it "should upgrade and downgrade successfully" do
       Dir.chdir(app.directory) do
-        set_java_and_maven_versions(jdk_version, "3.0.5")
+        set_java_and_maven_versions(jdk_version, "3.2.5")
       end
 
       app.deploy do |app|
-        expect(app.output).to include("Installing Maven 3.0.5")
-        expect(app.output).to include("BUILD SUCCESS")
-        expect(successful_body(app)).to eq("Hello from Java!")
-
-        set_java_and_maven_versions(jdk_version, "3.2.3")
-
-        app.push!
-        expect(app.output).to include("Installing Maven 3.2.3")
-        expect(app.output).to include("BUILD SUCCESS")
-        expect(successful_body(app)).to eq("Hello from Java!")
-
-        set_java_and_maven_versions(jdk_version, "3.2.5")
-
-        app.push!
         expect(app.output).to include("Installing Maven 3.2.5")
         expect(app.output).to include("BUILD SUCCESS")
         expect(successful_body(app)).to eq("Hello from Java!")
 
-        set_java_and_maven_versions(jdk_version, "3.1.1")
+        set_java_and_maven_versions(jdk_version, "3.6.2")
 
         app.push!
-        expect(app.output).to include("Installing Maven 3.1.1")
+        expect(app.output).to include("Installing Maven 3.6.2")
+        expect(app.output).to include("BUILD SUCCESS")
+        expect(successful_body(app)).to eq("Hello from Java!")
+
+        set_java_and_maven_versions(jdk_version, "3.5.4")
+
+        app.push!
+        expect(app.output).to include("Installing Maven 3.5.4")
+        expect(app.output).to include("BUILD SUCCESS")
+        expect(successful_body(app)).to eq("Hello from Java!")
+
+        set_java_and_maven_versions(jdk_version, "3.3.9")
+
+        app.push!
+        expect(app.output).to include("Installing Maven 3.3.9")
         expect(app.output).to include("BUILD SUCCESS")
         expect(successful_body(app)).to eq("Hello from Java!")
       end

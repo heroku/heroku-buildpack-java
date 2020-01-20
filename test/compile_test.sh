@@ -141,10 +141,10 @@ testIgnoreSettingsOptConfig()
   unset MAVEN_SETTINGS_OPT
 }
 
-testMaven311()
+testMaven325()
 {
   cat > ${BUILD_DIR}/system.properties <<EOF
-maven.version=3.1.1
+maven.version=3.2.5
 EOF
 
   createPom "$(withDependency)"
@@ -153,13 +153,13 @@ EOF
 
   assertCapturedSuccess
 
-  _assertMaven311
+  _assertMaven325
 }
 
-testMaven305()
+testMaven339()
 {
   cat > ${BUILD_DIR}/system.properties <<EOF
-maven.version=3.0.5
+maven.version=3.3.9
 EOF
 
   createPom "$(withDependency)"
@@ -168,7 +168,22 @@ EOF
 
   assertCapturedSuccess
 
-  _assertMaven305
+  _assertMaven339
+}
+
+testMaven354()
+{
+  cat > ${BUILD_DIR}/system.properties <<EOF
+maven.version=3.5.4
+EOF
+
+  createPom "$(withDependency)"
+
+  compile
+
+  assertCapturedSuccess
+
+  _assertMaven354
 }
 
 testMavenUpgrade()
@@ -176,7 +191,7 @@ testMavenUpgrade()
     setupJavaEnv
 
     cat > ${BUILD_DIR}/system.properties <<EOF
-maven.version=3.0.5
+maven.version=3.2.5
 EOF
 
     createPom "$(withDependency)"
@@ -184,10 +199,10 @@ EOF
     compile
     assertCapturedSuccess
 
-    _assertMaven305
+    _assertMaven325
 
     cat > ${BUILD_DIR}/system.properties <<EOF
-maven.version=3.2.3
+maven.version=3.5.4
 EOF
 
     compile
