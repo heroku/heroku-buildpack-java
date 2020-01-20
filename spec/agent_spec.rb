@@ -11,7 +11,7 @@ describe "JavaAgent" do
         init_app(@app)
         javaagent="heroku-javaagent-2.0.jar"
         Dir.chdir(@app.directory) do
-          `curl --silent -O -L http://repo1.maven.org/maven2/com/heroku/agent/heroku-javaagent/2.0/#{javaagent}`
+          `curl --silent -O -L https://repo1.maven.org/maven2/com/heroku/agent/heroku-javaagent/2.0/#{javaagent}`
           `git add #{javaagent}`
 
           # edit the procfile
