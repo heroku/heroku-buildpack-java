@@ -26,3 +26,7 @@ name = "Java"
 
 [[stacks]]
 id = "heroku-18"
+
+# this is to allow testing of other stack compatibility and is not a guarantee
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
