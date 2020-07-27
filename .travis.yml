@@ -1,7 +1,7 @@
 language: bash
 branches:
   only:
-  - master
+  - main
 before_install: bash etc/ci-setup.sh
 install: true
 script: /tmp/testrunner/bin/run -c . && bash etc/hatchet.sh spec/
