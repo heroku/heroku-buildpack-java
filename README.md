@@ -1,4 +1,4 @@
-Heroku buildpack for Java [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-java.svg)](https://travis-ci.org/heroku/heroku-buildpack-java)
+Heroku buildpack for Java [![Build Status](https://travis-ci.com/heroku/heroku-buildpack-java.svg?branch=main)](https://travis-ci.com/heroku/heroku-buildpack-java)
 =========================
 
 ![java](https://cloud.githubusercontent.com/assets/871315/20325947/f3544014-ab43-11e6-9c51-8240ce161939.png)
@@ -41,7 +41,7 @@ Example:
 
     $ git add system.properties && git commit -m "Java 8"
 
-    $ git push heroku master
+    $ git push heroku main
     ...
     -----> Java app detected
     -----> Installing OpenJDK 1.8... done
