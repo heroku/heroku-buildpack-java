@@ -10,6 +10,8 @@ env:
   global:
   - IS_RUNNING_ON_TRAVIS=true
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
+  - HATCHET_EXPENSIVE_MODE=1
+
   matrix:
   - HEROKU_TEST_STACK="heroku-16"
   - HEROKU_TEST_STACK="heroku-18"
