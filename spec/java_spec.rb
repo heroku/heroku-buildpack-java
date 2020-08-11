@@ -31,7 +31,7 @@ describe "Java" do
 
           expect(successful_body(app)).to eq("Hello from Java!")
 
-          expect(app.run("env", nil, { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
+          expect(app.run("env", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
               to include(%q{DATABASE_URL})
         end
       end
@@ -53,21 +53,21 @@ describe "Java" do
                 to include(%q{-Xmx300m -Xss512k})
 
             sleep 1
-            expect(app.run("env", nil, { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
+            expect(app.run("env", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
                not_to include(%q{DATABASE_URL})
 
             sleep 1 # make sure the dynos don't overlap
-            expect(app.run("jce", nil, { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
+            expect(app.run("jce", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
                 to include(%q{Encrypting, "Test"}).
                 and include(%q{Decrypted: Test})
 
             sleep 1 # make sure the dynos don't overlap
-            expect(app.run("netpatch", nil, { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
+            expect(app.run("netpatch", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
                 to include(%q{name:eth0 (eth0)}).
                 and include(%q{name:lo (lo)})
 
             sleep 1 # make sure the dynos don't overlap
-            expect(app.run("https", nil, { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
+            expect(app.run("https", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
                 to include("Successfully invoked HTTPS service.").
                 and match(%r{"X-Forwarded-Proto(col)?":\s?"https"})
 
@@ -75,7 +75,7 @@ describe "Java" do
             # the pgconfig.jar
             if !jdk_version.match(/^9/) and !jdk_version.match(/^10/) and !jdk_version.match(/^11/)
               sleep 1 # make sure the dynos don't overlap
-              expect(app.run("pgssl", nil, { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
+              expect(app.run("pgssl", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
                   to include("sslmode: require")
             end
           end
