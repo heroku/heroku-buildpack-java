@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem 'heroku_hatchet', '~> 4.0', '>= 4.0.9'
+gem 'heroku_hatchet'
 gem 'rspec-retry'
 gem 'rspec-expectations'
 gem "parallel_tests"
