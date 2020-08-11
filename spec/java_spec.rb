@@ -49,7 +49,7 @@ describe "Java" do
 
             expect(successful_body(app)).to eq("/1")
 
-            expect(app.run('echo \$JAVA_OPTS')).
+            expect(app.run('echo $JAVA_OPTS')).
                 to include(%q{-Xmx300m -Xss512k})
 
             expect(app.run("env", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
