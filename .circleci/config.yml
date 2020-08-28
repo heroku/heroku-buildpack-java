@@ -1,0 +1,153 @@
+version: 2.1
+
+orbs:
+  heroku: circleci/heroku@1.1.1
+
+executors:
+  cedar-14:
+    docker:
+      - image: heroku/cedar:14
+  heroku-16:
+    docker:
+      - image: heroku/heroku:16
+  heroku-18:
+    docker:
+      - image: heroku/heroku:18
+  heroku-20:
+    docker:
+      - image: heroku/heroku:20
+
+jobs:
+  hatchet:
+    parameters:
+      heroku-stack:
+        type: enum
+        enum: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
+    docker:
+      - image: circleci/ruby:2.7
+    environment:
+      HEROKU_TEST_STACK: << parameters.heroku-stack >>
+      HATCHET_BUILDPACK_BASE: https://github.com/heroku/heroku-buildpack-java
+      HATCHET_APP_LIMIT: 100
+      HATCHET_EXPENSIVE_MODE: 1
+      PARALLEL_SPLIT_TEST_PROCESSES: 8
+    steps:
+      - checkout
+      - heroku/install
+      - run:
+          name: Install Ruby dependencies
+          command: |
+            gem install bundler
+            bundle install
+      - run:
+          name: Hatchet CI setup
+          command: bundle exec hatchet ci:setup
+      - run:
+          name: Execute rspec w/ parallel_split_test
+          command: bundle exec parallel_split_test test/spec/
+
+  buildpack-testrunner:
+    docker:
+      - image: circleci/openjdk:8
+    environment:
+      SHUNIT_HOME: /tmp/shunit2-2.1.6
+      # Note the missing STACK environment variable here. This works since there is a default value in the buildpack
+      # source. I ported this as-is from the Travis config. Given we're trying to get rid of testrunner entirely,
+      # it will stay like this. If we, for some reason, decide to keep testrunner, we should look into a fixed STACK env var.
+    steps:
+      - checkout
+      - run:
+          name: Install required apt packages
+          command: |
+            sudo apt-get update
+            sudo apt-get install file
+      - run:
+          name: Download and unpack shunit 2.1.6
+          command: curl -sSf https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/shunit2/shunit2-2.1.6.tgz | tar xz -C /tmp/
+      - run:
+          name: Clone heroku-buildpack-testrunner
+          command: git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
+      - run:
+          name: Execute buildpack-testrunner
+          command: /tmp/testrunner/bin/run .
+
+  unit-tests-heroku-buildpack:
+    parameters:
+      heroku-stack:
+        type: enum
+        enum: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
+    environment:
+      STACK: << parameters.heroku-stack >>
+    executor:
+      name: << parameters.heroku-stack >>
+    steps:
+      - checkout
+      - run: test/unit
+
+  unit-tests-cloud-native-buildpack:
+    parameters:
+      heroku-stack:
+        type: enum
+        enum: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
+    environment:
+      # The unit tests change behaviour to test CNB specifics if this env var is set.
+      CNB_STACK_ID: << parameters.heroku-stack >>
+
+      # On Circle, uid and guids are randomized for security reasons. Since we're still running as root though, tar will
+      # try to set the uid and guid for extracted files according to the tarball.
+      #
+      # The error message looks like:
+      # "Cannot change ownership to uid 379060850, gid 454177323: Invalid argument"
+      #
+      # --no-same-owner disables the feature that causes the issue and is in-fact the default for non-root users.
+      TAR_OPTIONS: --no-same-owner
+    executor:
+      name: << parameters.heroku-stack >>
+    steps:
+      - checkout
+      - run: test/v3
+
+  publish-cnb-release:
+    docker:
+      - image: cibuilds/github:0.13
+    steps:
+      - checkout
+      - run:
+          name: "Package CNB release"
+          command: tar -czvf heroku-java-cnb-${CIRCLE_TAG}.tgz bin/ buildpack.toml etc/ lib/ vendor/ README.md LICENSE
+      - run:
+          name: "Publish release on GitHub"
+          command: |
+            ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" \
+              -n "CNB ${CIRCLE_TAG}" \
+              -b "Cloud Native Buildpack (CNB) release. Automatically built after ${CIRCLE_TAG} of heroku/java was released." \
+              -recreate "${CIRCLE_TAG}" "heroku-java-cnb-${CIRCLE_TAG}.tgz"
+
+workflows:
+  version: 2.1
+  default-ci-workflow:
+    jobs:
+      - buildpack-testrunner
+      - unit-tests-heroku-buildpack:
+          matrix:
+            parameters:
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+
+      - unit-tests-cloud-native-buildpack:
+          matrix:
+            parameters:
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+
+      - hatchet:
+          matrix:
+            parameters:
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+
+  cnb-release-workflow:
+    jobs:
+      - publish-cnb-release:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+$/
