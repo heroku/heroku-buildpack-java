@@ -71,6 +71,33 @@ jobs:
           name: Execute buildpack-testrunner
           command: /tmp/testrunner/bin/run .
 
+  unit-tests-heroku-buildpack:
+    parameters:
+      heroku-stack:
+        type: enum
+        enum: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
+    environment:
+      STACK: << parameters.heroku-stack >>
+    executor:
+      name: << parameters.heroku-stack >>
+    steps:
+      - checkout
+      - run: test/unit
+
+  unit-tests-cloud-native-buildpack:
+    parameters:
+      heroku-stack:
+        type: enum
+        enum: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
+    environment:
+      # The unit tests change behaviour to test CNB specifics if this env var is set.
+      CNB_STACK_ID: << parameters.heroku-stack >>
+    executor:
+      name: << parameters.heroku-stack >>
+    steps:
+      - checkout
+      - run: test/v3
+
   publish-cnb-release:
     docker:
       - image: cibuilds/github:0.13
@@ -92,10 +119,21 @@ workflows:
   default-ci-workflow:
     jobs:
       - buildpack-testrunner
+      - unit-tests-heroku-buildpack:
+          matrix:
+            parameters:
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+
+      - unit-tests-cloud-native-buildpack:
+          matrix:
+            parameters:
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+
       - hatchet:
           matrix:
             parameters:
               heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+
   cnb-release-workflow:
     jobs:
       - publish-cnb-release:
