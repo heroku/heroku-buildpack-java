@@ -2,6 +2,11 @@
 
 export BUILDPACK_HOME="${BUILDPACK_HOME:-$(pwd)}"
 
+
+error() {
+  echo "$1"
+}
+
 testDetect()
 {
   createPom "$(withDependency)"
@@ -174,7 +179,7 @@ testIgnoreSettingsOptConfig()
 testMavenUpgrade()
 {
   cat > ${BUILD_DIR}/system.properties <<EOF
-maven.version=3.0.5
+maven.version=3.2.5
 EOF
 
   createPom "$(withDependency)"
@@ -182,15 +187,16 @@ EOF
   build
   assertCapturedSuccess
 
-  _assertMaven305
+  _assertMaven325
 
   cat > ${BUILD_DIR}/system.properties <<EOF
-maven.version=3.2.3
+maven.version=3.3.9
 EOF
 
   build
-
   assertCapturedSuccess
+
+  _assertMaven339
 }
 
 testMavenInvalid()
