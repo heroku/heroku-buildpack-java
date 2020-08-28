@@ -92,6 +92,15 @@ jobs:
     environment:
       # The unit tests change behaviour to test CNB specifics if this env var is set.
       CNB_STACK_ID: << parameters.heroku-stack >>
+
+      # On Circle, uid and guids are randomized for security reasons. Since we're still running as root though, tar will
+      # try to set the uid and guid for extracted files according to the tarball.
+      #
+      # The error message looks like:
+      # "Cannot change ownership to uid 379060850, gid 454177323: Invalid argument"
+      #
+      # --no-same-owner disables the feature that causes the issue and is in-fact the default for non-root users.
+      TAR_OPTIONS: --no-same-owner
     executor:
       name: << parameters.heroku-stack >>
     steps:
