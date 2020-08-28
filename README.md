@@ -1,4 +1,4 @@
-Heroku buildpack for Java [![Build Status](https://travis-ci.com/heroku/heroku-buildpack-java.svg?branch=main)](https://travis-ci.com/heroku/heroku-buildpack-java)
+Heroku buildpack for Java [![CircleCI](https://circleci.com/gh/heroku/heroku-buildpack-java/tree/main.svg?style=shield)](https://circleci.com/gh/heroku/heroku-buildpack-java/tree/main)
 =========================
 
 ![java](https://cloud.githubusercontent.com/assets/871315/20325947/f3544014-ab43-11e6-9c51-8240ce161939.png)
@@ -113,6 +113,25 @@ and then:
     $ ls -al
 
 and you'll see the `.m2` and `.maven` directories are now present in your slug.
+
+## Run Tests Locally
+
+Tests can be run and debugged locally by using the [Circle CI CLI](https://circleci.com/docs/2.0/local-cli/).
+
+For example, to run [Hatchet](https://github.com/heroku/hatchet) tests on `heroku-18` run:
+
+```
+$ circleci local execute --job hatchet-heroku-18 \
+    --env HEROKU_API_USER=$(heroku whoami) \
+    --env HEROKU_API_KEY=$(heroku auth:token)
+```
+
+Available jobs are defined in [.circleci/config.yml](.circleci/config.yml).
+
+### Costs
+
+This command uses the credentials from your local `heroku` configuration. This means your account will be billed for any
+cost these tests incur. Proceed with caution.
 
 License
 -------
