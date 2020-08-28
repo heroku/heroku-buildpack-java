@@ -44,7 +44,7 @@ jobs:
           command: bundle exec hatchet ci:setup
       - run:
           name: Execute rspec w/ parallel_split_test
-          command: bundle exec parallel_split_test test/spec/
+          command: bundle exec parallel_split_test test/spec_new/
 
   buildpack-testrunner:
     docker:
