@@ -123,22 +123,54 @@ jobs:
               -b "Cloud Native Buildpack (CNB) release. Automatically built after ${CIRCLE_TAG} of heroku/java was released." \
               -recreate "${CIRCLE_TAG}" "heroku-java-cnb-${CIRCLE_TAG}.tgz"
 
+  shellcheck:
+    docker:
+      - image: themalax/shell-testing-toolbox:latest
+    steps:
+      - checkout
+      - run:
+          name: "shellcheck"
+          command: shfmt -f . | grep -v "/vendor/" | xargs shellcheck
+
+  shfmt:
+    docker:
+      - image: themalax/shell-testing-toolbox:latest
+    steps:
+      - checkout
+      - run:
+          name: "shfmt"
+          command: shfmt -f . | grep -v "/vendor/" | xargs shfmt -i 2 -d
+
 workflows:
   version: 2.1
   default-ci-workflow:
     jobs:
-      - buildpack-testrunner
+      - shellcheck
+      - shfmt
+      - buildpack-testrunner:
+          requires:
+              - shfmt
+              - shellcheck
       - unit-tests-heroku-buildpack:
+          requires:
+              - shfmt
+              - shellcheck
           matrix:
             parameters:
               heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
 
       - unit-tests-cloud-native-buildpack:
+          requires:
+              - shfmt
+              - shellcheck
           matrix:
             parameters:
               heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
 
       - hatchet:
+          requires:
+              - shfmt
+              - shellcheck
           matrix:
             parameters:
               heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
