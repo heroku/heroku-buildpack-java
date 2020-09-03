@@ -18,7 +18,7 @@ testDetect()
 
 testDetectPomXml()
 {
-  touch ${BUILD_DIR}/pom.xml
+  touch "${BUILD_DIR}"/pom.xml
 
   detect
 
@@ -27,7 +27,7 @@ testDetectPomXml()
 
 testDetectPomAtom()
 {
-  touch ${BUILD_DIR}/pom.atom
+  touch "${BUILD_DIR}"/pom.atom
 
   detect
 
@@ -36,7 +36,7 @@ testDetectPomAtom()
 
 testDetectPomClj()
 {
-  touch ${BUILD_DIR}/pom.clj
+  touch "${BUILD_DIR}"/pom.clj
 
   detect
 
@@ -45,7 +45,7 @@ testDetectPomClj()
 
 testDetectPomGroovy()
 {
-  touch ${BUILD_DIR}/pom.groovy
+  touch "${BUILD_DIR}"/pom.groovy
 
   detect
 
@@ -54,7 +54,7 @@ testDetectPomGroovy()
 
 testDetectPomRb()
 {
-  touch ${BUILD_DIR}/pom.rb
+  touch "${BUILD_DIR}"/pom.rb
 
   detect
 
@@ -63,7 +63,7 @@ testDetectPomRb()
 
 testDetectPomScala()
 {
-  touch ${BUILD_DIR}/pom.scala
+  touch "${BUILD_DIR}"/pom.scala
 
   detect
 
@@ -72,7 +72,7 @@ testDetectPomScala()
 
 testDetectYml()
 {
-  touch ${BUILD_DIR}/pom.yml
+  touch "${BUILD_DIR}"/pom.yml
 
   detect
 
@@ -81,7 +81,7 @@ testDetectYml()
 
 testDetectYaml()
 {
-  touch ${BUILD_DIR}/pom.yaml
+  touch "${BUILD_DIR}"/pom.yaml
 
   detect
 
@@ -97,7 +97,7 @@ testNoDetectMissingPomFile()
 
 testNoDetectPomFileAsDir()
 {
-  mkdir -p ${BUILD_DIR}/pom.xml
+  mkdir -p "${BUILD_DIR}"/pom.xml
 
   detect
 
@@ -129,7 +129,7 @@ testCustomSettingsXml()
 testCustomSettingsXmlWithPath()
 {
   createPom "$(withDependency)"
-  mkdir -p $BUILD_DIR/support
+  mkdir -p "${BUILD_DIR}"/support
   createSettingsXml "${BUILD_DIR}/support/settings.xml"
 
   export MAVEN_SETTINGS_PATH="${BUILD_DIR}/support/settings.xml"
@@ -178,7 +178,7 @@ testIgnoreSettingsOptConfig()
 
 testMavenUpgrade()
 {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+    cat > "${BUILD_DIR}"/system.properties <<EOF
 maven.version=3.2.5
 EOF
 
@@ -189,7 +189,7 @@ EOF
 
   _assertMaven325
 
-  cat > ${BUILD_DIR}/system.properties <<EOF
+    cat > "${BUILD_DIR}"/system.properties <<EOF
 maven.version=3.3.9
 EOF
 
@@ -201,7 +201,7 @@ EOF
 
 testMavenInvalid()
 {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+    cat > "${BUILD_DIR}"/system.properties <<EOF
 maven.version=9.9.9
 EOF
 
@@ -213,13 +213,18 @@ EOF
 }
 
 # testing utils
+# shellcheck source=test/stdlib_stubs.sh
 source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
+# shellcheck source=test/utils
 source "${BUILDPACK_HOME}/test/utils"
+# shellcheck source=test/helpers.sh
 source "${BUILDPACK_HOME}/test/helpers.sh"
 
 # mimic the heroku/jvm buildpack so we can run maven
+# shellcheck source=lib/common.sh
 source "${BUILDPACK_HOME}/lib/common.sh"
-install_jdk "$(mktemp -d ${SHUNIT_TMPDIR}/jdk.XXXX)" "$(mktemp -d)" > /dev/null 2>&1
+install_jdk "$(mktemp -d "${SHUNIT_TMPDIR}"/jdk.XXXX)" "$(mktemp -d)" > /dev/null 2>&1
 
 # import the testing framework
+# shellcheck source=test/shunit2
 source "${BUILDPACK_HOME}/test/shunit2"

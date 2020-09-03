@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-. ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
-. ${BUILDPACK_HOME}/test/stdlib_stubs.sh
+# shellcheck source=/dev/null
+source "${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh"
+# shellcheck source=test/stdlib_stubs.sh
+source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
 
 testDetectPomXml()
 {
-  touch ${BUILD_DIR}/pom.xml
+  touch "${BUILD_DIR}/pom.xml"
 
   detect
 
@@ -14,7 +16,7 @@ testDetectPomXml()
 
 testDetectPomAtom()
 {
-  touch ${BUILD_DIR}/pom.atom
+  touch "${BUILD_DIR}/pom.atom"
 
   detect
 
@@ -23,7 +25,7 @@ testDetectPomAtom()
 
 testDetectPomClj()
 {
-  touch ${BUILD_DIR}/pom.clj
+  touch "${BUILD_DIR}/pom.clj"
 
   detect
 
@@ -32,7 +34,7 @@ testDetectPomClj()
 
 testDetectPomGroovy()
 {
-  touch ${BUILD_DIR}/pom.groovy
+  touch "${BUILD_DIR}/pom.groovy"
 
   detect
 
@@ -41,7 +43,7 @@ testDetectPomGroovy()
 
 testDetectPomRb()
 {
-  touch ${BUILD_DIR}/pom.rb
+  touch "${BUILD_DIR}/pom.rb"
 
   detect
 
@@ -50,7 +52,7 @@ testDetectPomRb()
 
 testDetectPomScala()
 {
-  touch ${BUILD_DIR}/pom.scala
+  touch "${BUILD_DIR}/pom.scala"
 
   detect
 
@@ -59,7 +61,7 @@ testDetectPomScala()
 
 testDetectYml()
 {
-  touch ${BUILD_DIR}/pom.yml
+  touch "${BUILD_DIR}/pom.yml"
 
   detect
 
@@ -68,7 +70,7 @@ testDetectYml()
 
 testDetectYaml()
 {
-  touch ${BUILD_DIR}/pom.yaml
+  touch "${BUILD_DIR}/pom.yaml"
 
   detect
 
@@ -84,7 +86,7 @@ testNoDetectMissingPomFile()
 
 testNoDetectPomFileAsDir()
 {
-  mkdir -p ${BUILD_DIR}/pom.xml
+  mkdir -p "${BUILD_DIR}/pom.xml"
 
   detect
 

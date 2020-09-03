@@ -18,6 +18,8 @@
 # expr may be antiquated, but it is the only solution in some cases.
 #   shellcheck disable=SC2003
 
+# shellcheck disable=SC1094,SC2254,SC2039
+
 # Return if shunit2 already loaded.
 command [ -n "${SHUNIT_VERSION:-}" ] && exit 0
 SHUNIT_VERSION='2.1.8pre'

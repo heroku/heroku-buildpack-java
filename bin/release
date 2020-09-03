@@ -1,30 +1,34 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
-BP_DIR=$(cd $(dirname $0)/..; pwd) # absolute path
+BP_DIR="$(cd "$(dirname "$0")/.." || exit; pwd)" # absolute path
 BUILD_DIR=$1
 
-source $BP_DIR/lib/frameworks.sh
+# shellcheck source=lib/frameworks.sh
+source "${BP_DIR}/lib/frameworks.sh"
 
 echo "---"
 
-if has_postgres $BUILD_DIR; then
+if has_postgres "${BUILD_DIR}"; then
   cat <<EOF
 addons:
   - heroku-postgresql
 EOF
 fi
 
-if [ ! -f $BUILD_DIR/Procfile ] && [ -d $BUILD_DIR/target ]; then
-  cd $BUILD_DIR
-  for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f); do
-    if is_spring_boot $BUILD_DIR; then
-      echo "default_process_types:"
-      echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar $jarFile"
-    elif is_wildfly_swarm $BUILD_DIR; then
-      echo "default_process_types:"
-      echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar $jarFile"
+if [ ! -f "$BUILD_DIR/Procfile" ] && [ -d "${BUILD_DIR}/target" ]; then
+  cd "${BUILD_DIR}" || return
+  # We don't need nullglob here since we're checking if jarFile is actually a file later.
+  for jarFile in target/*.jar; do
+    if [[ -f "${jarFile}" ]]; then
+      if is_spring_boot "$BUILD_DIR"; then
+        echo "default_process_types:"
+        echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar $jarFile"
+      elif is_wildfly_swarm "$BUILD_DIR"; then
+        echo "default_process_types:"
+        echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar $jarFile"
+      fi
+      break;
     fi
-    break;
   done
 fi

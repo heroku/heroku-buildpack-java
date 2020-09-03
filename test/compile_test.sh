@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-. ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
-. ${BUILDPACK_HOME}/lib/common.sh
-. ${BUILDPACK_HOME}/test/helpers.sh
-. ${BUILDPACK_HOME}/test/stdlib_stubs.sh
+# shellcheck source=/dev/null
+source "${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh"
+# shellcheck source=lib/common.sh
+source "${BUILDPACK_HOME}/lib/common.sh"
+# shellcheck source=test/helpers.sh
+source "${BUILDPACK_HOME}/test/helpers.sh"
+# shellcheck source=test/stdlib_stubs.sh
+source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
 
 assertCapturedSuccess() {
   assertEquals 0 "${RETURN}"
@@ -11,7 +15,7 @@ assertCapturedSuccess() {
     # Travis keeps injecting -Xmn option on JDK8 that causes a warning in STR_ERR
     assertTrue true
   else
-    assertEquals "" "$(cat ${STD_ERR})"
+    assertEquals "" "$(cat "${STD_ERR}")"
   fi
 }
 
@@ -49,7 +53,7 @@ testCompile()
 
   _assertMavenLatest
   assertTrue "system.properties was not cached" "[ -f $CACHE_DIR/system.properties ]"
-  assertContains "system.properties contains the wrong version" "java.runtime.version=1.8" "$(cat $CACHE_DIR/system.properties)"
+  assertContains "system.properties contains the wrong version" "java.runtime.version=1.8" "$(cat "$CACHE_DIR/system.properties")"
 }
 
 testCompilationFailure()
@@ -59,15 +63,15 @@ testCompilationFailure()
   compile
 
   assertNotEquals 0 "${RETURN}"
-  assertContains "Build was unexpectedly successful" "Failed to build app with Maven" "$(cat ${STD_OUT})"
+  assertContains "Build was unexpectedly successful" "Failed to build app with Maven" "$(cat "${STD_OUT}")"
 }
 
 testNewAppsRemoveM2Cache()
 {
   createPom
-  rm -r ${CACHE_DIR} # simulate a brand new app without a cache dir
+  rm -r "${CACHE_DIR}" # simulate a brand new app without a cache dir
   assertFalse "Precondition: New apps should not have a CACHE_DIR prior to running" "[ -d ${CACHE_DIR} ]"
-  mkdir ${CACHE_DIR}
+  mkdir "${CACHE_DIR}"
 
   compile
 
@@ -90,7 +94,7 @@ testCustomSettingsXml()
 testCustomSettingsXmlWithPath()
 {
   createPom "$(withDependency)"
-  mkdir -p $BUILD_DIR/support
+  mkdir -p "$BUILD_DIR/support"
   createSettingsXml "${BUILD_DIR}/support/settings.xml"
 
   export MAVEN_SETTINGS_PATH="${BUILD_DIR}/support/settings.xml"
@@ -143,7 +147,7 @@ testIgnoreSettingsOptConfig()
 
 testMaven325()
 {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+  cat > "${BUILD_DIR}/system.properties" <<EOF
 maven.version=3.2.5
 EOF
 
@@ -158,7 +162,7 @@ EOF
 
 testMaven339()
 {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+  cat > "${BUILD_DIR}/system.properties" <<EOF
 maven.version=3.3.9
 EOF
 
@@ -173,7 +177,7 @@ EOF
 
 testMaven354()
 {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+  cat > "${BUILD_DIR}/system.properties" <<EOF
 maven.version=3.5.4
 EOF
 
@@ -190,7 +194,7 @@ testMavenUpgrade()
 {
     setupJavaEnv
 
-    cat > ${BUILD_DIR}/system.properties <<EOF
+    cat > "${BUILD_DIR}/system.properties" <<EOF
 maven.version=3.2.5
 EOF
 
@@ -201,7 +205,7 @@ EOF
 
     _assertMaven325
 
-    cat > ${BUILD_DIR}/system.properties <<EOF
+    cat > "${BUILD_DIR}/system.properties" <<EOF
 maven.version=3.5.4
 EOF
 
@@ -212,7 +216,7 @@ EOF
 
 testMavenInvalid()
 {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+  cat > "${BUILD_DIR}/system.properties" <<EOF
 maven.version=9.9.9
 EOF
 

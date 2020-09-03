@@ -16,6 +16,7 @@ test_is_spring_boot() {
 test_is_spring_boot_fail() {
   createPom "$(withDependency)"
   capture is_spring_boot "$BUILD_DIR"
+  # shellcheck disable=SC2119
   assertCapturedError
 }
 
@@ -33,6 +34,7 @@ test_is_wildfly_swarm() {
 test_is_wildfly_swarm_fail() {
   createPom "$(withDependency)"
   capture is_wildfly_swarm "$BUILD_DIR"
+  # shellcheck disable=SC2119
   assertCapturedError
 }
 
@@ -50,18 +52,26 @@ test_has_postgres() {
 test_has_postgres_fail() {
   createPom "$(withDependency)"
   capture has_postgres "$BUILD_DIR"
+  # shellcheck disable=SC2119
   assertCapturedError
 }
 
 # the modules to be tested
+# shellcheck source=lib/common.sh
 source "${BUILDPACK_HOME}/lib/common.sh"
+# shellcheck source=lib/maven.sh
 source "${BUILDPACK_HOME}/lib/maven.sh"
+# shellcheck source=lib/frameworks.sh
 source "${BUILDPACK_HOME}/lib/frameworks.sh"
 
 # testing utils
+# shellcheck source=test/utils
 source "${BUILDPACK_HOME}/test/utils"
+# shellcheck source=test/helpers.sh
 source "${BUILDPACK_HOME}/test/helpers.sh"
+# shellcheck source=test/stdlib_stubs.sh
 source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
 
 # import the testing framework
+# shellcheck source=test/shunit2
 source "${BUILDPACK_HOME}/test/shunit2"

@@ -12,7 +12,10 @@ bp_install_or_reuse_toolbox() {
   if [[ ! -f "${layer_dir}/bin/jq" ]]; then
     local jqBin="${layer_dir}/bin/jq"
     curl -o "$jqBin" -Ls "$jqUrl" && chmod +x "$jqBin"
-    local actualSha="$(shasum -a 256 ${jqBin} | awk '{ print $1 }')"
+
+    local actualSha
+    actualSha="$(shasum -a 256 "${jqBin}" | awk '{ print $1 }')"
+
     if [ "$actualSha" != "$jqSha" ]; then
       echo "Invalid jq sha: $actualSha"
       exit 1
@@ -22,7 +25,10 @@ bp_install_or_reuse_toolbox() {
   if [[ ! -f "${layer_dir}/bin/yj" ]]; then
     local yjBin="${layer_dir}/bin/yj"
     curl -o "$yjBin" -Ls "$yjUrl" && chmod +x "$yjBin"
-    local actualSha="$(shasum -a 256 $yjBin | awk '{ print $1 }')"
+
+    local actualSha
+    actualSha="$(shasum -a 256 "${yjBin}" | awk '{ print $1 }')"
+
     if [ "$actualSha" != "$yjSha" ]; then
       echo "Invalid yj sha: $actualSha"
       exit 1
@@ -40,6 +46,7 @@ bp_layer_has_key?() {
   local value="${3:?}"
   local layerMetadata="${layerDir}.toml"
 
+  # shellcheck disable=SC2002
   if [[ "$value" == "$([[ -f "${layerMetadata}" ]] && cat "${layerMetadata}" | yj -t | jq -r "${key}")" ]]; then
     return 0
   fi

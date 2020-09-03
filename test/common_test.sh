@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-. ${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh
-. ${BUILDPACK_HOME}/test/stdlib_stubs.sh
-. ${BUILDPACK_HOME}/lib/common.sh
+# shellcheck source=/dev/null
+source "${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh"
+# shellcheck source=test/stdlib_stubs.sh
+source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
+# shellcheck source=lib/common.sh
+source "${BUILDPACK_HOME}/lib/common.sh"
 
 # Mocks
 
@@ -33,8 +36,8 @@ error() {
 # Helpers
 
 create_mvn() {
-  mkdir -p ${BUILD_DIR}/.maven/bin
-  cat > ${BUILD_DIR}/.maven/bin/mvn <<EOF
+  mkdir -p "${BUILD_DIR}/.maven/bin"
+  cat > "${BUILD_DIR}/.maven/bin/mvn" <<EOF
 cat <<MVN
 Apache Maven 3.2.1 (ea8b2b07643dbb1b84b6d16e1f08391b666bc1e9; 2014-02-14T11:37:52-06:00)
 Maven home: /Users/jkutner/local/apache-maven
@@ -44,30 +47,30 @@ Default locale: en_US, platform encoding: UTF-8
 OS name: "mac os x", version: "10.9.4", arch: "x86_64", family: "mac"
 MVN
 EOF
-  chmod +x ${BUILD_DIR}/.maven/bin/mvn
+  chmod +x "${BUILD_DIR}/.maven/bin/mvn"
 }
 
 # Tests
 
 test_detect_maven_version_supported() {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+  cat > "${BUILD_DIR}/system.properties" <<EOF
 java.runtime.version=1.6
 maven.version=3.1.1
 EOF
-  capture detect_maven_version ${BUILD_DIR}
+  capture detect_maven_version "${BUILD_DIR}"
   assertCapturedEquals "3.1.1"
 }
 
 test_detect_maven_version_missing() {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+  cat > "${BUILD_DIR}/system.properties" <<EOF
 java.runtime.version=1.6
 EOF
-  capture detect_maven_version ${BUILD_DIR}
+  capture detect_maven_version "${BUILD_DIR}"
   assertCapturedEquals ""
 }
 
 test_detect_maven_version_with_no_file() {
-  capture detect_maven_version ${BUILD_DIR}
+  capture detect_maven_version "${BUILD_DIR}"
   assertCapturedEquals ""
 }
 
@@ -87,16 +90,16 @@ test_is_supported_maven_version_no() {
 }
 
 test_install_maven() {
-  capture install_maven ${BUILD_DIR} ${BUILD_DIR}
+  capture install_maven "${BUILD_DIR}" "${BUILD_DIR}"
   assertCapturedSuccess
   assertCaptured "Installing Maven $DEFAULT_MAVEN_VERSION"
 }
 
 test_install_maven_failure() {
-  cat > ${BUILD_DIR}/system.properties <<EOF
+  cat > "${BUILD_DIR}/system.properties" <<EOF
 maven.version=3.0.0
 EOF
-  capture install_maven ${BUILD_DIR} ${BUILD_DIR}
+  capture install_maven "${BUILD_DIR}" "${BUILD_DIR}"
   assertEquals 1 "${RETURN}"
   assertCaptured "Installing Maven 3.0.0"
   assertCapturedError "Error, you have defined an unsupported Maven version in the system.properties file"

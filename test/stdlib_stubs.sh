@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-export BUILDPACK_LOG_FILE="$(mktemp)"
+BUILDPACK_LOG_FILE="$(mktemp)"
+export BUILDPACK_LOG_FILE
 
 mmeasure() {
   :
