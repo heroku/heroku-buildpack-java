@@ -207,5 +207,5 @@ source "${BUILDPACK_HOME}/lib/common.sh"
 install_jdk "$(mktemp -d "${SHUNIT_TMPDIR}"/jdk.XXXX)" "$(mktemp -d)" >/dev/null 2>&1
 
 # import the testing framework
-# shellcheck source=test/shunit2
-source "${BUILDPACK_HOME}/test/shunit2"
+# shellcheck source=/dev/null
+source "${BUILDPACK_HOME}/test/vendor/shunit2"

@@ -73,5 +73,5 @@ source "${BUILDPACK_HOME}/test/helpers.sh"
 source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
 
 # import the testing framework
-# shellcheck source=test/shunit2
+# shellcheck source=/dev/null
 source "${BUILDPACK_HOME}/test/shunit2"
