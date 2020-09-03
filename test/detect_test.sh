@@ -5,90 +5,80 @@ source "${BUILDPACK_TEST_RUNNER_HOME}/lib/test_utils.sh"
 # shellcheck source=test/stdlib_stubs.sh
 source "${BUILDPACK_HOME}/test/stdlib_stubs.sh"
 
-testDetectPomXml()
-{
-  touch "${BUILD_DIR}/pom.xml"
+testDetectPomXml() {
+	touch "${BUILD_DIR}/pom.xml"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testDetectPomAtom()
-{
-  touch "${BUILD_DIR}/pom.atom"
+testDetectPomAtom() {
+	touch "${BUILD_DIR}/pom.atom"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testDetectPomClj()
-{
-  touch "${BUILD_DIR}/pom.clj"
+testDetectPomClj() {
+	touch "${BUILD_DIR}/pom.clj"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testDetectPomGroovy()
-{
-  touch "${BUILD_DIR}/pom.groovy"
+testDetectPomGroovy() {
+	touch "${BUILD_DIR}/pom.groovy"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testDetectPomRb()
-{
-  touch "${BUILD_DIR}/pom.rb"
+testDetectPomRb() {
+	touch "${BUILD_DIR}/pom.rb"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testDetectPomScala()
-{
-  touch "${BUILD_DIR}/pom.scala"
+testDetectPomScala() {
+	touch "${BUILD_DIR}/pom.scala"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testDetectYml()
-{
-  touch "${BUILD_DIR}/pom.yml"
+testDetectYml() {
+	touch "${BUILD_DIR}/pom.yml"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testDetectYaml()
-{
-  touch "${BUILD_DIR}/pom.yaml"
+testDetectYaml() {
+	touch "${BUILD_DIR}/pom.yaml"
 
-  detect
+	detect
 
-  assertAppDetected "Java"
+	assertAppDetected "Java"
 }
 
-testNoDetectMissingPomFile()
-{
-  detect
+testNoDetectMissingPomFile() {
+	detect
 
-  assertEquals "1" "${RETURN}"
+	assertEquals "1" "${RETURN}"
 }
 
-testNoDetectPomFileAsDir()
-{
-  mkdir -p "${BUILD_DIR}/pom.xml"
+testNoDetectPomFileAsDir() {
+	mkdir -p "${BUILD_DIR}/pom.xml"
 
-  detect
+	detect
 
-  assertEquals "1" "${RETURN}"
+	assertEquals "1" "${RETURN}"
 }

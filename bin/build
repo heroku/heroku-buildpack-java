@@ -4,7 +4,10 @@
 set -e
 
 appDir="$(pwd)"
-bpDir="$(cd "$(dirname "$0")/.."; pwd)" # absolute path
+bpDir="$(
+	cd "$(dirname "$0")/.."
+	pwd
+)" # absolute path
 layersDir="${1:?}"
 
 # shellcheck source=lib/v3/common.sh
@@ -27,25 +30,25 @@ run_mvn "compile" "$appDir" "$mavenLayer"
 remove_mvn "$appDir" "$mavenLayer"
 
 if [ -d target ]; then
-  # We don't need nullglob here since we're checking if jarFile is actually a file later.
-  for jarFile in target/*.jar; do
-    if [[ -f "${jarFile}" ]]; then
-      if is_spring_boot "$appDir"; then
-        cat >> "${layersDir}/launch.toml" <<EOF
+	# We don't need nullglob here since we're checking if jarFile is actually a file later.
+	for jarFile in target/*.jar; do
+		if [[ -f "${jarFile}" ]]; then
+			if is_spring_boot "$appDir"; then
+				cat >>"${layersDir}/launch.toml" <<EOF
 [[processes]]
 type = "web"
 command = "java -Dserver.port=\$PORT \$JAVA_OPTS -jar $jarFile"
 EOF
 
-      elif is_wildfly_swarm "$appDir"; then
-        cat >> "${layersDir}/launch.toml" <<EOF
+			elif is_wildfly_swarm "$appDir"; then
+				cat >>"${layersDir}/launch.toml" <<EOF
 [[processes]]
 type = "web"
 command = "java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar $jarFile"
 EOF
-      fi
+			fi
 
-      break;
-    fi
-  done
+			break
+		fi
+	done
 fi

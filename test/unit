@@ -3,57 +3,57 @@
 BUILDPACK_HOME="${BUILDPACK_HOME:-$(pwd)}"
 
 test_is_spring_boot() {
-  createPom "
+	createPom "
 <dependency>
   <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-starter-web</artifactId>
 </dependency>
 "
-  capture is_spring_boot "$BUILD_DIR"
-  assertCapturedSuccess
+	capture is_spring_boot "$BUILD_DIR"
+	assertCapturedSuccess
 }
 
 test_is_spring_boot_fail() {
-  createPom "$(withDependency)"
-  capture is_spring_boot "$BUILD_DIR"
-  # shellcheck disable=SC2119
-  assertCapturedError
+	createPom "$(withDependency)"
+	capture is_spring_boot "$BUILD_DIR"
+	# shellcheck disable=SC2119
+	assertCapturedError
 }
 
 test_is_wildfly_swarm() {
-  createPom "
+	createPom "
 <dependency>
   <groupId>org.wildfly.swarm</groupId>
   <artifactId>bom</artifactId>
 </dependency>
 "
-  capture is_wildfly_swarm "$BUILD_DIR"
-  assertCapturedSuccess
+	capture is_wildfly_swarm "$BUILD_DIR"
+	assertCapturedSuccess
 }
 
 test_is_wildfly_swarm_fail() {
-  createPom "$(withDependency)"
-  capture is_wildfly_swarm "$BUILD_DIR"
-  # shellcheck disable=SC2119
-  assertCapturedError
+	createPom "$(withDependency)"
+	capture is_wildfly_swarm "$BUILD_DIR"
+	# shellcheck disable=SC2119
+	assertCapturedError
 }
 
 test_has_postgres() {
-  createPom "
+	createPom "
 <dependency>
   <groupId>org.postgresql</groupId>
   <artifactId>postgresql</artifactId>
 </dependency>
 "
-  capture has_postgres "$BUILD_DIR"
-  assertCapturedSuccess
+	capture has_postgres "$BUILD_DIR"
+	assertCapturedSuccess
 }
 
 test_has_postgres_fail() {
-  createPom "$(withDependency)"
-  capture has_postgres "$BUILD_DIR"
-  # shellcheck disable=SC2119
-  assertCapturedError
+	createPom "$(withDependency)"
+	capture has_postgres "$BUILD_DIR"
+	# shellcheck disable=SC2119
+	assertCapturedError
 }
 
 # the modules to be tested
