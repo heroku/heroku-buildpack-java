@@ -139,7 +139,7 @@ jobs:
       - checkout
       - run:
           name: "shfmt"
-          command: shfmt -f . | grep -v "vendor/" | xargs shfmt -i 2 -d
+          command: shfmt -f . | grep -v "vendor/" | xargs shfmt -d
 
 workflows:
   version: 2.1
