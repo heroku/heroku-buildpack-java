@@ -15,7 +15,6 @@ describe "Heroku's Java Buildpack" do
     end
   end
 
-
   OPENJDK_VERSIONS_UNDER_TEST.each do |version|
     context "for an app with only 'java.runtime.version=#{version}' in the system.properties file" do
       it "should install OpenJDK #{version} and use Maven #{DEFAULT_MAVEN_VERSION}" do
