@@ -2,6 +2,12 @@
 
 ## main
 
+## v67
+
++ Update tests
+
+## v66
+
 + Add support for Cloud Native Buildpacks API
 + Add support for Maven wrapper without binary JAR by removing check for .mvn/wrapper/maven-wrapper.jar
 
