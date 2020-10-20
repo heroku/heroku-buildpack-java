@@ -39,7 +39,7 @@ describe "Java" do
   end
 
   context "korvan" do
-    ["1.8", "9", "10", "11"].each do |jdk_version|
+    ["1.8", "11", "13", "15"].each do |jdk_version|
       context "on jdk-#{jdk_version}" do
         it "runs commands" do
           Hatchet::Runner.new("korvan", stack: ENV["HEROKU_TEST_STACK"], run_multi: true).tap do |app|
@@ -111,7 +111,7 @@ describe "Java" do
       end
   end
 
-  %w{1.8 10}.each do |jdk_version|
+  %w{1.8 11 13 15}.each do |jdk_version|
     context "#{jdk_version} libpng test" do
       it "returns a successful response", :retry => 3, :retry_wait => 5 do
         Hatchet::Runner.new("libpng-test").tap do |app|
