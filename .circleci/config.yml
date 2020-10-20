@@ -131,17 +131,17 @@ workflows:
       - unit-tests-heroku-buildpack:
           matrix:
             parameters:
-              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
 
       - unit-tests-cloud-native-buildpack:
           matrix:
             parameters:
-              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
 
       - hatchet:
           matrix:
             parameters:
-              heroku-stack: ["cedar-14", "heroku-16", "heroku-18"]
+              heroku-stack: ["cedar-14", "heroku-16", "heroku-18", "heroku-20"]
 
   cnb-release-workflow:
     jobs:

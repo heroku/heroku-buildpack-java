@@ -39,7 +39,7 @@ describe "Java" do
   end
 
   context "korvan" do
-    ["1.8", "9", "10", "11"].each do |jdk_version|
+    ["1.8", "11", "13", "15"].each do |jdk_version|
       context "on jdk-#{jdk_version}" do
         it "runs commands" do
           Hatchet::Runner.new("korvan", stack: ENV["HEROKU_TEST_STACK"], run_multi: true).tap do |app|
@@ -70,9 +70,8 @@ describe "Java" do
               to include("Successfully invoked HTTPS service.").
                   and match(%r{"X-Forwarded-Proto(col)?":\s?"https"})
 
-              # JDK 9, 10, and 11 do not have the jre/lib/ext dir where we drop
-              # the pgconfig.jar
-              if !jdk_version.match(/^9/) and !jdk_version.match(/^10/) and !jdk_version.match(/^11/)
+              # JDK 9, 10, 11 and beyond do not have the jre/lib/ext dir where we drop the pgconfig.jar
+              if jdk_version.match(/^(1\.7|1\.8|7|8)$/)
                 expect(app.run("pgssl", { :heroku => { "exit-code" => Hatchet::App::SkipDefaultOption }})). # work around a CLI bug that doesn't allow --exit-code when invoking a process type via "heroku run"
                 to include("sslmode: require")
               end
@@ -111,7 +110,7 @@ describe "Java" do
       end
   end
 
-  %w{1.8 10}.each do |jdk_version|
+  %w{1.8 11 13 15}.each do |jdk_version|
     context "#{jdk_version} libpng test" do
       it "returns a successful response", :retry => 3, :retry_wait => 5 do
         Hatchet::Runner.new("libpng-test").tap do |app|
