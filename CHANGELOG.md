@@ -2,6 +2,8 @@
 
 ## main
 
++ Enable heroku-20 testing
+
 ## v67
 
 + Update tests
