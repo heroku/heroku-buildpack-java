@@ -1,9 +1,6 @@
 require "rspec/core"
-require "hatchet"
-require "fileutils"
-require "hatchet"
 require "rspec/retry"
-require "date"
+require "hatchet"
 require "java-properties"
 
 # Omitting 1.7 here since most example projects used in testing are not
