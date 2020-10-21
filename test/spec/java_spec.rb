@@ -31,7 +31,7 @@ describe "Heroku's Java buildpack" do
       end
 
       it "builds and executes Korvan test commands successfully" do
-        Hatchet::Runner.new("korvan", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
+        Hatchet::Runner.new("korvan", stack: ENV["HEROKU_TEST_STACK"], run_multi: true).tap do |app|
           app.before_deploy do
             set_java_version(openjdk_version)
           end
@@ -42,28 +42,43 @@ describe "Heroku's Java buildpack" do
             expect(app.output).not_to include("BUILD FAILURE")
             expect(http_get(app)).to eq("/1")
 
-            expect(app.run("echo $JAVA_OPTS"))
-                .to include("-Xmx300m -Xss512k")
+            app.run_multi("echo $JAVA_OPTS") do |out, status|
+              expect(status.success?).to be_truthy
+              expect(out).to include("-Xmx300m -Xss512k")
+            end
 
-            expect(app.run("env"))
-                .not_to include("DATABASE_URL")
+            app.run_multi("env") do |out, status|
+              expect(status.success?).to be_truthy
+              expect(out).not_to include("DATABASE_URL")
+            end
 
-            expect(app.run("java -cp target/app.jar JCE"))
-                .to include("Encrypting, \"Test\"")
-                .and include("Decrypted: Test")
+            app.run_multi("java -cp target/app.jar JCE") do |out, status|
+              expect(status.success?).to be_truthy
+              expect(out)
+                  .to include("Encrypting, \"Test\"")
+                  .and include("Decrypted: Test")
+            end
 
-            expect(app.run("java -cp target/app.jar NetPatch"))
-                .to include("name:eth0 (eth0)")
-                .and include("name:lo (lo)")
+            app.run_multi("java -cp target/app.jar NetPatch") do |out, status|
+              expect(status.success?).to be_truthy
+              expect(out)
+                  .to include("name:eth0 (eth0)")
+                  .and include("name:lo (lo)")
+            end
 
-            expect(app.run("java -cp target/app.jar Https"))
-                .to include("Successfully invoked HTTPS service.")
-                .and match(%r{"X-Forwarded-Proto(col)?":\s?"https"})
+            app.run_multi("java -cp target/app.jar Https") do |out, status|
+              expect(status.success?).to be_truthy
+              expect(out)
+                  .to include("Successfully invoked HTTPS service.")
+                  .and match(%r{"X-Forwarded-Proto(col)?":\s?"https"})
+            end
 
             # OpenJDK versions > 9 do not have the jre/lib/ext directory where we drop the pgconfig.jar
             if openjdk_version.match(%r{^(1\.7|1\.8)$})
-                expect(app.run("java -cp target/app.jar PostgresSSLTest"))
-                    .to include("sslmode: require")
+              app.run_multi("java -cp target/app.jar PostgresSSLTest") do |out, status|
+                expect(status.success?).to be_truthy
+                expect(out).to include("sslmode: require")
+              end
             end
           end
         end
