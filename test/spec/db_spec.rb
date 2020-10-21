@@ -1,25 +1,18 @@
-require_relative 'spec_helper'
+require_relative "spec_helper"
 
-describe "Java" do
-  before(:each) do
-    set_java_version(app.directory, jdk_version)
-    init_app(app)
-  end
+describe "Heroku's Java buildpack" do
+  context "using OpenJDK #{DEFAULT_OPENJDK_VERSION}" do
+    it "should use connection pool" do
+      Hatchet::Runner.new("java-apache-dbcp-sample", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
+        app.before_deploy do
+          set_java_version(DEFAULT_OPENJDK_VERSION)
+        end
 
-  %w{1.8}.each do |version|
-    context "on jdk-#{version}" do
-      let(:app) { Hatchet::Runner.new("java-apache-dbcp-sample") }
-      let(:jdk_version) { version }
-      it "should use connection pool" do
-        app.deploy do |app|
-          expect(app.output).to include("Installing JDK #{jdk_version}")
+        app.deploy do
+          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).to include("Installing Maven")
-          expect(app.output).not_to include("BUILD FAILURE")
           expect(app.output).to include("BUILD SUCCESS")
-
-          expect(successful_body(app, :path => "db")).to match("Read from DB:")
-
-          expect(app).to be_deployed
+          expect(http_get(app, :path => "db")).to match("Read from DB:")
         end
       end
     end
