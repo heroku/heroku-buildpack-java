@@ -2,7 +2,7 @@ require_relative "spec_helper"
 
 describe "Heroku's Java buildpack" do
   context "using OpenJDK #{DEFAULT_OPENJDK_VERSION}" do
-    it "polyglot" do
+    it "supports Maven polyglot" do
       Hatchet::Runner.new("maven-polyglot", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
         app.before_deploy do
           set_java_version(DEFAULT_OPENJDK_VERSION)
@@ -18,7 +18,7 @@ describe "Heroku's Java buildpack" do
       end
     end
 
-    it "upgrade/downgrade" do
+    it "handles Maven upgrades and downgrades correctly" do
       Hatchet::Runner.new("java-servlets-sample", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
         app.before_deploy do
           set_java_version(DEFAULT_OPENJDK_VERSION)
