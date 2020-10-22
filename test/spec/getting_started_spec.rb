@@ -1,6 +1,6 @@
-describe "A Java application" do	describe "A Java application" do
+describe "A Java application" do
   it "works with the getting started guide" do
-    Hatchet::Runner.new("java-getting-started").tap do |app|	
+    Hatchet::Runner.new("java-getting-started").tap do |app|
       app.deploy do
         #deploy works
       end
