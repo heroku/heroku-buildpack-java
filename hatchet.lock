@@ -1,6 +1,8 @@
 ---
 - - test/spec/fixtures/repos/db/java-apache-dbcp-sample
   - bc8ef681cf36bf3d78dd94ea514e6d26c649bbb1
+- - test/spec/fixtures/repos/github/java-getting-started
+  - main
 - - test/spec/fixtures/repos/java/java-servlets-sample
   - 1cc2843067197d939a1218f1bbe63f5ed28c6111
 - - test/spec/fixtures/repos/java/korvan

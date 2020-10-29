@@ -15,5 +15,6 @@
   ],
   "db": [
     "kissaten/java-apache-dbcp-sample"
-  ]
+  ],
+  "github": ["heroku/java-getting-started"]
 }
