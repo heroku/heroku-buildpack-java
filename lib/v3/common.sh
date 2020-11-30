@@ -21,6 +21,10 @@ indent() {
   esac
 }
 
+error() {
+  (>&2 echo "$@")
+}
+
 error_return() {
   (>&2 echo "$@")
 }
