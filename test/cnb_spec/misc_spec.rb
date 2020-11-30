@@ -111,9 +111,9 @@ describe "Heroku's Maven Cloud Native Buildpack" do
           expect(pack_result.build_success?).to be(false)
           expect(pack_result.stdout).to include("[INFO] BUILD FAILURE")
 
-          expect(pack_result.stderr).to include(" !     ERROR: Failed to build app with Maven")
-          expect(pack_result.stderr).to include("       We're sorry this build is failing! If you can't find the issue in application code,")
-          expect(pack_result.stderr).to include("       please submit a ticket so we can help: https://help.heroku.com/")
+          expect(pack_result.stderr).to include("Failed to build app with Maven")
+          expect(pack_result.stderr).to include("We're sorry this build is failing! If you can't find the issue in application code,")
+          expect(pack_result.stderr).to include("please submit a ticket so we can help: https://help.heroku.com/")
         end
       end
     end
