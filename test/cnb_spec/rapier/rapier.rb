@@ -25,7 +25,7 @@ module Rapier
       buildpacks = @default_buildpacks if buildpacks.empty?
 
       buildpack_argument = "--buildpack" + buildpacks.map { |bp| bp == :this ? "." : bp }.join(",")
-      env_arguments = env.keys.map { |key| "--env #{key}=#{env[key]}" }.join(" ")
+      env_arguments = build_env.keys.map { |key| "--env #{key}=#{build_env[key]}" }.join(" ")
       pack_command = "pack build #{image_name} --path #{app_dir} #{env_arguments} #{buildpack_argument}"
 
       pack_stdout, pack_stderr, pack_status = Open3.capture3(pack_command)
