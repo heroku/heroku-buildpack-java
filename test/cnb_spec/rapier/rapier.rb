@@ -103,9 +103,15 @@ module Rapier
       @container.json["NetworkSettings"]["Ports"]["#{port}/tcp"][0]["HostPort"]
     end
 
-    def bash_exec(cmd)
+    def bash_exec(cmd, exception_on_failure: true)
       result = @container.exec(["bash", "-c", cmd])
-      BashExecResult.new(result[0][0], result[1], result[2])
+      bash_exec_result = BashExecResult.new(result[0][0], result[1], result[2])
+
+      if exception_on_failure
+        raise "bash_exec(#{cmd}) failed: #{bash_exec_result.status}\nstderr: #{bash_exec_result.stderr}"
+      end
+
+      bash_exec_result
     end
 
     def contains_file(path)

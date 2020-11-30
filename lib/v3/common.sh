@@ -23,6 +23,7 @@ indent() {
 
 error() {
   (>&2 echo "$@")
+  exit 1
 }
 
 error_return() {
