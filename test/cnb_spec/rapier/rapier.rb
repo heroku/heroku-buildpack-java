@@ -107,7 +107,7 @@ module Rapier
       result = @container.exec(["bash", "-c", cmd])
       bash_exec_result = BashExecResult.new(result[0][0], result[1], result[2])
 
-      if exception_on_failure
+      if bash_exec_result.status != 0 and exception_on_failure
         raise "bash_exec(#{cmd}) failed: #{bash_exec_result.status}\nstderr: #{bash_exec_result.stderr}"
       end
 
