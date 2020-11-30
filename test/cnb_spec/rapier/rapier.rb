@@ -8,8 +8,9 @@ module Rapier
   class Runner
     attr_reader :default_buildpacks
 
-    def initialize(fixture_directory, default_buildpacks: [])
+    def initialize(fixture_directory, default_builder, default_buildpacks: [])
       @fixture_directory = fixture_directory
+      @default_builder = default_builder
       @default_buildpacks = default_buildpacks
     end
 
@@ -20,13 +21,15 @@ module Rapier
       end
     end
 
-    def pack_build(app_dir, image_name: nil, buildpacks: [], build_env: {}, exception_on_failure: true)
+    def pack_build(app_dir, image_name: nil, buildpacks: [], build_env: {}, builder: nil, exception_on_failure: true)
       image_name = "cnb_test_" + SecureRandom.hex(10) if image_name == nil
       buildpacks = @default_buildpacks if buildpacks.empty?
+      builder = @default_builder if builder == nil
 
-      buildpack_argument = "--buildpack" + buildpacks.map { |bp| bp == :this ? "." : bp }.join(",")
+      buildpack_argument = "--buildpack " + buildpacks.map { |bp| bp == :this ? "." : bp }.join(",")
+      builder_argument = "-B #{builder}"
       env_arguments = build_env.keys.map { |key| "--env #{key}=#{build_env[key]}" }.join(" ")
-      pack_command = "pack build #{image_name} --path #{app_dir} #{env_arguments} #{buildpack_argument}"
+      pack_command = "pack build #{image_name} #{builder_argument} --path #{app_dir} #{env_arguments} #{buildpack_argument}"
 
       pack_stdout, pack_stderr, pack_status = Open3.capture3(pack_command)
 
@@ -35,7 +38,7 @@ module Rapier
       else
         image = nil
         if exception_on_failure
-          raise "Pack exited with status code #{pack_status}, indicating an error and failed build!"
+          raise "Pack exited with status code #{pack_status}, indicating an error and failed build!\nstderr: #{pack_stderr}"
         end
       end
 

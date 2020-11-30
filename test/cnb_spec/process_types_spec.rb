@@ -2,7 +2,7 @@ require_relative "spec_helper"
 
 describe "Heroku's Maven Cloud Native Buildpack" do
   context "for a Spring Boot app" do
-    it "will automatically add a process type for that app", :focus => true do
+    it "will automatically add a process type for that app" do
       rapier.app_dir_from_fixture("buildpack-java-spring-boot-test") do |app_dir|
         # Note the missing Procfile buildpack in the list of buildpacks
         rapier.pack_build(app_dir, buildpacks: ["heroku/jvm", :this]) do |pack_result|
