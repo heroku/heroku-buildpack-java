@@ -45,7 +45,7 @@ module Rapier
       begin
         yield PackBuildResult.new(pack_stdout, pack_stderr, pack_status, image, image_name)
       ensure
-        image.remove(:force => true) unless image == nil
+        image.remove(:force => true) unless image == nil rescue nil
       end
     end
   end
