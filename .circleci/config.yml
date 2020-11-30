@@ -55,6 +55,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Ruby dependencies
+          command: |
+            gem install bundler
+            bundle install
+      - run:
           name: Execute rspec w/ parallel_split_test
           command: bundle exec parallel_split_test test/cnb_spec/
 
