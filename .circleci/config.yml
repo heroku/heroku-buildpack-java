@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   heroku: circleci/heroku@1.1.1
+  pack: buildpacks/pack@0.2.0
 
 executors:
   cedar-14:
@@ -54,6 +55,8 @@ jobs:
       PARALLEL_SPLIT_TEST_PROCESSES: 8
     steps:
       - checkout
+      - pack/install-pack:
+          version: "15.0.0"
       - run:
           name: Install Ruby dependencies
           command: |
