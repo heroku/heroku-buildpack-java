@@ -23,7 +23,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           set_maven_version(app_dir, PREVIOUS_MAVEN_VERSION)
           rapier.pack_build(app_dir) do |pack_result|
-            expect(pack_result.stdout).to include("Installing Maven #{PREVIOUS_MAVEN_VERSION}... done")
+            expect(pack_result.stdout).to include("[Installing Maven #{PREVIOUS_MAVEN_VERSION}]")
             expect(pack_result.stdout).to_not include("$ ./mvnw")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{PREVIOUS_MAVEN_VERSION}")
           end
@@ -52,7 +52,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
           rapier.pack_build(app_dir) do |pack_result|
-            expect(pack_result.stdout).to include("Installing Maven #{DEFAULT_MAVEN_VERSION}... done")
+            expect(pack_result.stdout).to include("[Installing Maven #{DEFAULT_MAVEN_VERSION}]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
           end
         end
@@ -80,7 +80,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
           rapier.pack_build(app_dir) do |pack_result|
-            expect(pack_result.stdout).to include("Installing Maven 3.6.2... done")
+            expect(pack_result.stdout).to include("[Installing Maven 3.6.2]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.6.2")
           end
         end
@@ -92,7 +92,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
           rapier.pack_build(app_dir) do |pack_result|
-            expect(pack_result.stdout).to include("Installing Maven 3.5.4... done")
+            expect(pack_result.stdout).to include("[Installing Maven 3.5.4]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.5.4")
           end
         end
@@ -104,7 +104,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
           rapier.pack_build(app_dir) do |pack_result|
-            expect(pack_result.stdout).to include("Installing Maven 3.3.9... done")
+            expect(pack_result.stdout).to include("[Installing Maven 3.3.9]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.3.9")
           end
         end
@@ -116,7 +116,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
           rapier.pack_build(app_dir) do |pack_result|
-            expect(pack_result.stdout).to include("Installing Maven 3.2.5... done")
+            expect(pack_result.stdout).to include("[Installing Maven 3.2.5]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.2.5")
           end
         end

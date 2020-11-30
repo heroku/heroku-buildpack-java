@@ -109,11 +109,11 @@ module Rapier
     end
 
     def contains_file(path)
-      exec_bash("[[ -f '#{path}' ]]").status == 0
+      bash_exec("[[ -f '#{path}' ]]").status == 0
     end
 
     def get_file_contents(path)
-      exec_bash("cat '#{path}'").stdout
+      bash_exec("cat '#{path}'").stdout
     end
 
     class BashExecResult
