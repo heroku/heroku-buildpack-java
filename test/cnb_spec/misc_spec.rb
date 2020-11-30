@@ -3,7 +3,7 @@ require_relative "spec_helper"
 describe "Heroku's Maven Cloud Native Buildpack" do
   it "will write ${APP_DIR}/target/mvn-dependency-list.log with the app's dependencies" do
     rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
-      rapier.pack_build(app_dir, build_env: {:MAVEN_CUSTOM_GOALS => "clean"}) do |pack_result|
+      rapier.pack_build(app_dir) do |pack_result|
         pack_result.start_container do |container|
           expected_dependency_list = <<~EOF
 
