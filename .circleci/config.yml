@@ -46,6 +46,18 @@ jobs:
           name: Execute rspec w/ parallel_split_test
           command: bundle exec parallel_split_test test/spec/
 
+  rapier:
+    machine:
+      image: ubuntu-2004:202010-01
+    resource_class: xlarge
+    environment:
+      PARALLEL_SPLIT_TEST_PROCESSES: 8
+    steps:
+      - checkout
+      - run:
+          name: Execute rspec w/ parallel_split_test
+          command: bundle exec parallel_split_test test/cnb_spec/
+
   buildpack-testrunner:
     docker:
       - image: circleci/openjdk:8
@@ -127,6 +139,7 @@ workflows:
   version: 2.1
   default-ci-workflow:
     jobs:
+      - rapier
       - buildpack-testrunner
       - unit-tests-heroku-buildpack:
           matrix:
