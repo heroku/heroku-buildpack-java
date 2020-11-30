@@ -37,9 +37,8 @@ describe "Heroku's Maven Cloud Native Buildpack" do
           set_maven_version(app_dir, UNKNOWN_MAVEN_VERSION)
           rapier.pack_build(app_dir, exception_on_failure: false) do |pack_result|
             expect(pack_result.build_success?).to be(false)
-            expect(pack_result.stderr).to include(" !     ERROR: Unsupported Maven version")
-            expect(pack_result.stderr).to include("       You have defined an unsupported Maven version in the system.properties file.")
-            expect(pack_result.stderr).to include("       The default supported version is #{DEFAULT_MAVEN_VERSION}")
+            expect(pack_result.stderr).to include("Error, you have defined an unsupported Maven version in the system.properties file.")
+            expect(pack_result.stderr).to include("The default supported version is #{DEFAULT_MAVEN_VERSION}")
           end
         end
       end
@@ -67,9 +66,8 @@ describe "Heroku's Maven Cloud Native Buildpack" do
 
           rapier.pack_build(app_dir, exception_on_failure: false) do |pack_result|
             expect(pack_result.build_success?).to be(false)
-            expect(pack_result.stderr).to include(" !     ERROR: Unsupported Maven version")
-            expect(pack_result.stderr).to include("       You have defined an unsupported Maven version in the system.properties file.")
-            expect(pack_result.stderr).to include("       The default supported version is #{DEFAULT_MAVEN_VERSION}")
+            expect(pack_result.stderr).to include("Error, you have defined an unsupported Maven version in the system.properties file.")
+            expect(pack_result.stderr).to include("The default supported version is #{DEFAULT_MAVEN_VERSION}")
           end
         end
       end
@@ -79,6 +77,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
       it "will install Maven 3.6.2" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
+          set_maven_version(app_dir, "3.6.2")
           rapier.pack_build(app_dir) do |pack_result|
             expect(pack_result.stdout).to include("[Installing Maven 3.6.2]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.6.2")
@@ -91,6 +90,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
       it "will install Maven 3.5.4" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
+          set_maven_version(app_dir, "3.5.4")
           rapier.pack_build(app_dir) do |pack_result|
             expect(pack_result.stdout).to include("[Installing Maven 3.5.4]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.5.4")
@@ -103,6 +103,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
       it "will install Maven 3.3.9" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
+          set_maven_version(app_dir, "3.3.9")
           rapier.pack_build(app_dir) do |pack_result|
             expect(pack_result.stdout).to include("[Installing Maven 3.3.9]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.3.9")
@@ -115,6 +116,7 @@ describe "Heroku's Maven Cloud Native Buildpack" do
       it "will install Maven 3.2.5" do
         rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
           remove_maven_wrapper(app_dir)
+          set_maven_version(app_dir, "3.2.5")
           rapier.pack_build(app_dir) do |pack_result|
             expect(pack_result.stdout).to include("[Installing Maven 3.2.5]")
             expect(pack_result.stdout).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.2.5")

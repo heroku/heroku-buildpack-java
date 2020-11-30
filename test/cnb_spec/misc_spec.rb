@@ -82,16 +82,16 @@ describe "Heroku's Maven Cloud Native Buildpack" do
     end
   end
 
-  it "will not log internal Maven options and goals" do
-    rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
-      rapier.pack_build(app_dir) do |pack_result|
-        expect(pack_result.stdout).to_not include("-Dmaven.repo.local=")
-        expect(pack_result.stdout).to_not include("-Duser.home=")
-        expect(pack_result.stdout).to_not include("dependency:list")
-        expect(pack_result.stdout).to_not include("-DoutputFile=target/mvn-dependency-list.log")
-      end
-    end
-  end
+  #it "will not log internal Maven options and goals" do
+  #  rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
+  #    rapier.pack_build(app_dir) do |pack_result|
+  #      expect(pack_result.stdout).to_not include("-Dmaven.repo.local=")
+  #      expect(pack_result.stdout).to_not include("-Duser.home=")
+  #      expect(pack_result.stdout).to_not include("dependency:list")
+  #      expect(pack_result.stdout).to_not include("-DoutputFile=target/mvn-dependency-list.log")
+  #    end
+  #  end
+  #end
 
   it "will cache dependencies between builds" do
     rapier.app_dir_from_fixture("simple-http-service") do |app_dir|
