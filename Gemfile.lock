@@ -2,6 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.4.4)
+    docker-api (2.0.0)
+      excon (>= 0.47.0)
+      multi_json
     erubis (2.7.0)
     excon (0.78.0)
     heroics (0.1.1)
@@ -50,6 +53,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  docker-api
   heroku_hatchet
   java-properties
   parallel_split_test
