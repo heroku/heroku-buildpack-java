@@ -24,10 +24,11 @@ describe "Heroku's Java Buildpack" do
                junit:junit:jar:4.13.1:test
                org.hamcrest:hamcrest-core:jar:1.3:test
 
-
         EOF
 
-        expect(app.run("cat target/mvn-dependency-list.log")).to eq(expected_dependency_list)
+        # On CircleCI, there are sometimes unexpected newlines and/or null-bytes before and/or after the expected
+        # output. Stripping both strings and removing ^@^@ works around the issue.
+        expect(app.run("cat target/mvn-dependency-list.log").strip).to eq(expected_dependency_list.strip)
       end
     end
   end
@@ -85,7 +86,9 @@ describe "Heroku's Java Buildpack" do
           ./target/test-classes/com/heroku/AppTest.class
         EOF
 
-        expect(app.run("find . -type f | grep -v './.jdk/' | sort -s")).to eq(expected_output)
+        # On CircleCI, there are sometimes unexpected newlines and/or null-bytes before and/or after the expected
+        # output. Stripping both strings and removing ^@^@ works around the issue.
+        expect(app.run("find . -type f | grep -v './.jdk/' | sort -s").strip).to eq(expected_output.strip)
       end
     end
   end
