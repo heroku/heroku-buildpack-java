@@ -27,11 +27,14 @@ jobs:
     docker:
       - image: circleci/ruby:2.7
     environment:
-      HEROKU_TEST_STACK: << parameters.heroku-stack >>
       HATCHET_BUILDPACK_BASE: https://github.com/heroku/heroku-buildpack-java
       HATCHET_APP_LIMIT: 100
       HATCHET_EXPENSIVE_MODE: 1
       PARALLEL_SPLIT_TEST_PROCESSES: 8
+      # Default stack for all Heroku apps created by Hatchet
+      DEFAULT_APP_STACK: << parameters.heroku-stack >>
+      # Default config variables for all Heroku apps created by Hatchet, prefixed with 'DEFAULT_APP_CONFIG_'
+      # DEFAULT_APP_CONFIG_FOO: BAR
     steps:
       - checkout
       - heroku/install

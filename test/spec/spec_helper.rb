@@ -1,54 +1,69 @@
 require "rspec/core"
 require "rspec/retry"
-require "hatchet"
 require "java-properties"
-
-# Omitting 1.7 here since most example projects used in testing are not
-# compatible with 1.7.
-OPENJDK_VERSIONS=%w(1.8 11 13 15)
-DEFAULT_OPENJDK_VERSION="1.8"
+require "hatchet"
 
 RSpec.configure do |config|
-  config.fail_if_no_examples = true
-  config.full_backtrace      = true
-  # rspec-retry
-  config.verbose_retry       = true
-  config.default_retry_count = 2 if ENV["CI"]
+  # config.filter_run :focus => true
 end
 
-def set_java_version(version_string)
-  set_system_properties_key("java.runtime.version", version_string)
+def new_default_hatchet_runner(*args, **kwargs)
+  kwargs[:stack] ||= ENV["DEFAULT_APP_STACK"]
+  kwargs[:config] ||= {}
+
+  ENV.keys.each do |key|
+    if key.start_with?("DEFAULT_APP_CONFIG_")
+      kwargs[:config][key.delete_prefix("DEFAULT_APP_CONFIG_")] ||= ENV[key]
+    end
+  end
+
+  Hatchet::Runner.new(*args, **kwargs)
 end
 
-def set_maven_version(version_string)
-  set_system_properties_key("maven.version", version_string)
+def remove_maven_wrapper(app_dir)
+  File.delete("#{app_dir}/mvnw")
+  File.delete("#{app_dir}/mvnw.cmd")
+  FileUtils.remove_dir("#{app_dir}/.mvn/wrapper")
 end
 
-def set_system_properties_key(key, value)
+def set_java_version(app_dir, version_string)
+  set_system_properties_key(app_dir, "java.runtime.version", version_string)
+end
+
+def set_maven_version(app_dir, version_string)
+  set_system_properties_key(app_dir, "maven.version", version_string)
+end
+
+def set_system_properties_key(app_dir, key, value)
   properties = {}
 
-  if File.file?("system.properties")
-    properties = JavaProperties.load("system.properties")
+  path = "#{app_dir}/system.properties"
+
+  if File.file?(path)
+    properties = JavaProperties.load(path)
   end
 
   properties[key.to_sym] = value
-  JavaProperties.write(properties, "system.properties")
+  JavaProperties.write(properties, path)
 end
 
-def write_to_procfile(content)
-  File.open("Procfile", "w") do |file|
-    file.write(content)
-  end
-end
+def write_settings_xml(app_dir, filename, test_value)
+  settings_xml = <<~EOF
+        <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-def run(cmd)
-  out = `#{cmd}`
-  raise "Command #{cmd} failed with output #{out}" unless $?.success?
-  out
-end
+          <profiles>
+              <profile>
+                  <activation>
+                      <activeByDefault>true</activeByDefault>
+                  </activation>
+                  <properties>
+                      <heroku.maven.settings-test.value>#{test_value}</heroku.maven.settings-test.value>
+                  </properties>
+              </profile>
+          </profiles>
+        </settings>
+  EOF
 
-def http_get(app, options = {})
-  retry_limit = options[:retry_limit] || 50
-  path = options[:path] ? "/#{options[:path]}" : ""
-  Excon.get("https://#{app.name}.herokuapp.com#{path}", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
+  File.open(File.join(app_dir, filename), "w") { |file| file.write(settings_xml) }
 end
