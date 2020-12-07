@@ -1,4 +1,4 @@
-api = "0.2"
+api = "0.4"
 
 [buildpack]
 
@@ -6,7 +6,7 @@ api = "0.2"
 # v3 or Cloud Native Buildpack id.
 id = "heroku/maven"
 
-version = "0.1"
+version = "0.1.0"
 name = "Java"
 
   [publish.Ignore]

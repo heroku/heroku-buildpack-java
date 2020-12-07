@@ -2,6 +2,8 @@
 
 ## main
 
+* Upgrade CNB API compatibility version to 0.4
+
 ## v68
 
 + Enable heroku-20 testing
