@@ -2,9 +2,11 @@
 
 ## main
 
++ Remove heroku-16 support
+
 ## v69
 
-* Upgrade CNB API compatibility version to 0.4
++ Upgrade CNB API compatibility version to 0.4
 
 ## v68
 
