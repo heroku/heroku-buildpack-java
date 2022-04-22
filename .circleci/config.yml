@@ -121,22 +121,6 @@ jobs:
       - checkout
       - run: test/v3
 
-  publish-cnb-release:
-    docker:
-      - image: cibuilds/github:0.13
-    steps:
-      - checkout
-      - run:
-          name: "Package CNB release"
-          command: tar -czvf heroku-java-cnb-${CIRCLE_TAG}.tgz bin/ buildpack.toml etc/ lib/ vendor/ README.md LICENSE
-      - run:
-          name: "Publish release on GitHub"
-          command: |
-            ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" \
-              -n "CNB ${CIRCLE_TAG}" \
-              -b "Cloud Native Buildpack (CNB) release. Automatically built after ${CIRCLE_TAG} of heroku/java was released." \
-              -recreate "${CIRCLE_TAG}" "heroku-java-cnb-${CIRCLE_TAG}.tgz"
-
 workflows:
   default-ci-workflow:
     jobs:
@@ -156,12 +140,3 @@ workflows:
           matrix:
             parameters:
               heroku-stack: ["heroku-18", "heroku-20"]
-
-  cnb-release-workflow:
-    jobs:
-      - publish-cnb-release:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\d+$/
