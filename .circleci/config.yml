@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   heroku: circleci/heroku@1.1.1
-  pack: buildpacks/pack@0.2.0
 
 executors:
   heroku-18:
@@ -40,25 +39,6 @@ jobs:
       - run:
           name: Execute rspec w/ parallel_split_test
           command: bundle exec parallel_split_test test/spec/
-
-  rapier:
-    machine:
-      image: ubuntu-2004:202010-01
-    resource_class: xlarge
-    environment:
-      PARALLEL_SPLIT_TEST_PROCESSES: 8
-    steps:
-      - checkout
-      - pack/install-pack:
-          version: "0.15.0"
-      - run:
-          name: Install Ruby dependencies
-          command: |
-            gem install bundler
-            bundle install
-      - run:
-          name: Execute rspec w/ parallel_split_test
-          command: bundle exec parallel_split_test test/cnb_spec/
 
   buildpack-testrunner:
     docker:
@@ -98,70 +78,15 @@ jobs:
       - checkout
       - run: test/unit
 
-  unit-tests-cloud-native-buildpack:
-    parameters:
-      heroku-stack:
-        type: enum
-        enum: ["heroku-18", "heroku-20"]
-    environment:
-      # The unit tests change behaviour to test CNB specifics if this env var is set.
-      CNB_STACK_ID: << parameters.heroku-stack >>
-
-      # On Circle, uid and guids are randomized for security reasons. Since we're still running as root though, tar will
-      # try to set the uid and guid for extracted files according to the tarball.
-      #
-      # The error message looks like:
-      # "Cannot change ownership to uid 379060850, gid 454177323: Invalid argument"
-      #
-      # --no-same-owner disables the feature that causes the issue and is in-fact the default for non-root users.
-      TAR_OPTIONS: --no-same-owner
-    executor:
-      name: << parameters.heroku-stack >>
-    steps:
-      - checkout
-      - run: test/v3
-
-  publish-cnb-release:
-    docker:
-      - image: cibuilds/github:0.13
-    steps:
-      - checkout
-      - run:
-          name: "Package CNB release"
-          command: tar -czvf heroku-java-cnb-${CIRCLE_TAG}.tgz bin/ buildpack.toml etc/ lib/ vendor/ README.md LICENSE
-      - run:
-          name: "Publish release on GitHub"
-          command: |
-            ghr -t "${GITHUB_TOKEN}" -u "${CIRCLE_PROJECT_USERNAME}" -r "${CIRCLE_PROJECT_REPONAME}" -c "${CIRCLE_SHA1}" \
-              -n "CNB ${CIRCLE_TAG}" \
-              -b "Cloud Native Buildpack (CNB) release. Automatically built after ${CIRCLE_TAG} of heroku/java was released." \
-              -recreate "${CIRCLE_TAG}" "heroku-java-cnb-${CIRCLE_TAG}.tgz"
-
 workflows:
   default-ci-workflow:
     jobs:
-      - rapier
       - buildpack-testrunner
       - unit-tests-heroku-buildpack:
           matrix:
             parameters:
               heroku-stack: ["heroku-18", "heroku-20"]
-
-      - unit-tests-cloud-native-buildpack:
-          matrix:
-            parameters:
-              heroku-stack: ["heroku-18", "heroku-20"]
-
       - hatchet:
           matrix:
             parameters:
               heroku-stack: ["heroku-18", "heroku-20"]
-
-  cnb-release-workflow:
-    jobs:
-      - publish-cnb-release:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /^v\d+$/

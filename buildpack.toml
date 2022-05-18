@@ -1,12 +1,4 @@
-api = "0.4"
-
 [buildpack]
-
-# The v2a buildpack id is "heroku/java". This value only defines the
-# v3 or Cloud Native Buildpack id.
-id = "heroku/maven"
-
-version = "0.1.0"
 name = "Java"
 
   [publish.Ignore]
@@ -23,13 +15,3 @@ name = "Java"
     "Gemfile",
     "Gemfile.lock"
   ]
-
-[[stacks]]
-id = "heroku-18"
-
-[[stacks]]
-id = "heroku-20"
-
-# this is to allow testing of other stack compatibility and is not a guarantee
-[[stacks]]
-id = "io.buildpacks.stacks.bionic"

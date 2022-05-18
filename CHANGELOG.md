@@ -3,6 +3,7 @@
 ## main
 
 + Remove heroku-16 support
++ Remove Cloud Native Buildpack support. Development of Heroku JVM Cloud Native Buildpacks now takes place in a dedicated repository: https://github.com/heroku/buildpacks-jvm
 
 ## v69
 
