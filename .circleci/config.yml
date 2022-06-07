@@ -10,13 +10,16 @@ executors:
   heroku-20:
     docker:
       - image: heroku/heroku:20
+  heroku-22:
+    docker:
+      - image: heroku/heroku:22
 
 jobs:
   hatchet:
     parameters:
       heroku-stack:
         type: enum
-        enum: ["heroku-18", "heroku-20"]
+        enum: ["heroku-18", "heroku-20", "heroku-22"]
     docker:
       - image: circleci/ruby:2.7
     environment:
@@ -69,7 +72,7 @@ jobs:
     parameters:
       heroku-stack:
         type: enum
-        enum: ["heroku-18", "heroku-20"]
+        enum: ["heroku-18", "heroku-20", "heroku-22"]
     environment:
       STACK: << parameters.heroku-stack >>
     executor:
@@ -85,8 +88,8 @@ workflows:
       - unit-tests-heroku-buildpack:
           matrix:
             parameters:
-              heroku-stack: ["heroku-18", "heroku-20"]
+              heroku-stack: ["heroku-18", "heroku-20", "heroku-22"]
       - hatchet:
           matrix:
             parameters:
-              heroku-stack: ["heroku-18", "heroku-20"]
+              heroku-stack: ["heroku-18", "heroku-20", "heroku-22"]

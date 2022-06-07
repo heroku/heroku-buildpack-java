@@ -2,6 +2,10 @@
 
 ## main
 
+## v71
+
++ Add heroku-22 support
+
 ## v70
 
 + Remove heroku-16 support
