@@ -10,7 +10,7 @@ describe "Heroku's Java buildpack" do
           end
 
           app.deploy do
-            expect(app.output).to include("Installing JDK #{openjdk_version}")
+            expect(app.output).to include("Installing OpenJDK #{openjdk_version}")
             expect(app.output).to include("BUILD SUCCESS")
             # Commit ed358d63b384bc7c8cf96be61ada768f4cc55a19 on the example app added Maven Wrapper to
             # the project, bypassing Maven installation entirely.
@@ -21,7 +21,7 @@ describe "Heroku's Java buildpack" do
             app.commit!
             app.push!
 
-            expect(app.output).to include("Installing JDK #{openjdk_version}")
+            expect(app.output).to include("Installing OpenJDK #{openjdk_version}")
             expect(app.output).to include("BUILD SUCCESS")
             expect(app.output).not_to include("BUILD FAILURE")
             expect(app.output).not_to include("Installing Maven")
@@ -37,7 +37,7 @@ describe "Heroku's Java buildpack" do
           end
 
           app.deploy do
-            expect(app.output).to include("Installing JDK #{openjdk_version}")
+            expect(app.output).to include("Installing OpenJDK #{openjdk_version}")
             expect(app.output).to include("BUILD SUCCESS")
             expect(app.output).not_to include("BUILD FAILURE")
             expect(http_get(app)).to eq("/1")
@@ -91,7 +91,7 @@ describe "Heroku's Java buildpack" do
           end
 
           app.deploy do
-            expect(app.output).to include("Installing JDK #{openjdk_version}")
+            expect(app.output).to include("Installing OpenJDK #{openjdk_version}")
             expect(app.output).to include("BUILD SUCCESS")
             expect(app.output).not_to include("BUILD FAILURE")
             expect(http_get(app)).to eq("All Good!!!")
@@ -107,7 +107,7 @@ describe "Heroku's Java buildpack" do
           end
 
           app.deploy do
-            expect(app.output).to include("Installing JDK #{openjdk_version}")
+            expect(app.output).to include("Installing OpenJDK #{openjdk_version}")
             expect(app.output).to include("BUILD SUCCESS")
             expect(app.output).not_to include("BUILD FAILURE")
 

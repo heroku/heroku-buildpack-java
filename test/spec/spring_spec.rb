@@ -10,7 +10,7 @@ describe "Heroku's Java buildpack" do
         end
 
         app.deploy do
-          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
           expect(app.output).not_to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
           expect(app.output).not_to include("BUILD FAILURE")
@@ -27,7 +27,7 @@ describe "Heroku's Java buildpack" do
         end
 
         app.deploy do |app|
-          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).not_to include("Installing Maven")
           expect(app.output).not_to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
           expect(app.output).to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
@@ -46,7 +46,7 @@ describe "Heroku's Java buildpack" do
         end
 
         app.deploy do |app|
-          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).not_to match(%r{Building war: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.war})
           expect(app.output).to match(%r{Building jar: /tmp/.*/target/spring-boot-example-1.0-SNAPSHOT.jar})
           expect(app.output).not_to include("BUILD FAILURE")

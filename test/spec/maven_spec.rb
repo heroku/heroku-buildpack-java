@@ -9,7 +9,7 @@ describe "Heroku's Java buildpack" do
         end
 
         app.deploy do
-          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).to include(".polyglot.pom.yaml")
           expect(app.output).not_to include("BUILD FAILURE")
           expect(app.output).to include("BUILD SUCCESS")
