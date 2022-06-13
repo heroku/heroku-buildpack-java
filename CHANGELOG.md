@@ -3,6 +3,7 @@
 ## main
 
 * Vendor buildpack-stdlib rather than downloading it at build time
+* Switch to the recommended regional S3 domain instead of the global one
 
 ## v71
 
