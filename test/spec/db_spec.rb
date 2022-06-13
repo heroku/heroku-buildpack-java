@@ -9,7 +9,7 @@ describe "Heroku's Java buildpack" do
         end
 
         app.deploy do
-          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).to include("Installing Maven")
           expect(app.output).to include("BUILD SUCCESS")
           expect(http_get(app, :path => "db")).to match("Read from DB:")

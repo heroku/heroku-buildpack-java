@@ -13,7 +13,7 @@ ENV_DIR=$3
 
 source $BP_DIR/lib/common.sh
 source $BP_DIR/lib/maven.sh
-source <(curl -s --retry 3 -L $BUILDPACK_STDLIB_URL)
+source $BP_DIR/lib/buildpack-stdlib-v7.sh
 
 export_env $ENV_DIR "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
