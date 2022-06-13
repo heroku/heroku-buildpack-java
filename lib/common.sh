@@ -13,7 +13,7 @@ install_maven() {
   mcount "mvn.version.${mavenVersion}"
 
   status_pending "Installing Maven ${mavenVersion}"
-  local mavenUrl="https://lang-jvm.s3.amazonaws.com/maven-${mavenVersion}.tar.gz"
+  local mavenUrl="https://lang-jvm.s3.us-east-1.amazonaws.com/maven-${mavenVersion}.tar.gz"
   if is_supported_maven_version "${mavenVersion}" "${mavenUrl}"; then
     download_maven "${mavenUrl}" "${installDir}" "${mavenHome}"
     status_done
@@ -87,7 +87,7 @@ install_jdk() {
   local cache_dir=${2}
 
   let start=$(nowms)
-  JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.amazonaws.com/buildpacks/heroku/jvm.tgz}
+  JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}
   mkdir -p /tmp/jvm-common
   curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
   source /tmp/jvm-common/bin/util
