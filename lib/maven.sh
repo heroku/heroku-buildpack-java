@@ -38,7 +38,7 @@ _mvn_settings_opt() {
   elif [ -n "$MAVEN_SETTINGS_URL" ]; then
     local settingsXml="${mavenInstallDir}/.m2/settings.xml"
     mkdir -p $(dirname ${settingsXml})
-    curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${settingsXml}
+    curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location $MAVEN_SETTINGS_URL --output ${settingsXml}
     mcount "mvn.settings.url"
     if [ -f ${settingsXml} ]; then
       echo -n "-s ${settingsXml}"
