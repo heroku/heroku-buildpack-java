@@ -29,7 +29,7 @@ download_maven() {
   local installDir=$2
   local mavenHome=$3
   rm -rf $mavenHome
-  curl --retry 3 --silent --max-time 60 --location "${mavenUrl}" | tar xzm -C $installDir
+  curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${mavenUrl}" | tar xzm -C $installDir
   chmod +x $mavenHome/bin/mvn
 }
 
@@ -38,7 +38,7 @@ is_supported_maven_version() {
   local mavenUrl=${2:?}
   if [ "$mavenVersion" = "$DEFAULT_MAVEN_VERSION" ]; then
     return 0
-  elif curl -I --retry 3 --fail --silent --max-time 5 --location "${mavenUrl}" > /dev/null; then
+  elif curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${mavenUrl}" > /dev/null; then
     return 0
   else
     return 1
@@ -89,7 +89,7 @@ install_jdk() {
   let start=$(nowms)
   JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}
   mkdir -p /tmp/jvm-common
-  curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+  curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
   source /tmp/jvm-common/bin/util
   source /tmp/jvm-common/bin/java
   source /tmp/jvm-common/opt/jdbc.sh
