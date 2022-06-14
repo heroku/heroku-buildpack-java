@@ -8,7 +8,7 @@ describe "Heroku's Java buildpack" do
           set_java_version(DEFAULT_OPENJDK_VERSION)
 
           java_agent_filename="heroku-javaagent-2.0.jar"
-          run("curl --silent -O -L https://repo1.maven.org/maven2/com/heroku/agent/heroku-javaagent/2.0/#{java_agent_filename}")
+          run("curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent -O -L https://repo1.maven.org/maven2/com/heroku/agent/heroku-javaagent/2.0/#{java_agent_filename}")
           write_to_procfile("web: java $JAVA_OPTS -javaagent:#{java_agent_filename}=stdout=true,lxmem=true -jar target/dependency/webapp-runner.jar --port $PORT target/*.war")
         end
 
