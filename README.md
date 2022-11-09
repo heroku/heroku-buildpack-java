@@ -114,25 +114,6 @@ and then:
 
 and you'll see the `.m2` and `.maven` directories are now present in your slug.
 
-## Run Tests Locally
-
-Tests can be run and debugged locally by using the [Circle CI CLI](https://circleci.com/docs/2.0/local-cli/).
-
-For example, to run [Hatchet](https://github.com/heroku/hatchet) tests on `heroku-18` run:
-
-```
-$ circleci local execute --job hatchet-heroku-18 \
-    --env HEROKU_API_USER=$(heroku whoami) \
-    --env HEROKU_API_KEY=$(heroku auth:token)
-```
-
-Available jobs are defined in [.circleci/config.yml](.circleci/config.yml).
-
-### Costs
-
-This command uses the credentials from your local `heroku` configuration. This means your account will be billed for any
-cost these tests incur. Proceed with caution.
-
 License
 -------
 
