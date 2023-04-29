@@ -96,6 +96,7 @@ install_jdk() {
   mtime "jvm-common.install.time" "${start}"
 
   let start=$(nowms)
+  export DEFAULT_JDK_VERSION="17"
   install_java_with_overlay "${install_dir}" "${cache_dir}"
   mtime "jvm.install.time" "${start}"
 }
