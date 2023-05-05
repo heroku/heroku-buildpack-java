@@ -2,6 +2,8 @@
 
 ## main
 
+* Remove heroku-18 support ([#204](https://github.com/heroku/heroku-buildpack-java/pull/204))
+
 ## v72
 
 * Adjust curl retry and connection timeout handling

@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        stack: ["heroku-18", "heroku-20", "heroku-22"]
+        stack: ["heroku-20", "heroku-22"]
     env:
       HATCHET_APP_LIMIT: 100
       HATCHET_EXPENSIVE_MODE: 1
@@ -85,12 +85,12 @@ jobs:
     name: "Unit Tests (${{ matrix.stack }})"
     runs-on: ubuntu-22.04
     container:
-      image: "${{ fromJson('{ \"heroku-18\": \"heroku/heroku:18\", \"heroku-20\": \"heroku/heroku:20\", \"heroku-22\": \"heroku/heroku:22\" }')[matrix.stack] }}"
+      image: "${{ fromJson('{ \"heroku-20\": \"heroku/heroku:20\", \"heroku-22\": \"heroku/heroku:22\" }')[matrix.stack] }}"
       env:
         STACK: ${{ matrix.stack }}
     strategy:
       matrix:
-        stack: ["heroku-18", "heroku-20", "heroku-22"]
+        stack: ["heroku-20", "heroku-22"]
     steps:
       - uses: actions/checkout@v3
       - run: test/unit
