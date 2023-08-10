@@ -6,7 +6,6 @@ name = "Java"
     "etc/",
     "spec/",
     "test/",
-    "vendor/",
     ".gitignore",
     ".github/",
     "hatchet.json",
