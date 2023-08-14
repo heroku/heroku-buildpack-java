@@ -62,7 +62,7 @@ createSettingsXml()
         <repository>
           <id>jboss-no-bees</id>
           <name>JBoss Public Maven Repository Group</name>
-          <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+          <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
       </repositories>
     </profile>
@@ -115,8 +115,8 @@ _assertMaven354() {
 
 _assertMavenLatest() {
   local installDir="$(_mavenDir)"
-  assertCaptured "Wrong Maven Installed" "Installing Maven 3.6.2"
-  assertFileMD5 "833f5bcc6ee59f6716223f866570bc88" ${installDir}/.maven/bin/mvn
+  assertCaptured "Wrong Maven Installed" "Installing Maven 3.9.4"
+  assertFileMD5 "45ca660e83af83fa8213b55fb693326c" ${installDir}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${installDir}/.maven/bin/mvn ]"
 
   assertCaptured "Unexpected mvn command" "mvn -DskipTests clean dependency:list install"

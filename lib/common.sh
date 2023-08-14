@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export DEFAULT_MAVEN_VERSION="3.6.2"
+export DEFAULT_MAVEN_VERSION="3.9.4"
 
 install_maven() {
   local installDir=$1

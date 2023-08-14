@@ -31,7 +31,7 @@ describe "Heroku's Java buildpack" do
           expect(app.output).to include("BUILD SUCCESS")
           expect(http_get(app)).to eq("Hello from Java!")
 
-          %w(3.6.2 3.5.4 3.3.9).each do |maven_version|
+          %w(3.9.4 3.6.2 3.5.4 3.3.9).each do |maven_version|
             set_maven_version(maven_version)
             app.commit!
             app.push!
