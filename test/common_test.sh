@@ -72,7 +72,7 @@ test_detect_maven_version_with_no_file() {
 }
 
 test_is_supported_maven_version_default() {
-  capture is_supported_maven_version "$DEFAULT_MAVEN_VERSION" "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${$DEFAULT_MAVEN_VERSION}/apache-maven-${$DEFAULT_MAVEN_VERSION}-bin.tar.gz"
+  capture is_supported_maven_version "$DEFAULT_MAVEN_VERSION" "https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${DEFAULT_MAVEN_VERSION}/apache-maven-${DEFAULT_MAVEN_VERSION}-bin.tar.gz"
   assertCapturedSuccess
 }
 

@@ -84,7 +84,7 @@ testCustomSettingsXml()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: https://repository.jboss.org/nexus/content/groups/public"
 }
 
 testCustomSettingsXmlWithPath()
@@ -98,7 +98,7 @@ testCustomSettingsXmlWithPath()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: https://repository.jboss.org/nexus/content/groups/public"
 
   unset MAVEN_SETTINGS_PATH
 }
@@ -114,7 +114,7 @@ testCustomSettingsXmlWithUrl()
   compile
 
   assertCapturedSuccess
-  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: http://repository.jboss.org/nexus/content/groups/public"
+  assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: https://repository.jboss.org/nexus/content/groups/public"
 
   unset MAVEN_SETTINGS_URL
 }
