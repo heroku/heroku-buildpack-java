@@ -2,6 +2,8 @@
 
 ## main
 
+## v73
+
 * Remove heroku-18 support ([#204](https://github.com/heroku/heroku-buildpack-java/pull/204))
 * Upgrade default Maven version to `3.9.4`. ([#207](https://github.com/heroku/heroku-buildpack-java/pull/207))
 
