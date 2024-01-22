@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create a New Appointment</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/datepicker.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-datepicker.js"></script>
+
+    <style>
+      .wrapper {
+        margin:20px;
+        width:500px;
+      }
+    </style>
+  </head>
+  <body>
+
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right" role="form">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="text" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <div class="wrapper">
+        <h2>Create a New Appointment</h2>
+          <form class="form-horizontal">
+            <div class="form-group">
+                <label for="inputEmail" class="control-label col-xs-4">Invitee Name</label>
+                <div class="col-xs-8">
+                   <input type="text" class="form-control" id="inputName" placeholder="Name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="control-label col-xs-4">Invitee Email</label>
+                <div class="col-xs-8">
+                   <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPhone" class="control-label col-xs-4">Invitee Phone</label>
+                <div class="col-xs-8">
+                   <input type="text" class="form-control" id="inputPhone" placeholder="___-___-____">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputDate" class="control-label col-xs-4">Appt. Date</label>
+                <div class="col-xs-8">
+                  <div class="input-group date" id="dp3" data-date="10-01-2014" data-date-format="mm-dd-yyyy">
+                    <input class="form-control" type="text" readonly="" id="inputDate" value="10-01-2014">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                  </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-offset-2 col-xs-10">
+                    <div class="checkbox">
+                        <label><input id="inputSms" type="checkbox"> Send SMS Reminder</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-offset-2 col-xs-10">
+                    <button id="submitBtn" type="button" class="btn btn-primary">Create</button>
+                </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Example row of columns -->
+
+      <hr>
+
+      <footer>
+        <p>&copy; Company 2014</p>
+      </footer>
+    </div> <!-- /container -->
+
+    <script>
+      $(document).ready(function() {
+        console.log('setting up datepicker')
+        $(".input-group.date").datepicker({ autoclose: true, todayHighlight: true });
+      });
+
+
+      $( "#submitBtn" ).click(function() {
+        var inviteeName = $('#inputName').val();
+        var inviteeEmail = $('#inputEmail').val();
+        var inviteePhone = $('#inputPhone').val();
+        var apptDate = $('#inputDate').val();
+        var sendSms = $('#inputSms').is(':checked');
+
+        $.post( "submit/", { name : inviteeName, email : inviteeEmail, phone : inviteePhone, date : apptDate, send_sms : sendSms }, function( data ) {
+          window.location = "success.html";
+        });
+      });
+    </script>
+
+  </body>
+</html>

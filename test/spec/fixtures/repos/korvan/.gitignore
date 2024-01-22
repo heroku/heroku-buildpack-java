@@ -1,0 +1,12 @@
+logs
+project/project
+project/target
+target
+tmp
+.history
+dist
+dump.rdb
+.env
+.anvil
+.idea
+*.iml

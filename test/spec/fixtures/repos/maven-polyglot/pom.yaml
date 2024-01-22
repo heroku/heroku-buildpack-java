@@ -1,0 +1,25 @@
+modelVersion: 4.0.0
+groupId: com.example
+artifactId: helloworld
+version: 1.0-SNAPSHOT
+packaging: jar
+
+dependencies:
+- {groupId: org.eclipse.jetty, artifactId: jetty-servlet, version: '9.2.11.v20150529'}
+- {groupId: javax.servlet, artifactId: javax.servlet-api, version: '3.1.0'}
+
+build:
+  plugins:
+  - artifactId: maven-compiler-plugin
+    groupId: org.apache.maven.plugins
+    version: 2.3.2
+    configuration:
+      source: 1.7
+      target: 1.7
+  - artifactId: maven-dependency-plugin
+    groupId: org.apache.maven.plugins
+    version: 2.4
+    executions:
+    - id: copy-dependencies
+      phase: package
+      goals: [copy-dependencies]
