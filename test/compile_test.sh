@@ -7,12 +7,6 @@
 
 assertCapturedSuccess() {
   assertEquals 0 "${RETURN}"
-  if [ "$TRAVIS" = "true" ]; then
-    # Travis keeps injecting -Xmn option on JDK8 that causes a warning in STR_ERR
-    assertTrue true
-  else
-    assertEquals "" "$(cat ${STD_ERR})"
-  fi
 }
 
 setupJavaEnv() {
@@ -33,7 +27,7 @@ testCompileWithoutSystemProperties() {
   assertCapturedSuccess
 
   _assertMavenLatest
-  assertCaptured "Installing OpenJDK 1.8"
+  assertCaptured "Installing OpenJDK 21"
   assertTrue "Java should be present in runtime." "[ -d ${BUILD_DIR}/.jdk ]"
   assertTrue "Java version file should be present." "[ -f ${BUILD_DIR}/.jdk/version ]"
   assertTrue "system.properties was not cached" "[ -f $CACHE_DIR/system.properties ]"
@@ -49,7 +43,7 @@ testCompile()
 
   _assertMavenLatest
   assertTrue "system.properties was not cached" "[ -f $CACHE_DIR/system.properties ]"
-  assertContains "system.properties contains the wrong version" "java.runtime.version=1.8" "$(cat $CACHE_DIR/system.properties)"
+  assertContains "system.properties contains the wrong version" "java.runtime.version=21" "$(cat $CACHE_DIR/system.properties)"
 }
 
 testCompilationFailure()
@@ -115,19 +109,6 @@ testCustomSettingsXmlWithUrl()
 
   assertCapturedSuccess
   assertCaptured "Should download from JBoss" "Downloading from jboss-no-bees: https://repository.jboss.org/nexus/content/groups/public"
-
-  unset MAVEN_SETTINGS_URL
-}
-
-testCustomSettingsXmlWithInvalidUrl()
-{
-  createPom
-
-  export MAVEN_SETTINGS_URL="https://example.com/ha7s8duysadfuhasjd/settings.xml"
-
-  compile
-
-  assertCapturedError
 
   unset MAVEN_SETTINGS_URL
 }

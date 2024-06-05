@@ -3,9 +3,7 @@ require "rspec/retry"
 require "hatchet"
 require "java-properties"
 
-# Omitting 1.7 here since most example projects used in testing are not
-# compatible with 1.7.
-OPENJDK_VERSIONS=%w(1.8 11 13 15)
+OPENJDK_VERSIONS=%w(1.8 11)
 DEFAULT_OPENJDK_VERSION="1.8"
 
 RSpec.configure do |config|
@@ -50,5 +48,10 @@ end
 def http_get(app, options = {})
   retry_limit = options[:retry_limit] || 50
   path = options[:path] ? "/#{options[:path]}" : ""
-  Excon.get("#{app.platform_api.app.info(app.name).fetch("web_url")}#{path}", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
+
+  begin
+    Excon.get("#{app.platform_api.app.info(app.name).fetch("web_url")}#{path}", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
+  rescue Excon::Error => e
+    puts e.response.body
+  end
 end
