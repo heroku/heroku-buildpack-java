@@ -6,7 +6,7 @@ describe "Heroku's Java buildpack" do
       Hatchet::Runner.new("java-apache-dbcp-sample", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
         app.before_deploy do
           set_java_version(DEFAULT_OPENJDK_VERSION)
-          app.add_database("heroku-postgresql:essential-0")
+          app.add_database("heroku-postgresql")
           `heroku addons:wait`
         end
 
