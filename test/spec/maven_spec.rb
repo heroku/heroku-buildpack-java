@@ -23,6 +23,8 @@ describe "Heroku's Java buildpack" do
         app.before_deploy do
           set_java_version(DEFAULT_OPENJDK_VERSION)
           set_maven_version("3.2.5")
+          app.add_database("heroku-postgresql")
+          `heroku addons:wait`
         end
 
         app.deploy do

@@ -42,8 +42,6 @@ EOF
 
 createSettingsXml()
 {
-  [ "$TRAVIS" = "true" ] && rm -rf /home/travis/.m2/repository
-
   if [ ! -z "${1:-}" ]; then
     settings_file="$1"
   else
@@ -115,10 +113,10 @@ _assertMaven354() {
 
 _assertMavenLatest() {
   local installDir="$(_mavenDir)"
-  assertCaptured "Wrong Maven Installed" "Installing Maven 3.9.4"
+  assertCaptured "Installing Maven 3.9.4"
   assertFileMD5 "45ca660e83af83fa8213b55fb693326c" ${installDir}/.maven/bin/mvn
   assertTrue "mvn should be executable" "[ -x ${installDir}/.maven/bin/mvn ]"
 
-  assertCaptured "Unexpected mvn command" "mvn -DskipTests clean dependency:list install"
-  assertCaptured "Build was not successful" "BUILD SUCCESS"
+  assertCaptured "mvn -DskipTests clean dependency:list install"
+  assertCaptured "BUILD SUCCESS"
 }
