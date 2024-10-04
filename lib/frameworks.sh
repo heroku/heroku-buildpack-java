@@ -13,6 +13,18 @@ is_wildfly_swarm() {
     test -n "$(grep "<groupId>org.wildfly.swarm" ${buildDir}/pom.xml)"
 }
 
+is_micronaut() {
+  local buildDir=${1:?}
+  test -f ${buildDir}/pom.xml &&
+    test -n "$(grep "<groupId>io.micronaut" ${buildDir}/pom.xml)"
+}
+
+is_quarkus() {
+  local buildDir=${1:?}
+  test -f ${buildDir}/pom.xml &&
+    test -n "$(grep "<groupId>io.quarkus" ${buildDir}/pom.xml)"
+}
+
 has_postgres() {
   local buildDir=${1:?}
   test -f ${buildDir}/pom.xml && (
