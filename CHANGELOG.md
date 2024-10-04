@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v74] - 2024-10-04
+
 * Add default process type for Micronaut and Quarkus. ([#224](https://github.com/heroku/heroku-buildpack-java/pull/224))
 
 ## [v73] - 2023-08-14
@@ -98,7 +101,8 @@
 
 * Added a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v73...HEAD
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v74...main
+[v74]: https://github.com/heroku/heroku-buildpack-java/compare/v73...v74
 [v73]: https://github.com/heroku/heroku-buildpack-java/compare/v72...v73
 [v72]: https://github.com/heroku/heroku-buildpack-java/compare/v71...v72
 [v71]: https://github.com/heroku/heroku-buildpack-java/compare/v70...v71
