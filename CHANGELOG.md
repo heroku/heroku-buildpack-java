@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Add default process type for Micronaut and Quarkus. ([#224](https://github.com/heroku/heroku-buildpack-java/pull/224))
 
 ## [v73] - 2023-08-14
 

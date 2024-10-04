@@ -16,15 +16,23 @@ EOF
 fi
 
 if [ ! -f $BUILD_DIR/Procfile ] && [ -d $BUILD_DIR/target ]; then
-  cd $BUILD_DIR
-  for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f); do
-    if is_spring_boot $BUILD_DIR; then
-      echo "default_process_types:"
-      echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar $jarFile"
-    elif is_wildfly_swarm $BUILD_DIR; then
-      echo "default_process_types:"
-      echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar $jarFile"
-    fi
-    break;
-  done
+  if is_quarkus $BUILD_DIR; then
+    echo "default_process_types:"
+    echo "  web: java -Dquarkus.http.port=\$PORT \$JAVA_OPTS -jar target/quarkus-app/quarkus-run.jar"
+  else
+    cd $BUILD_DIR
+      for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
+        if is_spring_boot $BUILD_DIR; then
+          echo "default_process_types:"
+          echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar $jarFile"
+        elif is_wildfly_swarm $BUILD_DIR; then
+          echo "default_process_types:"
+          echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar $jarFile"
+        elif is_micronaut $BUILD_DIR; then
+          echo "default_process_types:"
+          echo "  web: java -Dmicronaut.server.port=\$PORT \$JAVA_OPTS -jar $jarFile"
+        fi
+        break;
+      done
+  fi
 fi
