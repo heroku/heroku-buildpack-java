@@ -1,3 +1,0 @@
-#!/bin/sh
-INET6=$(cat /proc/net/if_inet6 | wc -l)
-JVM_INET6=
