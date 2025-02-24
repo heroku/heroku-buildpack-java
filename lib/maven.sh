@@ -108,9 +108,8 @@ run_mvn() {
 
   local cache_status="$(get_cache_status ${mavenInstallDir})"
   let start=$(nowms)
-  ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent
 
-  if [ "${PIPESTATUS[*]}" != "0 0" ]; then
+  if ! ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent; then
     error "Failed to build app with Maven
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
