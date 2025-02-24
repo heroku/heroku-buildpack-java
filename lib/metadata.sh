@@ -2,7 +2,7 @@
 
 # This is technically redundant, since all consumers of this lib will have enabled these,
 # however, it helps Shellcheck realise the options under which these functions will run.
-set -euo pipefail
+set -eo pipefail
 
 # Based on: https://github.com/heroku/heroku-buildpack-nodejs/blob/main/lib/metadata.sh
 
