@@ -7,17 +7,22 @@ set -e
 BPLOG_PREFIX="buildpack.java"
 
 BP_DIR=$(
-	cd $(dirname $0)/..
+	cd "$(dirname "${0}")/"..
 	pwd
-) # absolute path
+)
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-source $BP_DIR/lib/common.sh
-source $BP_DIR/lib/maven.sh
-source $BP_DIR/lib/buildpack-stdlib-v7.sh
-source $BP_DIR/lib/metadata.sh
+# shellcheck source=lib/common.sh
+source "${BP_DIR}/lib/common.sh"
+# shellcheck source=lib/maven.sh
+source "${BP_DIR}/lib/maven.sh"
+# shellcheck source=lib/buildpack-stdlib-v7.sh
+source "${BP_DIR}/lib/buildpack-stdlib-v7.sh"
+# shellcheck source=lib/metadata.sh
+source "${BP_DIR}/lib/metadata.sh"
 
 # Initialise the buildpack metadata store.
 # This is used to track state across builds (for cache invalidation and messaging when build
@@ -25,12 +30,12 @@ source $BP_DIR/lib/metadata.sh
 meta_init "${CACHE_DIR}" "java"
 meta_setup
 
-export_env $ENV_DIR "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+export_env "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
 
-[ -n "$(find ${BUILD_DIR} -type f -name "*.kt")" ] && mcount "kotlin.source"
-[ -n "$(find ${BUILD_DIR} -type f -name "*.groovy")" ] && mcount "groovy.source"
+[ -n "$(find "${BUILD_DIR}" -type f -name "*.kt")" ] && mcount "kotlin.source"
+[ -n "$(find "${BUILD_DIR}" -type f -name "*.groovy")" ] && mcount "groovy.source"
 
-run_mvn "compile" $BUILD_DIR $CACHE_DIR
-remove_mvn $BUILD_DIR $CACHE_DIR
+run_mvn "compile" "${BUILD_DIR}" "${CACHE_DIR}"
+remove_mvn "${BUILD_DIR}" "${CACHE_DIR}"
