@@ -33,25 +33,20 @@ _mvn_settings_opt() {
 	local mavenInstallDir="${2}"
 
 	if [ -n "$MAVEN_SETTINGS_PATH" ]; then
-		mcount "mvn.settings.path"
 		echo -n "-s $MAVEN_SETTINGS_PATH"
 	elif [ -n "$MAVEN_SETTINGS_URL" ]; then
 		local settingsXml="${mavenInstallDir}/.m2/settings.xml"
 		mkdir -p "$(dirname "${settingsXml}")"
 		curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${settingsXml}"
-		mcount "mvn.settings.url"
 		if [ -f "${settingsXml}" ]; then
 			echo -n "-s ${settingsXml}"
 		else
-			mcount "mvn.settings.url.fail"
 			error "Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!"
 			return 1
 		fi
 	elif [ -f "${home}/settings.xml" ]; then
-		mcount "mvn.settings.file"
 		echo -n "-s ${home}/settings.xml"
 	else
-		mcount "mvn.settings.default"
 		echo -n ""
 	fi
 }
@@ -86,15 +81,11 @@ run_mvn() {
 		cache_copy ".m2/wrapper" "${mavenInstallDir}" "${home}"
 		chmod +x "${home}/mvnw"
 		local mavenExe="./mvnw"
-		mcount "mvn.version.wrapper"
 	else
 		# shellcheck disable=SC2164
 		cd "${mavenInstallDir}"
-		local start
-		start=$(nowms)
 
 		install_maven "${mavenInstallDir}" "${home}"
-		mtime "mvn.${scope}.time" "${start}"
 		PATH="${mavenInstallDir}/.maven/bin:$PATH"
 		local mavenExe="mvn"
 		# shellcheck disable=SC2164
@@ -115,11 +106,6 @@ run_mvn() {
 	status "Executing Maven"
 	echo "$ ${mavenExe} ${mvnOpts}" | indent
 
-	local cache_status
-	cache_status="$(get_cache_status "${mavenInstallDir}")"
-	local start
-	start=$(nowms)
-
 	# We rely on word splitting for mvn_settings_opt and mvnOpts:
 	# shellcheck disable=SC2086
 	if ! ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent; then
@@ -127,9 +113,6 @@ run_mvn() {
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
 	fi
-
-	mtime "mvn.${scope}.time" "${start}"
-	mtime "mvn.${scope}.time.cache.${cache_status}" "${start}"
 }
 
 write_mvn_profile() {

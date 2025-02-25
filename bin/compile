@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir> <cache-dir> <env-dir>
 
-# fail fast
 set -e
-
-BPLOG_PREFIX="buildpack.java"
 
 BP_DIR=$(
 	cd "$(dirname "${0}")/"..
@@ -15,9 +12,9 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
+source "${BP_DIR}/lib/util.sh"
 source "${BP_DIR}/lib/common.sh"
 source "${BP_DIR}/lib/maven.sh"
-source "${BP_DIR}/lib/buildpack-stdlib-v7.sh"
 source "${BP_DIR}/lib/metadata.sh"
 
 # Initialise the buildpack metadata store.
@@ -26,12 +23,9 @@ source "${BP_DIR}/lib/metadata.sh"
 meta_init "${CACHE_DIR}" "java"
 meta_setup
 
-export_env "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
-
-[ -n "$(find "${BUILD_DIR}" -type f -name "*.kt")" ] && mcount "kotlin.source"
-[ -n "$(find "${BUILD_DIR}" -type f -name "*.groovy")" ] && mcount "groovy.source"
 
 run_mvn "compile" "${BUILD_DIR}" "${CACHE_DIR}"
 remove_mvn "${BUILD_DIR}" "${CACHE_DIR}"
