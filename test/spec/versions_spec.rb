@@ -7,7 +7,9 @@ RSpec.describe 'Maven buildpack' do
     app = Hatchet::Runner.new('simple-http-service')
     app.deploy do
       expect(clean_output(app.output)).to include('$ ./mvnw')
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{SIMPLE_HTTP_SERVICE_MAVEN_WRAPPER_VERSION}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{SIMPLE_HTTP_SERVICE_MAVEN_WRAPPER_VERSION}")
+      )
     end
   end
 
@@ -20,11 +22,13 @@ RSpec.describe 'Maven buildpack' do
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
       expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}... done")
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
+      )
     end
   end
 
-  it 'prioritizes installed Maven over wrapper when maven.version property is present, even when the version is unknown' do
+  it 'prioritizes installed Maven when maven.version property is present, even when the version is unknown' do
     app = Hatchet::Runner.new('simple-http-service', allow_failure: true)
     app.before_deploy do
       add_to_system_properties('maven.version', UNKNOWN_MAVEN_VERSION)
@@ -50,7 +54,9 @@ RSpec.describe 'Maven buildpack' do
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
       expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}... done")
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
+      )
     end
   end
 
