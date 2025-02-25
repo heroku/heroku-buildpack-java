@@ -120,7 +120,9 @@ run_mvn() {
 	local start
 	start=$(nowms)
 
-	if ! ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B "${mvn_settings_opt}" "${mvnOpts}" | indent; then
+	# We rely on word splitting for mvn_settings_opt and mvnOpts:
+	# shellcheck disable=SC2086
+	if ! ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent; then
 		error "Failed to build app with Maven
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
