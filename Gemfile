@@ -5,8 +5,8 @@ source 'https://rubygems.org'
 ruby '>= 3.2', '< 3.5'
 
 group :test, :development do
-  gem "java-properties"
   gem 'heroku_hatchet'
+  gem 'java-properties'
   # Work around https://github.com/excon/excon/issues/860
   gem 'logger'
   gem 'parallel_split_test'

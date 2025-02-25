@@ -6,12 +6,15 @@ RSpec.describe 'Maven buildpack' do
   it 'allows adding Maven settings via SETTINGS_XML_URL' do
     app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_SETTINGS_URL: SETTINGS_XML_URL })
     app.deploy do
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{SETTINGS_XML_URL_VALUE}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{SETTINGS_XML_URL_VALUE}")
+      )
     end
   end
 
   it 'maven_settings_url_failure' do
-    app = Hatchet::Runner.new('simple-http-service', allow_failure: true, config: { MAVEN_SETTINGS_URL: SETTINGS_XML_URL_404 })
+    app = Hatchet::Runner.new('simple-http-service', allow_failure: true,
+                                                     config: { MAVEN_SETTINGS_URL: SETTINGS_XML_URL_404 })
     app.deploy do
       expect(clean_output(app.output)).to include(<<~OUTPUT)
         remote: -----> Executing Maven
@@ -40,7 +43,9 @@ RSpec.describe 'Maven buildpack' do
     end
 
     app.deploy do
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{settings_xml_test_value}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{settings_xml_test_value}")
+      )
     end
   end
 
@@ -48,14 +53,18 @@ RSpec.describe 'Maven buildpack' do
     settings_xml_filename = 'zerowing.xml'
     settings_xml_test_value = 'We get signal.'
 
-    app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_SETTINGS_PATH: settings_xml_filename, MAVEN_SETTINGS_URL: SETTINGS_XML_URL })
+    app = Hatchet::Runner.new('simple-http-service',
+                              config: { MAVEN_SETTINGS_PATH: settings_xml_filename,
+                                        MAVEN_SETTINGS_URL: SETTINGS_XML_URL, })
     app.before_deploy do
       write_settings_xml(settings_xml_filename, settings_xml_test_value)
     end
 
     app.deploy do
       # MAVEN_SETTINGS_PATH should take precedence
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{settings_xml_test_value}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{settings_xml_test_value}")
+      )
     end
   end
 
@@ -71,7 +80,9 @@ RSpec.describe 'Maven buildpack' do
     end
 
     app.deploy do
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{settings_xml_test_value}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{settings_xml_test_value}")
+      )
     end
   end
 
@@ -81,7 +92,7 @@ RSpec.describe 'Maven buildpack' do
     zero_wing_filename = 'zerowing.xml'
     zero_wing_test_value = 'How are you gentlemen !!'
 
-    app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_SETTINGS_PATH: zero_wing_filename})
+    app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_SETTINGS_PATH: zero_wing_filename })
 
     app.before_deploy do
       write_settings_xml(settings_xml_filename, settings_xml_test_value)
@@ -89,7 +100,9 @@ RSpec.describe 'Maven buildpack' do
     end
 
     app.deploy do
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{zero_wing_test_value}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{zero_wing_test_value}")
+      )
     end
   end
 
@@ -104,12 +117,14 @@ RSpec.describe 'Maven buildpack' do
     end
 
     app.deploy do
-      expect(clean_output(app.output)).to include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{SETTINGS_XML_URL_VALUE}")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{SETTINGS_XML_URL_VALUE}")
+      )
     end
   end
 end
 
-def write_settings_xml(path, test_value)
+def write_settings_xml(path, test_value) # rubocop:disable Metrics/MethodLength
   File.write(path, <<~FILE)
     <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">

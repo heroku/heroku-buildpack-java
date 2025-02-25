@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
+set -e
+
 BP_DIR=$(
-	cd $(dirname $0)/..
+	cd "$(dirname "${0}")"/..
 	pwd
-) # absolute path
+)
 BUILD_DIR=$1
 
 source "${BP_DIR}/lib/frameworks.sh"
@@ -24,6 +26,7 @@ if [ ! -f "${BUILD_DIR}/Procfile" ] && [ -d "${BUILD_DIR}/target" ]; then
 		echo "  web: java -Dquarkus.http.port=\$PORT \$JAVA_OPTS -jar target/quarkus-app/quarkus-run.jar"
 	else
 		cd "${BUILD_DIR}"
+		# shellcheck disable=SC2044
 		for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
 			if is_spring_boot "${BUILD_DIR}"; then
 				echo "default_process_types:"
