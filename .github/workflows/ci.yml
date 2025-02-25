@@ -10,9 +10,26 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Ruby and dependencies
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: "3.4"
+      - name: Install shfmt
+        run: sudo apt-get install shfmt
+      - run: make lint-scripts
+      - run: make check-format
+      - run: make lint-ruby
+
   hatchet:
     name: "Hatchet (${{ matrix.stack }})"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    needs: lint
     strategy:
       fail-fast: false
       matrix:
@@ -36,3 +53,15 @@ jobs:
         run: bundle exec hatchet ci:setup
       - name: Run Hatchet integration tests
         run: bundle exec parallel_split_test test/spec/
+
+  container-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      # These test both the local development `make run` workflow and that `bin/report` completes successfully
+      # for both passing and failing builds (since `bin/report` can't easily be tested via Hatchet tests).
+      - name: Run buildpack using default app fixture
+        run: make run
+      #- name: Run buildpack using an app fixture that's expected to fail
+      #  run: make run FIXTURE=spec/fixtures/failing/
