@@ -1,3 +1,6 @@
+# This file is a vendored file and we will therefore not make changes to it:
+# shellcheck disable=all
+
 # Buildpack defaults
 # ---------------
 

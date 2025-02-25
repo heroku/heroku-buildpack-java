@@ -7,7 +7,7 @@ install_maven() {
 	local buildDir=$2
 	mavenHome=$installDir/.maven
 
-	definedMavenVersion=$(detect_maven_version $buildDir)
+	definedMavenVersion=$(detect_maven_version "${buildDir}")
 
 	mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
 	mcount "mvn.version.${mavenVersion}"
@@ -28,10 +28,10 @@ download_maven() {
 	local mavenUrl=$1
 	local installDir=$2
 
-	rm -rf $installDir
-	mkdir -p $installDir
-	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${mavenUrl}" | tar -xzm --strip-components 1 -C $installDir
-	chmod +x $installDir/bin/mvn
+	rm -rf "${installDir}"
+	mkdir -p "${installDir}"
+	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${mavenUrl}" | tar -xzm --strip-components 1 -C "${installDir}"
+	chmod +x "${installDir}/bin/mvn"
 }
 
 is_supported_maven_version() {
@@ -48,10 +48,10 @@ is_supported_maven_version() {
 
 detect_maven_version() {
 	local baseDir=${1}
-	if [ -f ${baseDir}/system.properties ]; then
-		mavenVersion=$(get_app_system_value ${baseDir}/system.properties "maven.version")
+	if [ -f "${baseDir}/system.properties" ]; then
+		mavenVersion=$(get_app_system_value "${baseDir}/system.properties" "maven.version")
 		if [ -n "$mavenVersion" ]; then
-			echo $mavenVersion
+			echo "${mavenVersion}"
 		else
 			echo ""
 		fi
@@ -65,11 +65,13 @@ get_app_system_value() {
 	local key=${2?"No key specified"}
 
 	# escape for regex
-	local escaped_key=$(echo $key | sed "s/\./\\\./g")
+	local escaped_key
+	# shellcheck disable=SC2001
+	escaped_key="$(echo "${key}" | sed "s/\./\\\./g")"
 
-	[ -f $file ] &&
-		grep -E ^$escaped_key[[:space:]=]+ $file |
-		sed -E -e "s/$escaped_key([\ \t]*=[\ \t]*|[\ \t]+)([A-Za-z0-9\.-]*).*/\2/g"
+	[ -f "${file}" ] &&
+		grep -E "^${escaped_key}[[:space:]=]+" "${file}" |
+		sed -E -e "s/${escaped_key}([\ \t]*=[\ \t]*|[\ \t]+)([A-Za-z0-9\.-]*).*/\2/g"
 }
 
 cache_copy() {
@@ -77,9 +79,9 @@ cache_copy() {
 	from_dir=$2
 	to_dir=$3
 	rm -rf "${to_dir:?}/${rel_dir:?}"
-	if [ -d $from_dir/$rel_dir ]; then
-		mkdir -p $to_dir/$rel_dir
-		cp -pr $from_dir/$rel_dir/. $to_dir/$rel_dir
+	if [ -d "${from_dir}/${rel_dir}" ]; then
+		mkdir -p "${to_dir}/${rel_dir}"
+		cp -pr "${from_dir}/${rel_dir}"/. "${to_dir}/${rel_dir}"
 	fi
 }
 
@@ -87,16 +89,21 @@ install_jdk() {
 	local install_dir=${1}
 	local cache_dir=${2}
 
-	let start=$(nowms)
+	local start
+	start=$(nowms)
+
 	JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}
 	mkdir -p /tmp/jvm-common
-	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --location "${JVM_COMMON_BUILDPACK}" | tar xzm -C /tmp/jvm-common --strip-components=1
+	#shellcheck source=/dev/null
 	source /tmp/jvm-common/bin/util
+	#shellcheck source=/dev/null
 	source /tmp/jvm-common/bin/java
+	#shellcheck source=/dev/null
 	source /tmp/jvm-common/opt/jdbc.sh
 	mtime "jvm-common.install.time" "${start}"
 
-	let start=$(nowms)
+	start=$(nowms)
 	install_java_with_overlay "${install_dir}" "${cache_dir}"
 	mtime "jvm.install.time" "${start}"
 }
