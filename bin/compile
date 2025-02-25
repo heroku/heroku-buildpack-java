@@ -15,13 +15,9 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-# shellcheck source=lib/common.sh
 source "${BP_DIR}/lib/common.sh"
-# shellcheck source=lib/maven.sh
 source "${BP_DIR}/lib/maven.sh"
-# shellcheck source=lib/buildpack-stdlib-v7.sh
 source "${BP_DIR}/lib/buildpack-stdlib-v7.sh"
-# shellcheck source=lib/metadata.sh
 source "${BP_DIR}/lib/metadata.sh"
 
 # Initialise the buildpack metadata store.
