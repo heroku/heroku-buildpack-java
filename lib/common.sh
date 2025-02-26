@@ -10,7 +10,6 @@ install_maven() {
 	definedMavenVersion=$(detect_maven_version "${buildDir}")
 
 	mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
-	mcount "mvn.version.${mavenVersion}"
 
 	status_pending "Installing Maven ${mavenVersion}"
 	local mavenUrl="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${mavenVersion}/apache-maven-${mavenVersion}-bin.tar.gz"
@@ -89,9 +88,6 @@ install_jdk() {
 	local install_dir=${1}
 	local cache_dir=${2}
 
-	local start
-	start=$(nowms)
-
 	JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}
 	mkdir -p /tmp/jvm-common
 	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --location "${JVM_COMMON_BUILDPACK}" | tar xzm -C /tmp/jvm-common --strip-components=1
@@ -101,9 +97,6 @@ install_jdk() {
 	source /tmp/jvm-common/bin/java
 	#shellcheck source=/dev/null
 	source /tmp/jvm-common/opt/jdbc.sh
-	mtime "jvm-common.install.time" "${start}"
 
-	start=$(nowms)
 	install_java_with_overlay "${install_dir}" "${cache_dir}"
-	mtime "jvm.install.time" "${start}"
 }

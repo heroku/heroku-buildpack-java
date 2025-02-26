@@ -13,9 +13,8 @@ ENV_DIR=$2
 
 source "${BP_DIR}/lib/common.sh"
 source "${BP_DIR}/lib/maven.sh"
-source "${BP_DIR}/lib/buildpack-stdlib-v7.sh"
 
-export_env "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 cd "${BUILD_DIR}"
 
