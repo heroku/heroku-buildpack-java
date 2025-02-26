@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+
+source "${BUILDPACK_DIR}/lib/output.sh"
+
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
 install_maven() {
@@ -11,14 +15,18 @@ install_maven() {
 
 	mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
 
-	status_pending "Installing Maven ${mavenVersion}"
+	output::step "Installing Maven ${mavenVersion}"
 	local mavenUrl="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${mavenVersion}/apache-maven-${mavenVersion}-bin.tar.gz"
 	if is_supported_maven_version "${mavenVersion}" "${mavenUrl}"; then
 		download_maven "${mavenUrl}" "${mavenHome}"
-		status_done
 	else
-		error_return "Error, you have defined an unsupported Maven version in the system.properties file.
-The default supported version is ${DEFAULT_MAVEN_VERSION}"
+		output::error <<-EOF
+			ERROR: Unsupported Maven version
+
+			You have defined an unsupported Maven version in the system.properties file.
+			The default supported version is ${DEFAULT_MAVEN_VERSION}
+		EOF
+
 		return 1
 	fi
 }
@@ -91,8 +99,6 @@ install_jdk() {
 	JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}
 	mkdir -p /tmp/jvm-common
 	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --location "${JVM_COMMON_BUILDPACK}" | tar xzm -C /tmp/jvm-common --strip-components=1
-	#shellcheck source=/dev/null
-	source /tmp/jvm-common/bin/util
 	#shellcheck source=/dev/null
 	source /tmp/jvm-common/bin/java
 	#shellcheck source=/dev/null

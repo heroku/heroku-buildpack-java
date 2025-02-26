@@ -21,7 +21,7 @@ RSpec.describe 'Maven buildpack' do
 
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
-      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}... done")
+      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}...")
       expect(clean_output(app.output)).to(
         include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
       )
@@ -53,7 +53,7 @@ RSpec.describe 'Maven buildpack' do
 
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
-      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}... done")
+      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}...")
       expect(clean_output(app.output)).to(
         include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
       )
@@ -87,7 +87,7 @@ RSpec.describe 'Maven buildpack' do
 
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
-      expect(clean_output(app.output)).to include('remote: -----> Installing Maven 3.9.4... done')
+      expect(clean_output(app.output)).to include('remote: -----> Installing Maven 3.9.4...')
       expect(clean_output(app.output)).to include('[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.9.4')
     end
   end
