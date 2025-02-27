@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+
+source "${BUILDPACK_DIR}/lib/output.sh"
+
 _mvn_java_opts() {
 	local scope=${1}
 	local home=${2}
@@ -41,7 +45,11 @@ _mvn_settings_opt() {
 		if [ -f "${settingsXml}" ]; then
 			echo -n "-s ${settingsXml}"
 		else
-			error "Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!"
+			output::error <<-EOF
+				ERROR: Download failed
+
+				Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!
+			EOF
 			return 1
 		fi
 	elif [ -f "${home}/settings.xml" ]; then
@@ -103,15 +111,18 @@ run_mvn() {
 	local mvnOpts
 	mvnOpts="$(_mvn_cmd_opts "${scope}")"
 
-	status "Executing Maven"
-	echo "$ ${mavenExe} ${mvnOpts}" | indent
+	output::step "Executing Maven"
+	echo "$ ${mavenExe} ${mvnOpts}" | output::indent
 
 	# We rely on word splitting for mvn_settings_opt and mvnOpts:
 	# shellcheck disable=SC2086
-	if ! ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent; then
-		error "Failed to build app with Maven
-We're sorry this build is failing! If you can't find the issue in application code,
-please submit a ticket so we can help: https://help.heroku.com/"
+	if ! ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | output::indent; then
+		output::error <<-EOF
+			ERROR: Failed to build app with Maven
+
+			We're sorry this build is failing! If you can't find the issue in application code,
+			please submit a ticket so we can help: https://help.heroku.com/
+		EOF
 	fi
 }
 

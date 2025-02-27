@@ -3,13 +3,10 @@
 
 set -e
 
-BP_DIR=$(
-	cd "$(dirname "${0}")"/..
-	pwd
-)
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 BUILD_DIR=$1
 
-source "${BP_DIR}/lib/frameworks.sh"
+source "${BUILDPACK_DIR}/lib/frameworks.sh"
 
 echo "---"
 
