@@ -7,8 +7,6 @@ RSpec.describe 'Maven buildpack' do
     app = Hatchet::Runner.new('simple-http-service')
 
     app.run_ci do |test_run|
-      puts(test_run.output)
-
       expect(clean_output(test_run.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
         \\[INFO\\] -------------------------------------------------------
         \\[INFO\\]  T E S T S
