@@ -22,7 +22,9 @@ cd "${BUILD_DIR}"
 mvn_settings_opt="$(_mvn_settings_opt "${BUILD_DIR}" "${BUILD_DIR}")"
 
 if has_maven_wrapper "${BUILD_DIR}"; then
-	./mvnw -B "${mvn_settings_opt}" "${MAVEN_HEROKU_CI_GOAL:-test}"
+	# shellcheck disable=SC2086
+	./mvnw -B ${mvn_settings_opt} "${MAVEN_HEROKU_CI_GOAL:-test}"
 else
-	mvn -B "${mvn_settings_opt}" "${MAVEN_HEROKU_CI_GOAL:-test}"
+	# shellcheck disable=SC2086
+	mvn -B ${mvn_settings_opt} "${MAVEN_HEROKU_CI_GOAL:-test}"
 fi
