@@ -11,6 +11,7 @@ BP_DIR=$(
 BUILD_DIR=$1
 ENV_DIR=$2
 
+source "${BP_DIR}/lib/util.sh"
 source "${BP_DIR}/lib/common.sh"
 source "${BP_DIR}/lib/maven.sh"
 
