@@ -1,36 +1,36 @@
 #!/usr/bin/env bash
 
 is_spring_boot() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>org.springframework.boot" "${buildDir}/pom.xml")" &&
-		test -n "$(grep "<artifactId>spring-boot" "${buildDir}/pom.xml")"
+	local build_dir=${1:?}
+	test -f "${build_dir}/pom.xml" &&
+		test -n "$(grep "<groupId>org.springframework.boot" "${build_dir}/pom.xml")" &&
+		test -n "$(grep "<artifactId>spring-boot" "${build_dir}/pom.xml")"
 }
 
 is_wildfly_swarm() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>org.wildfly.swarm" "${buildDir}/pom.xml")"
+	local build_dir=${1:?}
+	test -f "${build_dir}/pom.xml" &&
+		test -n "$(grep "<groupId>org.wildfly.swarm" "${build_dir}/pom.xml")"
 }
 
 is_micronaut() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>io.micronaut" "${buildDir}/pom.xml")"
+	local build_dir=${1:?}
+	test -f "${build_dir}/pom.xml" &&
+		test -n "$(grep "<groupId>io.micronaut" "${build_dir}/pom.xml")"
 }
 
 is_quarkus() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>io.quarkus" "${buildDir}/pom.xml")"
+	local build_dir=${1:?}
+	test -f "${build_dir}/pom.xml" &&
+		test -n "$(grep "<groupId>io.quarkus" "${build_dir}/pom.xml")"
 }
 
 has_postgres() {
-	local buildDir=${1:?}
+	local build_dir=${1:?}
 	# shellcheck disable=SC2235
-	test -f "${buildDir}/pom.xml" && (
-		test -n "$(grep "<groupId>org.postgresql" "${buildDir}/pom.xml")" ||
-			test -n "$(grep "<groupId>postgresql" "${buildDir}/pom.xml")" ||
-			test -n "$(grep "<groupId>com.impossibl.pgjdbc-ng" "${buildDir}/pom.xml")"
+	test -f "${build_dir}/pom.xml" && (
+		test -n "$(grep "<groupId>org.postgresql" "${build_dir}/pom.xml")" ||
+			test -n "$(grep "<groupId>postgresql" "${build_dir}/pom.xml")" ||
+			test -n "$(grep "<groupId>com.impossibl.pgjdbc-ng" "${build_dir}/pom.xml")"
 	)
 }
