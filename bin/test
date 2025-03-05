@@ -4,16 +4,17 @@
 # fail fast
 set -e
 
-BP_DIR=$(
-	cd "$(dirname "${0}")"/..
-	pwd
-)
 BUILD_DIR=$1
 ENV_DIR=$2
 
-source "${BP_DIR}/lib/util.sh"
-source "${BP_DIR}/lib/common.sh"
-source "${BP_DIR}/lib/maven.sh"
+BUILDPACK_DIR=$(
+	cd "$(dirname "${0}")"/..
+	pwd
+)
+
+source "${BUILDPACK_DIR}/lib/util.sh"
+source "${BUILDPACK_DIR}/lib/common.sh"
+source "${BUILDPACK_DIR}/lib/maven.sh"
 
 export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
