@@ -46,9 +46,9 @@ is_supported_maven_version() {
 }
 
 detect_maven_version() {
-	local baseDir=${1}
-	if [ -f "${baseDir}/system.properties" ]; then
-		maven_version=$(get_app_system_value "${baseDir}/system.properties" "maven.version")
+	local base_dir=${1}
+	if [ -f "${base_dir}/system.properties" ]; then
+		maven_version=$(get_app_system_value "${base_dir}/system.properties" "maven.version")
 		if [ -n "$maven_version" ]; then
 			echo "${maven_version}"
 		else

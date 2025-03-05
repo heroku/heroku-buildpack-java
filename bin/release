@@ -26,16 +26,16 @@ if [ ! -f "${BUILD_DIR}/Procfile" ] && [ -d "${BUILD_DIR}/target" ]; then
 	else
 		cd "${BUILD_DIR}"
 		# shellcheck disable=SC2044
-		for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
+		for jar_file in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
 			if frameworks::is_spring_boot "${BUILD_DIR}"; then
 				echo "default_process_types:"
-				echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar ${jarFile}"
+				echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
 			elif frameworks::is_wildfly_swarm "${BUILD_DIR}"; then
 				echo "default_process_types:"
-				echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar ${jarFile}"
+				echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
 			elif frameworks::is_micronaut "${BUILD_DIR}"; then
 				echo "default_process_types:"
-				echo "  web: java -Dmicronaut.server.port=\$PORT \$JAVA_OPTS -jar ${jarFile}"
+				echo "  web: java -Dmicronaut.server.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
 			fi
 			break
 		done
