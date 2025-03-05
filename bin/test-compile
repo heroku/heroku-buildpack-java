@@ -1,20 +1,18 @@
 #!/usr/bin/env bash
-# bin/test-compile <build-dir> <cache-dir> <env-dir>
-
-# fail fast
 set -e
 
-BP_DIR=$(
+BUILD_DIR="${1}"
+CACHE_DIR="${2}"
+ENV_DIR="${3}"
+
+BUILDPACK_DIR=$(
 	cd "$(dirname "${0}")"/..
 	pwd
 )
-BUILD_DIR=$1
-CACHE_DIR=$2
-ENV_DIR=$3
 
-source "${BP_DIR}/lib/util.sh"
-source "${BP_DIR}/lib/common.sh"
-source "${BP_DIR}/lib/maven.sh"
+source "${BUILDPACK_DIR}/lib/util.sh"
+source "${BUILDPACK_DIR}/lib/common.sh"
+source "${BUILDPACK_DIR}/lib/maven.sh"
 
 export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
