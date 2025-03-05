@@ -3,9 +3,9 @@
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
 install_maven() {
-	local installDir=$1
-	local buildDir=$2
-	mavenHome=$installDir/.maven
+	local installDir="${1}"
+	local buildDir="${2}"
+	mavenHome="${installDir}/.maven"
 
 	definedMavenVersion=$(detect_maven_version "${buildDir}")
 

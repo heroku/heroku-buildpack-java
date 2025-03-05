@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-# bin/release <build-dir>
-
 set -e
 
-BUILD_DIR=$1
+BUILD_DIR="${1}"
 
 BUILDPACK_DIR=$(
 	cd "$(dirname "${0}")"/..
