@@ -30,16 +30,16 @@ _mvn_cmd_opts() {
 
 _mvn_settings_opt() {
 	local home="${1}"
-	local mavenInstallDir="${2}"
+	local maven_install_dir="${2}"
 
 	if [ -n "$MAVEN_SETTINGS_PATH" ]; then
 		echo -n "-s $MAVEN_SETTINGS_PATH"
 	elif [ -n "$MAVEN_SETTINGS_URL" ]; then
-		local settingsXml="${mavenInstallDir}/.m2/settings.xml"
-		mkdir -p "$(dirname "${settingsXml}")"
-		curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${settingsXml}"
-		if [ -f "${settingsXml}" ]; then
-			echo -n "-s ${settingsXml}"
+		local settings_xml="${maven_install_dir}/.m2/settings.xml"
+		mkdir -p "$(dirname "${settings_xml}")"
+		curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${settings_xml}"
+		if [ -f "${settings_xml}" ]; then
+			echo -n "-s ${settings_xml}"
 		else
 			error "Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!"
 			return 1
@@ -63,8 +63,8 @@ has_maven_wrapper() {
 }
 
 get_cache_status() {
-	local cacheDir=${1}
-	if [ ! -d "${cacheDir}/.m2" ]; then
+	local cache_dir=${1}
+	if [ ! -d "${cache_dir}/.m2" ]; then
 		echo "not-found"
 	else
 		echo "valid"
@@ -74,41 +74,41 @@ get_cache_status() {
 run_mvn() {
 	local scope=${1}
 	local home=${2}
-	local mavenInstallDir=${3}
+	local maven_install_dir=${3}
 
-	mkdir -p "${mavenInstallDir}"
+	mkdir -p "${maven_install_dir}"
 	if has_maven_wrapper "${home}"; then
-		cache_copy ".m2/wrapper" "${mavenInstallDir}" "${home}"
+		cache_copy ".m2/wrapper" "${maven_install_dir}" "${home}"
 		chmod +x "${home}/mvnw"
-		local mavenExe="./mvnw"
+		local maven_exe="./mvnw"
 	else
 		# shellcheck disable=SC2164
-		cd "${mavenInstallDir}"
+		cd "${maven_install_dir}"
 
-		install_maven "${mavenInstallDir}" "${home}"
-		PATH="${mavenInstallDir}/.maven/bin:$PATH"
-		local mavenExe="mvn"
+		install_maven "${maven_install_dir}" "${home}"
+		PATH="${maven_install_dir}/.maven/bin:$PATH"
+		local maven_exe="mvn"
 		# shellcheck disable=SC2164
 		cd "${home}"
 	fi
 
 	local mvn_settings_opt
-	mvn_settings_opt="$(_mvn_settings_opt "${home}" "${mavenInstallDir}")"
+	mvn_settings_opt="$(_mvn_settings_opt "${home}" "${maven_install_dir}")"
 
-	MAVEN_OPTS="$(_mvn_java_opts "${scope}" "${home}" "${mavenInstallDir}")"
+	MAVEN_OPTS="$(_mvn_java_opts "${scope}" "${home}" "${maven_install_dir}")"
 	export MAVEN_OPTS
 
 	# shellcheck disable=SC2164
 	cd "${home}"
-	local mvnOpts
-	mvnOpts="$(_mvn_cmd_opts "${scope}")"
+	local mvn_opts
+	mvn_opts="$(_mvn_cmd_opts "${scope}")"
 
 	status "Executing Maven"
-	echo "$ ${mavenExe} ${mvnOpts}" | indent
+	echo "$ ${maven_exe} ${mvn_opts}" | indent
 
-	# We rely on word splitting for mvn_settings_opt and mvnOpts:
+	# We rely on word splitting for mvn_settings_opt and mvn_opts:
 	# shellcheck disable=SC2086
-	if ! ${mavenExe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvnOpts} | indent; then
+	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvn_opts} | indent; then
 		error "Failed to build app with Maven
 We're sorry this build is failing! If you can't find the issue in application code,
 please submit a ticket so we can help: https://help.heroku.com/"
@@ -129,9 +129,9 @@ write_mvn_profile() {
 
 remove_mvn() {
 	local home=${1}
-	local mavenInstallDir=${2}
+	local maven_install_dir=${2}
 	if has_maven_wrapper "${home}"; then
-		cache_copy ".m2/wrapper" "$home" "$mavenInstallDir"
+		cache_copy ".m2/wrapper" "$home" "$maven_install_dir"
 		rm -rf "$home/.m2"
 	fi
 }
