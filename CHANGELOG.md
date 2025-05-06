@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Remove heroku-20 support ([#245](https://github.com/heroku/heroku-buildpack-java/pull/245))
 
 ## [v75] - 2025-02-24
 
