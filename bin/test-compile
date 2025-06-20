@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # bin/test-compile <build-dir> <cache-dir> <env-dir>
 
-# fail fast
 set -euo pipefail
 
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
