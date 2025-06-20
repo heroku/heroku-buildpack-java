@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 if [ -f "${1:?}/pom.xml" ] ||
 	[ -f "${1:?}/pom.atom" ] ||
 	[ -f "${1:?}/pom.clj" ] ||

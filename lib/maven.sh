@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This is technically redundant, since all consumers of this lib will have enabled these,
+# however, it helps Shellcheck realise the options under which these functions will run.
+set -euo pipefail
+
 _mvn_java_opts() {
 	local scope=${1}
 	local home=${2}
@@ -7,7 +11,7 @@ _mvn_java_opts() {
 
 	echo -n "-Xmx1024m"
 	if [ "$scope" = "compile" ]; then
-		echo -n " $MAVEN_JAVA_OPTS"
+		echo -n " ${MAVEN_JAVA_OPTS:-""}"
 	elif [ "$scope" = "test-compile" ]; then
 		echo -n ""
 	fi
@@ -32,9 +36,9 @@ _mvn_settings_opt() {
 	local home="${1}"
 	local mavenInstallDir="${2}"
 
-	if [ -n "$MAVEN_SETTINGS_PATH" ]; then
-		echo -n "-s $MAVEN_SETTINGS_PATH"
-	elif [ -n "$MAVEN_SETTINGS_URL" ]; then
+	if [ -n "${MAVEN_SETTINGS_PATH:-}" ]; then
+		echo -n "-s ${MAVEN_SETTINGS_PATH}"
+	elif [ -n "${MAVEN_SETTINGS_URL:-}" ]; then
 		local settingsXml="${mavenInstallDir}/.m2/settings.xml"
 		mkdir -p "$(dirname "${settingsXml}")"
 		curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${settingsXml}"
@@ -86,7 +90,7 @@ run_mvn() {
 		cd "${mavenInstallDir}"
 
 		install_maven "${mavenInstallDir}" "${home}"
-		PATH="${mavenInstallDir}/.maven/bin:$PATH"
+		PATH="${mavenInstallDir}/.maven/bin:${PATH}"
 		local mavenExe="mvn"
 		# shellcheck disable=SC2164
 		cd "${home}"

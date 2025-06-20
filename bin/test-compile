@@ -2,7 +2,7 @@
 # bin/test-compile <build-dir> <cache-dir> <env-dir>
 
 # fail fast
-set -e
+set -euo pipefail
 
 BP_DIR=$(
 	cd "$(dirname "${0}")"/..
@@ -18,7 +18,7 @@ source "${BP_DIR}/lib/maven.sh"
 
 export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
-install_jdk "${BUILD_DIR}"
+install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
 
 cd "${BUILD_DIR}"
 

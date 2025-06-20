@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
-set -e
+set -euo pipefail
 
 BP_DIR=$(
 	cd "$(dirname "${0}")"/..

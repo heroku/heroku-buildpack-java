@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This is technically redundant, since all consumers of this lib will have enabled these,
+# however, it helps Shellcheck realise the options under which these functions will run.
+set -euo pipefail
+
 # Exports configuration variables of a buildpacks ENV_DIR to environment variables.
 #
 # Only configuration variables which names pass the positive pattern and don't match the negative pattern

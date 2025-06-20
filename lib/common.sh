@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 
+# This is technically redundant, since all consumers of this lib will have enabled these,
+# however, it helps Shellcheck realise the options under which these functions will run.
+set -euo pipefail
+
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
 install_maven() {
 	local installDir=$1
 	local buildDir=$2
-	mavenHome=$installDir/.maven
+	local mavenHome=$installDir/.maven
 
+	local definedMavenVersion
 	definedMavenVersion=$(detect_maven_version "${buildDir}")
 
-	mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
+	local mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
 
 	status_pending "Installing Maven ${mavenVersion}"
 	local mavenUrl="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${mavenVersion}/apache-maven-${mavenVersion}-bin.tar.gz"
@@ -48,8 +53,9 @@ is_supported_maven_version() {
 detect_maven_version() {
 	local baseDir=${1}
 	if [ -f "${baseDir}/system.properties" ]; then
+		local mavenVersion
 		mavenVersion=$(get_app_system_value "${baseDir}/system.properties" "maven.version")
-		if [ -n "$mavenVersion" ]; then
+		if [ -n "${mavenVersion}" ]; then
 			echo "${mavenVersion}"
 		else
 			echo ""
@@ -74,9 +80,9 @@ get_app_system_value() {
 }
 
 cache_copy() {
-	rel_dir=$1
-	from_dir=$2
-	to_dir=$3
+	local rel_dir=$1
+	local from_dir=$2
+	local to_dir=$3
 	rm -rf "${to_dir:?}/${rel_dir:?}"
 	if [ -d "${from_dir}/${rel_dir}" ]; then
 		mkdir -p "${to_dir}/${rel_dir}"
