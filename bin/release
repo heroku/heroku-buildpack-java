@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# bin/release <build-dir>
 
 set -euo pipefail
 
+BUILD_DIR="${1}"
+
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
-BUILD_DIR=$1
 
 source "${BUILDPACK_DIR}/lib/frameworks.sh"
 

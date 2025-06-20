@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# Usage: bin/report <build-dir> <cache-dir> <env-dir>
 
 # Produces a build report containing metadata about the build, that's consumed by the build system.
 # This script is run for both successful and failing builds, so it should not assume the build ran
@@ -20,9 +19,10 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+# BUILD_DIR="${1}"
 CACHE_DIR="${2}"
+# ENV_DIR="${3}"
 
-# The absolute path to the root of the buildpack.
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 # The build system doesn't source the `export` script before running this script, so we have to do

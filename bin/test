@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# bin/test <build-dir> <env-dir> <artifact-dir>
 
 set -euo pipefail
 
+BUILD_DIR="${1}"
+ENV_DIR="${2}"
+# ARTIFACT_DIR="${3}"
+
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
-BUILD_DIR=$1
-ENV_DIR=$2
 
 source "${BUILDPACK_DIR}/lib/util.sh"
 source "${BUILDPACK_DIR}/lib/common.sh"
