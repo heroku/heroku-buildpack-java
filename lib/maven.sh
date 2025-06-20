@@ -10,22 +10,22 @@ _mvn_java_opts() {
 	local cache=${3}
 
 	echo -n "-Xmx1024m"
-	if [ "$scope" = "compile" ]; then
+	if [ "${scope}" = "compile" ]; then
 		echo -n " ${MAVEN_JAVA_OPTS:-""}"
-	elif [ "$scope" = "test-compile" ]; then
+	elif [ "${scope}" = "test-compile" ]; then
 		echo -n ""
 	fi
 
-	echo -n " -Duser.home=$home -Dmaven.repo.local=$cache/.m2/repository"
+	echo -n " -Duser.home=${home} -Dmaven.repo.local=${cache}/.m2/repository"
 }
 
 _mvn_cmd_opts() {
 	local scope=${1}
 
-	if [ "$scope" = "compile" ]; then
+	if [ "${scope}" = "compile" ]; then
 		echo -n "${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
 		echo -n " ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
-	elif [ "$scope" = "test-compile" ]; then
+	elif [ "${scope}" = "test-compile" ]; then
 		echo -n "${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
 	else
 		echo -n ""
@@ -135,7 +135,7 @@ remove_mvn() {
 	local home=${1}
 	local maven_install_dir=${2}
 	if has_maven_wrapper "${home}"; then
-		cache_copy ".m2/wrapper" "$home" "$maven_install_dir"
-		rm -rf "$home/.m2"
+		cache_copy ".m2/wrapper" "${home}" "${maven_install_dir}"
+		rm -rf "${home}/.m2"
 	fi
 }
