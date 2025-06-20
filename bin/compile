@@ -15,13 +15,13 @@ ENV_DIR=$3
 source "${BP_DIR}/lib/util.sh"
 source "${BP_DIR}/lib/common.sh"
 source "${BP_DIR}/lib/maven.sh"
-source "${BP_DIR}/lib/metadata.sh"
+source "${BP_DIR}/lib/metrics.sh"
 
 # Initialise the buildpack metadata store.
 # This is used to track state across builds (for cache invalidation and messaging when build
 # configuration changes) and also so that `bin/report` can generate the build report.
-meta_init "${CACHE_DIR}" "java"
-meta_setup
+metrics::init "${CACHE_DIR}" "java"
+metrics::setup
 
 export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 

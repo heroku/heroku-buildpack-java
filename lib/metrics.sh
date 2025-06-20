@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+# This is technically redundant, since all consumers of this lib will have enabled these,
+# however, it helps Shellcheck realise the options under which these functions will run.
+set -euo pipefail
+
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+
+source "${BUILDPACK_DIR}/lib/util.sh"
+
+# Variables shared by this whole module
+METRICS_DATA_FILE=""
+PREVIOUS_METRICS_DATA_FILE=""
+
+# Initializes the environment required for metrics collection.
+# Must be called before you can use any other functions from this file!
+#
+# Usage:
+# ```
+# metrics::init "${CACHE_DIR}" "scala"
+# ```
+metrics::init() {
+	local cache_dir="${1}"
+	local buildpack_name="${2}"
+
+	METRICS_DATA_FILE="${cache_dir}/metrics-data/${buildpack_name}"
+	PREVIOUS_METRICS_DATA_FILE="${cache_dir}/metrics-data/${buildpack_name}-prev"
+}
+
+# Initializes the metrics collection environment by setting up data files.
+#
+# WARNING: This function prunes existing metrics should there be any.
+#
+# Usage:
+# ```
+# metrics::init "${CACHE_DIR}" "scala"
+# metrics::setup
+# ```
+metrics::setup() {
+	if [[ -f "${METRICS_DATA_FILE}" ]]; then
+		cp "${METRICS_DATA_FILE}" "${PREVIOUS_METRICS_DATA_FILE}"
+	fi
+
+	mkdir -p "$(dirname "${METRICS_DATA_FILE}")"
+	echo "{}" >"${METRICS_DATA_FILE}"
+}
+
+# Sets a metric value as raw JSON data.
+# The value parameter should be valid JSON (number, boolean, string, etc.).
+#
+# NOTE: Strings must include quotes (use `metrics::set_string` for automatic quoting).
+#
+# Usage:
+# ```
+# metrics::set_raw "build_duration" "42.5"
+# metrics::set_raw "success" "true"
+# metrics::set_raw "message" '"Hello World"'
+# ```
+metrics::set_raw() {
+	local key="${1}"
+	local value="${2}"
+
+	local new_data_file_contents
+	new_data_file_contents=$(jq <"${METRICS_DATA_FILE}" --arg key "${key}" --argjson value "${value}" '. + { ($key): ($value) }')
+
+	echo "${new_data_file_contents}" >"${METRICS_DATA_FILE}"
+}
+
+# Sets a metric value as a string.
+# The value will be automatically quoted and escaped for JSON.
+#
+# Usage:
+# ```
+# metrics::set_string "buildpack_version" "1.2.3"
+# metrics::set_string "jvm_distribution" "Heroku"
+# ```
+metrics::set_string() {
+	local key="${1}"
+	local value="${2}"
+
+	metrics::set_raw "${key}" "\"${value}\""
+}
+
+# Sets a metric for elapsed time between two timestamps.
+# If end timestamp is not provided, current time is used.
+# Time is calculated in seconds with millisecond precision.
+#
+# Usage:
+# ```
+# start_time=$(util::nowms)
+# # ... some operation ...
+# metrics::set_time "compile_duration" "${start_time}"
+# ```
+metrics::set_time() {
+	local key="${1}"
+	local start="${2}"
+	local end="${3:-$(util::nowms)}"
+	local time
+	time="$(echo "${start}" "${end}" | awk '{ printf "%.3f", ($2 - $1)/1000 }')"
+	metrics::set_raw "${key}" "${time}"
+}
+
+# Prints all metrics data in YAML format suitable for `bin/report`.
+# Each metric key-value pair is output as a separate YAML line.
+#
+# Usage:
+# ```
+# metrics::print_bin_report_yaml
+# ```
+metrics::print_bin_report_yaml() {
+	jq -r 'keys[] as $key | (.[$key] | tojson) as $value | "\($key): \($value)"' <"${METRICS_DATA_FILE}"
+}
