@@ -7,19 +7,19 @@ set -euo pipefail
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
 install_maven() {
-	local installDir=$1
-	local buildDir=$2
-	local mavenHome=$installDir/.maven
+	local install_dir=$1
+	local build_dir=$2
+	local maven_home=$install_dir/.maven
 
-	local definedMavenVersion
-	definedMavenVersion=$(detect_maven_version "${buildDir}")
+	local defined_maven_version
+	defined_maven_version=$(detect_maven_version "${build_dir}")
 
-	local mavenVersion=${definedMavenVersion:-$DEFAULT_MAVEN_VERSION}
+	local maven_version=${defined_maven_version:-$DEFAULT_MAVEN_VERSION}
 
-	status_pending "Installing Maven ${mavenVersion}"
-	local mavenUrl="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${mavenVersion}/apache-maven-${mavenVersion}-bin.tar.gz"
-	if is_supported_maven_version "${mavenVersion}" "${mavenUrl}"; then
-		download_maven "${mavenUrl}" "${mavenHome}"
+	status_pending "Installing Maven ${maven_version}"
+	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
+	if is_supported_maven_version "${maven_version}" "${maven_url}"; then
+		download_maven "${maven_url}" "${maven_home}"
 		status_done
 	else
 		error_return "Error, you have defined an unsupported Maven version in the system.properties file.
@@ -29,21 +29,21 @@ The default supported version is ${DEFAULT_MAVEN_VERSION}"
 }
 
 download_maven() {
-	local mavenUrl=$1
-	local installDir=$2
+	local maven_url=$1
+	local install_dir=$2
 
-	rm -rf "${installDir}"
-	mkdir -p "${installDir}"
-	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${mavenUrl}" | tar -xzm --strip-components 1 -C "${installDir}"
-	chmod +x "${installDir}/bin/mvn"
+	rm -rf "${install_dir}"
+	mkdir -p "${install_dir}"
+	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${maven_url}" | tar -xzm --strip-components 1 -C "${install_dir}"
+	chmod +x "${install_dir}/bin/mvn"
 }
 
 is_supported_maven_version() {
-	local mavenVersion=${1}
-	local mavenUrl=${2:?}
-	if [ "$mavenVersion" = "$DEFAULT_MAVEN_VERSION" ]; then
+	local maven_version=${1}
+	local maven_url=${2:?}
+	if [ "$maven_version" = "$DEFAULT_MAVEN_VERSION" ]; then
 		return 0
-	elif curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${mavenUrl}" >/dev/null; then
+	elif curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${maven_url}" >/dev/null; then
 		return 0
 	else
 		return 1
@@ -51,12 +51,12 @@ is_supported_maven_version() {
 }
 
 detect_maven_version() {
-	local baseDir=${1}
-	if [ -f "${baseDir}/system.properties" ]; then
-		local mavenVersion
-		mavenVersion=$(get_app_system_value "${baseDir}/system.properties" "maven.version")
-		if [ -n "${mavenVersion}" ]; then
-			echo "${mavenVersion}"
+	local base_dir=${1}
+	if [ -f "${base_dir}/system.properties" ]; then
+		local maven_version
+		maven_version=$(get_app_system_value "${base_dir}/system.properties" "maven.version")
+		if [ -n "${maven_version}" ]; then
+			echo "${maven_version}"
 		else
 			echo ""
 		fi
