@@ -14,7 +14,7 @@ set -euo pipefail
 # export_env_dir "./env" "." "FORBIDDEN_ENV"
 # ```
 export_env_dir() {
-	local env_dir="${1:?}"
+	local env_dir="${1}"
 	local positive_pattern="${2:-"."}"
 	local negative_pattern="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH${3:+"|"}${3})$"
 
