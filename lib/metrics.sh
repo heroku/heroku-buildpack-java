@@ -2,7 +2,10 @@
 
 # This is technically redundant, since all consumers of this lib will have enabled these,
 # however, it helps Shellcheck realise the options under which these functions will run.
-set -euo pipefail
+
+# This buildpack cannot currently run with `set -u`! This needs to be fixed.
+# set -euo pipefail
+set -eo pipefail
 
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
