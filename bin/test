@@ -4,16 +4,13 @@
 # fail fast
 set -euo pipefail
 
-BP_DIR=$(
-	cd "$(dirname "${0}")"/..
-	pwd
-)
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 BUILD_DIR=$1
 ENV_DIR=$2
 
-source "${BP_DIR}/lib/util.sh"
-source "${BP_DIR}/lib/common.sh"
-source "${BP_DIR}/lib/maven.sh"
+source "${BUILDPACK_DIR}/lib/util.sh"
+source "${BUILDPACK_DIR}/lib/common.sh"
+source "${BUILDPACK_DIR}/lib/maven.sh"
 
 export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
