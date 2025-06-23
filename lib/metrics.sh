@@ -49,9 +49,9 @@ metrics::setup() {
 }
 
 # Sets a metric value as raw JSON data.
-# The value parameter should be valid JSON (number, boolean, string, etc.).
+# The value parameter must be valid JSON value (number, boolean, string, etc.).
 #
-# NOTE: Strings must include quotes (use `metrics::set_string` for automatic quoting).
+# NOTE: Strings must be wrapped in double quotes (use `metrics::set_string` for convenience).
 #
 # Usage:
 # ```
@@ -70,7 +70,7 @@ metrics::set_raw() {
 }
 
 # Sets a metric value as a string.
-# The value will be automatically quoted and escaped for JSON.
+# The value will be automatically wrapped in double quotes and escaped for JSON.
 #
 # Usage:
 # ```
@@ -81,7 +81,8 @@ metrics::set_string() {
 	local key="${1}"
 	local value="${2}"
 
-	metrics::set_raw "${key}" "\"${value}\""
+	# This works because jq's `--arg` always results in a string value
+	metrics::set_raw "${key}" "$(jq -n --arg value "${value}" '$value')"
 }
 
 # Sets a metric for elapsed time between two timestamps.
@@ -92,9 +93,9 @@ metrics::set_string() {
 # ```
 # start_time=$(util::nowms)
 # # ... some operation ...
-# metrics::set_time "compile_duration" "${start_time}"
+# metrics::set_duration "compile_duration" "${start_time}"
 # ```
-metrics::set_time() {
+metrics::set_duration() {
 	local key="${1}"
 	local start="${2}"
 	local end="${3:-$(util::nowms)}"
