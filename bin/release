@@ -17,7 +17,7 @@ addons:
 EOF
 fi
 
-if [ ! -f "${BUILD_DIR}/Procfile" ] && [ -d "${BUILD_DIR}/target" ]; then
+if [[ ! -f "${BUILD_DIR}/Procfile" ]] && [[ -d "${BUILD_DIR}/target" ]]; then
 	if frameworks::is_quarkus "${BUILD_DIR}"; then
 		echo "default_process_types:"
 		echo "  web: java -Dquarkus.http.port=\$PORT \$JAVA_OPTS -jar target/quarkus-app/quarkus-run.jar"

@@ -41,7 +41,7 @@ common::download_maven() {
 common::is_supported_maven_version() {
 	local maven_version=${1}
 	local maven_url=${2:?}
-	if [ "${maven_version}" = "${DEFAULT_MAVEN_VERSION}" ]; then
+	if [[ "${maven_version}" = "${DEFAULT_MAVEN_VERSION}" ]]; then
 		return 0
 	elif curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${maven_url}" >/dev/null; then
 		return 0
@@ -52,10 +52,10 @@ common::is_supported_maven_version() {
 
 common::detect_maven_version() {
 	local base_dir=${1}
-	if [ -f "${base_dir}/system.properties" ]; then
+	if [[ -f "${base_dir}/system.properties" ]]; then
 		local maven_version
 		maven_version=$(common::get_app_system_value "${base_dir}/system.properties" "maven.version")
-		if [ -n "${maven_version}" ]; then
+		if [[ -n "${maven_version}" ]]; then
 			echo "${maven_version}"
 		else
 			echo ""
@@ -74,7 +74,7 @@ common::get_app_system_value() {
 	# shellcheck disable=SC2001
 	escaped_key="$(echo "${key}" | sed "s/\./\\\./g")"
 
-	[ -f "${file}" ] &&
+	[[ -f "${file}" ]] &&
 		grep -E "^${escaped_key}[[:space:]=]+" "${file}" |
 		sed -E -e "s/${escaped_key}([\ \t]*=[\ \t]*|[\ \t]+)([A-Za-z0-9\.-]*).*/\2/g"
 }
@@ -84,7 +84,7 @@ common::cache_copy() {
 	local from_dir="${2}"
 	local to_dir="${3}"
 	rm -rf "${to_dir:?}/${rel_dir:?}"
-	if [ -d "${from_dir}/${rel_dir}" ]; then
+	if [[ -d "${from_dir}/${rel_dir}" ]]; then
 		mkdir -p "${to_dir}/${rel_dir}"
 		cp -pr "${from_dir}/${rel_dir}"/. "${to_dir}/${rel_dir}"
 	fi

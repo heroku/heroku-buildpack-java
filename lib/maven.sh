@@ -10,9 +10,9 @@ maven::mvn_java_opts() {
 	local cache=${3}
 
 	echo -n "-Xmx1024m"
-	if [ "${scope}" = "compile" ]; then
+	if [[ "${scope}" = "compile" ]]; then
 		echo -n " ${MAVEN_JAVA_OPTS:-""}"
-	elif [ "${scope}" = "test-compile" ]; then
+	elif [[ "${scope}" = "test-compile" ]]; then
 		echo -n ""
 	fi
 
@@ -22,10 +22,10 @@ maven::mvn_java_opts() {
 maven::mvn_cmd_opts() {
 	local scope=${1}
 
-	if [ "${scope}" = "compile" ]; then
+	if [[ "${scope}" = "compile" ]]; then
 		echo -n "${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
 		echo -n " ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
-	elif [ "${scope}" = "test-compile" ]; then
+	elif [[ "${scope}" = "test-compile" ]]; then
 		echo -n "${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
 	else
 		echo -n ""
@@ -36,19 +36,19 @@ maven::mvn_settings_opt() {
 	local home="${1}"
 	local maven_install_dir="${2}"
 
-	if [ -n "${MAVEN_SETTINGS_PATH:-}" ]; then
+	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
 		echo -n "-s ${MAVEN_SETTINGS_PATH}"
-	elif [ -n "${MAVEN_SETTINGS_URL:-}" ]; then
+	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
 		local settings_xml="${maven_install_dir}/.m2/settings.xml"
 		mkdir -p "$(dirname "${settings_xml}")"
 		curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${settings_xml}"
-		if [ -f "${settings_xml}" ]; then
+		if [[ -f "${settings_xml}" ]]; then
 			echo -n "-s ${settings_xml}"
 		else
 			error "Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!"
 			return 1
 		fi
-	elif [ -f "${home}/settings.xml" ]; then
+	elif [[ -f "${home}/settings.xml" ]]; then
 		echo -n "-s ${home}/settings.xml"
 	else
 		echo -n ""
@@ -57,9 +57,9 @@ maven::mvn_settings_opt() {
 
 maven::has_maven_wrapper() {
 	local home=${1}
-	if [ -f "${home}/mvnw" ] &&
-		[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ] &&
-		[ -z "$(common::detect_maven_version "${home}")" ]; then
+	if [[ -f "${home}/mvnw" ]] &&
+		[[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ]] &&
+		[[ -z "$(common::detect_maven_version "${home}")" ]]; then
 		return 0
 	else
 		return 1
