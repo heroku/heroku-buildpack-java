@@ -1,36 +1,35 @@
 #!/usr/bin/env bash
 
-is_spring_boot() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>org.springframework.boot" "${buildDir}/pom.xml")" &&
-		test -n "$(grep "<artifactId>spring-boot" "${buildDir}/pom.xml")"
+# This is technically redundant, since all consumers of this lib will have enabled these,
+# however, it helps Shellcheck realise the options under which these functions will run.
+set -euo pipefail
+
+frameworks::is_spring_boot() {
+	local build_dir="${1}"
+
+	grep -qs "<groupId>org.springframework.boot" "${build_dir}/pom.xml" &&
+		grep -qs "<artifactId>spring-boot" "${build_dir}/pom.xml"
 }
 
-is_wildfly_swarm() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>org.wildfly.swarm" "${buildDir}/pom.xml")"
+frameworks::is_wildfly_swarm() {
+	local build_dir="${1}"
+	grep -qs "<groupId>org.wildfly.swarm" "${build_dir}/pom.xml"
 }
 
-is_micronaut() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>io.micronaut" "${buildDir}/pom.xml")"
+frameworks::is_micronaut() {
+	local build_dir="${1}"
+	grep -qs "<groupId>io.micronaut" "${build_dir}/pom.xml"
 }
 
-is_quarkus() {
-	local buildDir=${1:?}
-	test -f "${buildDir}/pom.xml" &&
-		test -n "$(grep "<groupId>io.quarkus" "${buildDir}/pom.xml")"
+frameworks::is_quarkus() {
+	local build_dir="${1}"
+	grep -qs "<groupId>io.quarkus" "${build_dir}/pom.xml"
 }
 
-has_postgres() {
-	local buildDir=${1:?}
-	# shellcheck disable=SC2235
-	test -f "${buildDir}/pom.xml" && (
-		test -n "$(grep "<groupId>org.postgresql" "${buildDir}/pom.xml")" ||
-			test -n "$(grep "<groupId>postgresql" "${buildDir}/pom.xml")" ||
-			test -n "$(grep "<groupId>com.impossibl.pgjdbc-ng" "${buildDir}/pom.xml")"
-	)
+frameworks::has_postgres() {
+	local build_dir="${1}"
+
+	grep -qs "<groupId>org.postgresql" "${build_dir}/pom.xml" ||
+		grep -qs "<groupId>postgresql" "${build_dir}/pom.xml" ||
+		grep -qs "<groupId>com.impossibl.pgjdbc-ng" "${build_dir}/pom.xml"
 }

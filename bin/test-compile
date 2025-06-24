@@ -1,28 +1,24 @@
 #!/usr/bin/env bash
-# bin/test-compile <build-dir> <cache-dir> <env-dir>
 
-# fail fast
-set -e
+set -euo pipefail
 
-BP_DIR=$(
-	cd "$(dirname "${0}")"/..
-	pwd
-)
-BUILD_DIR=$1
-CACHE_DIR=$2
-ENV_DIR=$3
+BUILD_DIR="${1}"
+CACHE_DIR="${2}"
+ENV_DIR="${3}"
 
-source "${BP_DIR}/lib/util.sh"
-source "${BP_DIR}/lib/common.sh"
-source "${BP_DIR}/lib/maven.sh"
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
-export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+source "${BUILDPACK_DIR}/lib/util.sh"
+source "${BUILDPACK_DIR}/lib/common.sh"
+source "${BUILDPACK_DIR}/lib/maven.sh"
 
-install_jdk "${BUILD_DIR}"
+util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+
+common::install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
 
 cd "${BUILD_DIR}"
 
-cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
-run_mvn "test-compile" "${BUILD_DIR}" "${BUILD_DIR}"
-write_mvn_profile "${BUILD_DIR}"
-cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
+common::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
+maven::run_mvn "test-compile" "${BUILD_DIR}" "${BUILD_DIR}"
+maven::write_mvn_profile "${BUILD_DIR}"
+common::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"

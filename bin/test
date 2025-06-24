@@ -1,27 +1,24 @@
 #!/usr/bin/env bash
-# bin/test <build-dir> <env-dir> <artifact-dir>
 
-# fail fast
-set -e
+set -euo pipefail
 
-BP_DIR=$(
-	cd "$(dirname "${0}")"/..
-	pwd
-)
-BUILD_DIR=$1
-ENV_DIR=$2
+BUILD_DIR="${1}"
+ENV_DIR="${2}"
+# ARTIFACT_DIR="${3}"
 
-source "${BP_DIR}/lib/util.sh"
-source "${BP_DIR}/lib/common.sh"
-source "${BP_DIR}/lib/maven.sh"
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
-export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+source "${BUILDPACK_DIR}/lib/util.sh"
+source "${BUILDPACK_DIR}/lib/common.sh"
+source "${BUILDPACK_DIR}/lib/maven.sh"
+
+util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 cd "${BUILD_DIR}"
 
-mvn_settings_opt="$(_mvn_settings_opt "${BUILD_DIR}" "${BUILD_DIR}")"
+mvn_settings_opt="$(maven::mvn_settings_opt "${BUILD_DIR}" "${BUILD_DIR}")"
 
-if has_maven_wrapper "${BUILD_DIR}"; then
+if maven::has_maven_wrapper "${BUILD_DIR}"; then
 	# shellcheck disable=SC2086
 	./mvnw -B ${mvn_settings_opt} "${MAVEN_HEROKU_CI_GOAL:-test}"
 else

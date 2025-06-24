@@ -1,42 +1,39 @@
 #!/usr/bin/env bash
-# bin/release <build-dir>
 
-set -e
+set -euo pipefail
 
-BP_DIR=$(
-	cd "$(dirname "${0}")"/..
-	pwd
-)
-BUILD_DIR=$1
+BUILD_DIR="${1}"
 
-source "${BP_DIR}/lib/frameworks.sh"
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+
+source "${BUILDPACK_DIR}/lib/frameworks.sh"
 
 echo "---"
 
-if has_postgres "${BUILD_DIR}"; then
+if frameworks::has_postgres "${BUILD_DIR}"; then
 	cat <<EOF
 addons:
   - heroku-postgresql
 EOF
 fi
 
-if [ ! -f "${BUILD_DIR}/Procfile" ] && [ -d "${BUILD_DIR}/target" ]; then
-	if is_quarkus "${BUILD_DIR}"; then
+if [[ ! -f "${BUILD_DIR}/Procfile" ]] && [[ -d "${BUILD_DIR}/target" ]]; then
+	if frameworks::is_quarkus "${BUILD_DIR}"; then
 		echo "default_process_types:"
 		echo "  web: java -Dquarkus.http.port=\$PORT \$JAVA_OPTS -jar target/quarkus-app/quarkus-run.jar"
 	else
 		cd "${BUILD_DIR}"
 		# shellcheck disable=SC2044
-		for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
-			if is_spring_boot "${BUILD_DIR}"; then
+		for jar_file in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
+			if frameworks::is_spring_boot "${BUILD_DIR}"; then
 				echo "default_process_types:"
-				echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar ${jarFile}"
-			elif is_wildfly_swarm "${BUILD_DIR}"; then
+				echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
+			elif frameworks::is_wildfly_swarm "${BUILD_DIR}"; then
 				echo "default_process_types:"
-				echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar ${jarFile}"
-			elif is_micronaut "${BUILD_DIR}"; then
+				echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
+			elif frameworks::is_micronaut "${BUILD_DIR}"; then
 				echo "default_process_types:"
-				echo "  web: java -Dmicronaut.server.port=\$PORT \$JAVA_OPTS -jar ${jarFile}"
+				echo "  web: java -Dmicronaut.server.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
 			fi
 			break
 		done
