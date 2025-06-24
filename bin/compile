@@ -13,9 +13,6 @@ source "${BUILDPACK_DIR}/lib/common.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"
 source "${BUILDPACK_DIR}/lib/metrics.sh"
 
-# Initialise the buildpack metadata store.
-# This is used to track state across builds (for cache invalidation and messaging when build
-# configuration changes) and also so that `bin/report` can generate the build report.
 metrics::init "${CACHE_DIR}" "java"
 metrics::setup
 
