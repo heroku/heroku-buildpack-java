@@ -4,7 +4,7 @@
 # however, it helps Shellcheck realise the options under which these functions will run.
 set -euo pipefail
 
-_mvn_java_opts() {
+maven::mvn_java_opts() {
 	local scope=${1}
 	local home=${2}
 	local cache=${3}
@@ -19,7 +19,7 @@ _mvn_java_opts() {
 	echo -n " -Duser.home=${home} -Dmaven.repo.local=${cache}/.m2/repository"
 }
 
-_mvn_cmd_opts() {
+maven::mvn_cmd_opts() {
 	local scope=${1}
 
 	if [ "${scope}" = "compile" ]; then
@@ -32,7 +32,7 @@ _mvn_cmd_opts() {
 	fi
 }
 
-_mvn_settings_opt() {
+maven::mvn_settings_opt() {
 	local home="${1}"
 	local maven_install_dir="${2}"
 
@@ -55,7 +55,7 @@ _mvn_settings_opt() {
 	fi
 }
 
-has_maven_wrapper() {
+maven::has_maven_wrapper() {
 	local home=${1}
 	if [ -f "${home}/mvnw" ] &&
 		[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ] &&
@@ -66,22 +66,13 @@ has_maven_wrapper() {
 	fi
 }
 
-get_cache_status() {
-	local cache_dir=${1}
-	if [ ! -d "${cache_dir}/.m2" ]; then
-		echo "not-found"
-	else
-		echo "valid"
-	fi
-}
-
-run_mvn() {
+maven::run_mvn() {
 	local scope=${1}
 	local home=${2}
 	local maven_install_dir=${3}
 
 	mkdir -p "${maven_install_dir}"
-	if has_maven_wrapper "${home}"; then
+	if maven::has_maven_wrapper "${home}"; then
 		common::cache_copy ".m2/wrapper" "${maven_install_dir}" "${home}"
 		chmod +x "${home}/mvnw"
 		local maven_exe="./mvnw"
@@ -97,15 +88,15 @@ run_mvn() {
 	fi
 
 	local mvn_settings_opt
-	mvn_settings_opt="$(_mvn_settings_opt "${home}" "${maven_install_dir}")"
+	mvn_settings_opt="$(maven::mvn_settings_opt "${home}" "${maven_install_dir}")"
 
-	MAVEN_OPTS="$(_mvn_java_opts "${scope}" "${home}" "${maven_install_dir}")"
+	MAVEN_OPTS="$(maven::mvn_java_opts "${scope}" "${home}" "${maven_install_dir}")"
 	export MAVEN_OPTS
 
 	# shellcheck disable=SC2164
 	cd "${home}"
 	local mvn_opts
-	mvn_opts="$(_mvn_cmd_opts "${scope}")"
+	mvn_opts="$(maven::mvn_cmd_opts "${scope}")"
 
 	status "Executing Maven"
 	echo "$ ${maven_exe} ${mvn_opts}" | indent
@@ -119,22 +110,22 @@ please submit a ticket so we can help: https://help.heroku.com/"
 	fi
 }
 
-write_mvn_profile() {
+maven::write_mvn_profile() {
 	local home
 	home=${1}
 
 	mkdir -p "${home}/.profile.d"
 	cat <<-EOF >"${home}/.profile.d/maven.sh"
 		export M2_HOME="\$HOME/.maven"
-		export MAVEN_OPTS="$(_mvn_java_opts "test" "\$HOME" "\$HOME")"
+		export MAVEN_OPTS="$(maven::mvn_java_opts "test" "\$HOME" "\$HOME")"
 		export PATH="\$M2_HOME/bin:\$PATH"
 	EOF
 }
 
-remove_mvn() {
+maven::remove_mvn() {
 	local home=${1}
 	local maven_install_dir=${2}
-	if has_maven_wrapper "${home}"; then
+	if maven::has_maven_wrapper "${home}"; then
 		common::cache_copy ".m2/wrapper" "${home}" "${maven_install_dir}"
 		rm -rf "${home}/.m2"
 	fi

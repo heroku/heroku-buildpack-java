@@ -19,6 +19,6 @@ common::install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
 cd "${BUILD_DIR}"
 
 common::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
-run_mvn "test-compile" "${BUILD_DIR}" "${BUILD_DIR}"
-write_mvn_profile "${BUILD_DIR}"
+maven::run_mvn "test-compile" "${BUILD_DIR}" "${BUILD_DIR}"
+maven::write_mvn_profile "${BUILD_DIR}"
 common::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
