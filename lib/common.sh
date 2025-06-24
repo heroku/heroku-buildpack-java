@@ -6,20 +6,20 @@ set -euo pipefail
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
-install_maven() {
+common::install_maven() {
 	local install_dir=$1
 	local build_dir=$2
 	local maven_home="${install_dir}/.maven"
 
 	local defined_maven_version
-	defined_maven_version=$(detect_maven_version "${build_dir}")
+	defined_maven_version=$(common::detect_maven_version "${build_dir}")
 
 	local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
 
 	status_pending "Installing Maven ${maven_version}"
 	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
-	if is_supported_maven_version "${maven_version}" "${maven_url}"; then
-		download_maven "${maven_url}" "${maven_home}"
+	if common::is_supported_maven_version "${maven_version}" "${maven_url}"; then
+		common::download_maven "${maven_url}" "${maven_home}"
 		status_done
 	else
 		error_return "Error, you have defined an unsupported Maven version in the system.properties file.
@@ -28,7 +28,7 @@ The default supported version is ${DEFAULT_MAVEN_VERSION}"
 	fi
 }
 
-download_maven() {
+common::download_maven() {
 	local maven_url=$1
 	local install_dir=$2
 
@@ -38,7 +38,7 @@ download_maven() {
 	chmod +x "${install_dir}/bin/mvn"
 }
 
-is_supported_maven_version() {
+common::is_supported_maven_version() {
 	local maven_version=${1}
 	local maven_url=${2:?}
 	if [ "${maven_version}" = "${DEFAULT_MAVEN_VERSION}" ]; then
@@ -50,11 +50,11 @@ is_supported_maven_version() {
 	fi
 }
 
-detect_maven_version() {
+common::detect_maven_version() {
 	local base_dir=${1}
 	if [ -f "${base_dir}/system.properties" ]; then
 		local maven_version
-		maven_version=$(get_app_system_value "${base_dir}/system.properties" "maven.version")
+		maven_version=$(common::get_app_system_value "${base_dir}/system.properties" "maven.version")
 		if [ -n "${maven_version}" ]; then
 			echo "${maven_version}"
 		else
@@ -65,7 +65,7 @@ detect_maven_version() {
 	fi
 }
 
-get_app_system_value() {
+common::get_app_system_value() {
 	local file=${1?"No file specified"}
 	local key=${2?"No key specified"}
 
@@ -79,7 +79,7 @@ get_app_system_value() {
 		sed -E -e "s/${escaped_key}([\ \t]*=[\ \t]*|[\ \t]+)([A-Za-z0-9\.-]*).*/\2/g"
 }
 
-cache_copy() {
+common::cache_copy() {
 	local rel_dir=$1
 	local from_dir=$2
 	local to_dir=$3
@@ -90,7 +90,7 @@ cache_copy() {
 	fi
 }
 
-install_jdk() {
+common::install_jdk() {
 	local install_dir=${1}
 	local cache_dir=${2}
 

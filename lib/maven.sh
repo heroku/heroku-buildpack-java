@@ -59,7 +59,7 @@ has_maven_wrapper() {
 	local home=${1}
 	if [ -f "${home}/mvnw" ] &&
 		[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ] &&
-		[ -z "$(detect_maven_version "${home}")" ]; then
+		[ -z "$(common::detect_maven_version "${home}")" ]; then
 		return 0
 	else
 		return 1
@@ -82,14 +82,14 @@ run_mvn() {
 
 	mkdir -p "${maven_install_dir}"
 	if has_maven_wrapper "${home}"; then
-		cache_copy ".m2/wrapper" "${maven_install_dir}" "${home}"
+		common::cache_copy ".m2/wrapper" "${maven_install_dir}" "${home}"
 		chmod +x "${home}/mvnw"
 		local maven_exe="./mvnw"
 	else
 		# shellcheck disable=SC2164
 		cd "${maven_install_dir}"
 
-		install_maven "${maven_install_dir}" "${home}"
+		common::install_maven "${maven_install_dir}" "${home}"
 		PATH="${maven_install_dir}/.maven/bin:${PATH}"
 		local maven_exe="mvn"
 		# shellcheck disable=SC2164
@@ -135,7 +135,7 @@ remove_mvn() {
 	local home=${1}
 	local maven_install_dir=${2}
 	if has_maven_wrapper "${home}"; then
-		cache_copy ".m2/wrapper" "${home}" "${maven_install_dir}"
+		common::cache_copy ".m2/wrapper" "${home}" "${maven_install_dir}"
 		rm -rf "${home}/.m2"
 	fi
 }

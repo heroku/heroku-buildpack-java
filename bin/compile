@@ -21,7 +21,7 @@ metrics::setup
 
 export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
-install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
+common::install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
 
 run_mvn "compile" "${BUILD_DIR}" "${CACHE_DIR}"
 remove_mvn "${BUILD_DIR}" "${CACHE_DIR}"

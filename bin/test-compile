@@ -14,11 +14,11 @@ source "${BUILDPACK_DIR}/lib/maven.sh"
 
 export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
-install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
+common::install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
 
 cd "${BUILD_DIR}"
 
-cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
+common::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
 run_mvn "test-compile" "${BUILD_DIR}" "${BUILD_DIR}"
 write_mvn_profile "${BUILD_DIR}"
-cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
+common::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
