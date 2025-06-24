@@ -7,8 +7,8 @@ set -euo pipefail
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
 common::install_maven() {
-	local install_dir=$1
-	local build_dir=$2
+	local install_dir="${1}"
+	local build_dir="${2}"
 	local maven_home="${install_dir}/.maven"
 
 	local defined_maven_version
@@ -29,8 +29,8 @@ The default supported version is ${DEFAULT_MAVEN_VERSION}"
 }
 
 common::download_maven() {
-	local maven_url=$1
-	local install_dir=$2
+	local maven_url="${1}"
+	local install_dir="${2}"
 
 	rm -rf "${install_dir}"
 	mkdir -p "${install_dir}"
@@ -80,9 +80,9 @@ common::get_app_system_value() {
 }
 
 common::cache_copy() {
-	local rel_dir=$1
-	local from_dir=$2
-	local to_dir=$3
+	local rel_dir="${1}"
+	local from_dir="${2}"
+	local to_dir="${3}"
 	rm -rf "${to_dir:?}/${rel_dir:?}"
 	if [ -d "${from_dir}/${rel_dir}" ]; then
 		mkdir -p "${to_dir}/${rel_dir}"
