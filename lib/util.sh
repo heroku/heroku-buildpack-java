@@ -11,9 +11,9 @@ set -euo pipefail
 #
 # Usage:
 # ```
-# export_env_dir "./env" "." "FORBIDDEN_ENV"
+# util::export_env_dir "./env" "." "FORBIDDEN_ENV"
 # ```
-export_env_dir() {
+util::export_env_dir() {
 	local env_dir="${1}"
 	local positive_pattern="${2:-"."}"
 	local negative_pattern="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH${3:+"|"}${3})$"
@@ -30,6 +30,6 @@ export_env_dir() {
 	done
 }
 
-nowms() {
+util::nowms() {
 	date +%s%3N
 }

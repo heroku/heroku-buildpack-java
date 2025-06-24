@@ -12,7 +12,7 @@ source "${BUILDPACK_DIR}/lib/util.sh"
 source "${BUILDPACK_DIR}/lib/common.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"
 
-export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
+util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 cd "${BUILD_DIR}"
 
