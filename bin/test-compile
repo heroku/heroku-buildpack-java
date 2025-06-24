@@ -8,6 +8,7 @@ ENV_DIR="${3}"
 
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
+source "${BUILDPACK_DIR}/lib/output.sh"
 source "${BUILDPACK_DIR}/lib/util.sh"
 source "${BUILDPACK_DIR}/lib/common.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"

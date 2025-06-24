@@ -21,7 +21,7 @@ RSpec.describe 'Maven buildpack' do
 
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
-      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}... done")
+      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}...")
       expect(clean_output(app.output)).to(
         include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
       )
@@ -37,9 +37,11 @@ RSpec.describe 'Maven buildpack' do
     app.deploy do
       expect(clean_output(app.output)).to include(<<~OUTPUT)
         remote: -----> Installing Maven #{UNKNOWN_MAVEN_VERSION}...
-        remote:  !     ERROR: Error, you have defined an unsupported Maven version in the system.properties file.
-        remote:        The default supported version is #{DEFAULT_MAVEN_VERSION}
-        remote: 
+        remote:  
+        remote:  !     ERROR: You have defined an unsupported Maven version in the system.properties file.
+        remote:  !     
+        remote:  !     The default supported version is #{DEFAULT_MAVEN_VERSION}
+        remote:  
         remote:  !     Push rejected, failed to compile Java app.
       OUTPUT
     end
@@ -53,7 +55,7 @@ RSpec.describe 'Maven buildpack' do
 
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
-      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}... done")
+      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}...")
       expect(clean_output(app.output)).to(
         include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
       )
@@ -70,8 +72,9 @@ RSpec.describe 'Maven buildpack' do
     app.deploy do
       expect(clean_output(app.output)).to include(<<~OUTPUT)
         remote: -----> Installing Maven #{UNKNOWN_MAVEN_VERSION}...
-        remote:  !     ERROR: Error, you have defined an unsupported Maven version in the system.properties file.
-        remote:        The default supported version is #{DEFAULT_MAVEN_VERSION}
+        remote:  !     ERROR: You have defined an unsupported Maven version in the system.properties file.
+        remote:  !     
+        remote:  !     The default supported version is #{DEFAULT_MAVEN_VERSION}
         remote: 
         remote:  !     Push rejected, failed to compile Java app.
       OUTPUT
@@ -87,7 +90,7 @@ RSpec.describe 'Maven buildpack' do
 
     app.deploy do
       expect(clean_output(app.output)).not_to include('$ ./mvnw')
-      expect(clean_output(app.output)).to include('remote: -----> Installing Maven 3.9.4... done')
+      expect(clean_output(app.output)).to include('remote: -----> Installing Maven 3.9.4...')
       expect(clean_output(app.output)).to include('[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.9.4')
     end
   end
