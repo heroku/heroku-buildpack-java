@@ -10,7 +10,7 @@ source "${BUILDPACK_DIR}/lib/frameworks.sh"
 
 echo "---"
 
-if has_postgres "${BUILD_DIR}"; then
+if frameworks::has_postgres "${BUILD_DIR}"; then
 	cat <<EOF
 addons:
   - heroku-postgresql
@@ -18,20 +18,20 @@ EOF
 fi
 
 if [ ! -f "${BUILD_DIR}/Procfile" ] && [ -d "${BUILD_DIR}/target" ]; then
-	if is_quarkus "${BUILD_DIR}"; then
+	if frameworks::is_quarkus "${BUILD_DIR}"; then
 		echo "default_process_types:"
 		echo "  web: java -Dquarkus.http.port=\$PORT \$JAVA_OPTS -jar target/quarkus-app/quarkus-run.jar"
 	else
 		cd "${BUILD_DIR}"
 		# shellcheck disable=SC2044
 		for jar_file in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
-			if is_spring_boot "${BUILD_DIR}"; then
+			if frameworks::is_spring_boot "${BUILD_DIR}"; then
 				echo "default_process_types:"
 				echo "  web: java -Dserver.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
-			elif is_wildfly_swarm "${BUILD_DIR}"; then
+			elif frameworks::is_wildfly_swarm "${BUILD_DIR}"; then
 				echo "default_process_types:"
 				echo "  web: java -Dswarm.http.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
-			elif is_micronaut "${BUILD_DIR}"; then
+			elif frameworks::is_micronaut "${BUILD_DIR}"; then
 				echo "default_process_types:"
 				echo "  web: java -Dmicronaut.server.port=\$PORT \$JAVA_OPTS -jar ${jar_file}"
 			fi
