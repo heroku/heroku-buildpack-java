@@ -5,9 +5,9 @@
 set -euo pipefail
 
 maven::mvn_java_opts() {
-	local scope=${1}
-	local home=${2}
-	local cache=${3}
+	local scope="${1}"
+	local home="${2}"
+	local cache="${3}"
 
 	echo -n "-Xmx1024m"
 	if [[ "${scope}" = "compile" ]]; then
@@ -20,7 +20,7 @@ maven::mvn_java_opts() {
 }
 
 maven::mvn_cmd_opts() {
-	local scope=${1}
+	local scope="${1}"
 
 	if [[ "${scope}" = "compile" ]]; then
 		echo -n "${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
@@ -56,7 +56,7 @@ maven::mvn_settings_opt() {
 }
 
 maven::has_maven_wrapper() {
-	local home=${1}
+	local home="${1}"
 	if [[ -f "${home}/mvnw" ]] &&
 		[[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ]] &&
 		[[ -z "$(common::detect_maven_version "${home}")" ]]; then
@@ -67,9 +67,9 @@ maven::has_maven_wrapper() {
 }
 
 maven::run_mvn() {
-	local scope=${1}
-	local home=${2}
-	local maven_install_dir=${3}
+	local scope="${1}"
+	local home="${2}"
+	local maven_install_dir="${3}"
 
 	mkdir -p "${maven_install_dir}"
 	if maven::has_maven_wrapper "${home}"; then
@@ -111,8 +111,7 @@ please submit a ticket so we can help: https://help.heroku.com/"
 }
 
 maven::write_mvn_profile() {
-	local home
-	home=${1}
+	local home="${1}"
 
 	mkdir -p "${home}/.profile.d"
 	cat <<-EOF >"${home}/.profile.d/maven.sh"
@@ -123,8 +122,8 @@ maven::write_mvn_profile() {
 }
 
 maven::remove_mvn() {
-	local home=${1}
-	local maven_install_dir=${2}
+	local home="${1}"
+	local maven_install_dir="${2}"
 	if maven::has_maven_wrapper "${home}"; then
 		common::cache_copy ".m2/wrapper" "${home}" "${maven_install_dir}"
 		rm -rf "${home}/.m2"

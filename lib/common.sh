@@ -39,8 +39,8 @@ common::download_maven() {
 }
 
 common::is_supported_maven_version() {
-	local maven_version=${1}
-	local maven_url=${2:?}
+	local maven_version="${1}"
+	local maven_url="${2:?}"
 	if [[ "${maven_version}" = "${DEFAULT_MAVEN_VERSION}" ]]; then
 		return 0
 	elif curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${maven_url}" >/dev/null; then
@@ -51,7 +51,7 @@ common::is_supported_maven_version() {
 }
 
 common::detect_maven_version() {
-	local base_dir=${1}
+	local base_dir="${1}"
 	if [[ -f "${base_dir}/system.properties" ]]; then
 		local maven_version
 		maven_version=$(common::get_app_system_value "${base_dir}/system.properties" "maven.version")
@@ -66,8 +66,8 @@ common::detect_maven_version() {
 }
 
 common::get_app_system_value() {
-	local file=${1?"No file specified"}
-	local key=${2?"No key specified"}
+	local file="${1?No file specified}"
+	local key="${2?No key specified}"
 
 	# escape for regex
 	local escaped_key
@@ -91,8 +91,8 @@ common::cache_copy() {
 }
 
 common::install_jdk() {
-	local install_dir=${1}
-	local cache_dir=${2}
+	local install_dir="${1}"
+	local cache_dir="${2}"
 
 	JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}
 	mkdir -p /tmp/jvm-common
