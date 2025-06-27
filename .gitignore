@@ -5,3 +5,4 @@ target
 .DS_Store
 .rspec_status
 test/spec/fixtures/repos/github
+/target
