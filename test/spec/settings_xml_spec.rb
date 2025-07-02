@@ -25,8 +25,9 @@ RSpec.describe 'Maven buildpack' do
         remote:        
         remote: 
         remote:  !     ERROR: Failed to build app with Maven
-        remote:        We're sorry this build is failing! If you can't find the issue in application code,
-        remote:        please submit a ticket so we can help: https://help.heroku.com/
+        remote:  !     
+        remote:  !     We're sorry this build is failing! If you can't find the issue in application code,
+        remote:  !     please submit a ticket so we can help: https://help.heroku.com/
         remote: 
         remote:  !     Push rejected, failed to compile Java app.
       OUTPUT

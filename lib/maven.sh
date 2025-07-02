@@ -45,7 +45,9 @@ maven::mvn_settings_opt() {
 		if [[ -f "${settings_xml}" ]]; then
 			echo -n "-s ${settings_xml}"
 		else
-			error "Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!"
+			output::error <<-EOF
+				ERROR: Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!
+			EOF
 			return 1
 		fi
 	elif [[ -f "${home}/settings.xml" ]]; then
@@ -98,15 +100,19 @@ maven::run_mvn() {
 	local mvn_opts
 	mvn_opts="$(maven::mvn_cmd_opts "${scope}")"
 
-	status "Executing Maven"
-	echo "$ ${maven_exe} ${mvn_opts}" | indent
+	output::step "Executing Maven"
+	echo "$ ${maven_exe} ${mvn_opts}" | output::indent
 
 	# We rely on word splitting for mvn_settings_opt and mvn_opts:
 	# shellcheck disable=SC2086
-	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvn_opts} | indent; then
-		error "Failed to build app with Maven
-We're sorry this build is failing! If you can't find the issue in application code,
-please submit a ticket so we can help: https://help.heroku.com/"
+	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvn_opts} | output::indent; then
+		output::error <<-EOF
+			ERROR: Failed to build app with Maven
+
+			We're sorry this build is failing! If you can't find the issue in application code,
+			please submit a ticket so we can help: https://help.heroku.com/
+		EOF
+		return 1
 	fi
 }
 
