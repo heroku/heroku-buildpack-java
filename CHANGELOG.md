@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 * Remove heroku-20 support ([#245](https://github.com/heroku/heroku-buildpack-java/pull/245))
+* Buildpack output slightly changed. If you match against the buildpack output, verify your matching still works and adjust if necessary. ([#249](https://github.com/heroku/heroku-buildpack-java/pull/249))
 
 ## [v75] - 2025-02-24
 
