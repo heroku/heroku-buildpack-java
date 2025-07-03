@@ -1,0 +1,11 @@
+[package]
+name = "heroku-buildpack-java"
+version = "0.1.0"
+edition = "2024"
+
+[dev-dependencies]
+rusty-hatchet = { path ="../rusty-hatchet" }
+indoc = "2"
+regex = "1"
+url = "2"
+java-properties = "2"
