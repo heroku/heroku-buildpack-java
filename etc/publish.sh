@@ -51,9 +51,9 @@ fi
 
 read -r -p "Deploy as ${new_git_tag} [y/n]? " choice
 case "${choice}" in
-	y | Y) ;;
-	n | N) exit 0 ;;
-	*) exit 1 ;;
+y | Y) ;;
+n | N) exit 0 ;;
+*) exit 1 ;;
 esac
 
 echo -e "\nCreating GitHub release..."
