@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v76] - 2025-07-14
+
 * Remove heroku-20 support ([#245](https://github.com/heroku/heroku-buildpack-java/pull/245))
 * Buildpack output slightly changed. If you match against the buildpack output, verify your matching still works and adjust if necessary. ([#249](https://github.com/heroku/heroku-buildpack-java/pull/249))
 
@@ -107,7 +110,8 @@
 
 * Added a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v75...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v76...main
+[v76]: https://github.com/heroku/heroku-buildpack-java/compare/v75...v76
 [v75]: https://github.com/heroku/heroku-buildpack-java/compare/v74...v75
 [v74]: https://github.com/heroku/heroku-buildpack-java/compare/v73...v74
 [v73]: https://github.com/heroku/heroku-buildpack-java/compare/v72...v73
