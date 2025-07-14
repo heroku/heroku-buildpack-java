@@ -13,13 +13,14 @@ source "${BUILDPACK_DIR}/lib/util.sh"
 source "${BUILDPACK_DIR}/lib/common.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"
 source "${BUILDPACK_DIR}/lib/metrics.sh"
+source "${BUILDPACK_DIR}/lib/openjdk.sh"
 
 metrics::init "${CACHE_DIR}" "java"
 metrics::setup
 
 util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
-common::install_jdk "${BUILD_DIR}" "${CACHE_DIR}"
+openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
 
 maven::run_mvn "compile" "${BUILD_DIR}" "${CACHE_DIR}"
 maven::remove_mvn "${BUILD_DIR}" "${CACHE_DIR}"
