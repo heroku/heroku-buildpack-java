@@ -20,7 +20,7 @@ openjdk::install_openjdk_via_jvm_common_buildpack() {
 	local jvm_common_buildpack_dir
 	jvm_common_buildpack_dir=$(mktemp -d)
 
-	curl --silent --fail --retry 3 --retry-connrefused --connect-timeout 5 --location "${jvm_common_buildpack_tarball_url}" -o "${jvm_common_buildpack_tarball_path}"
+	curl --silent --show-error --fail --retry 3 --retry-connrefused --connect-timeout 5 --location "${jvm_common_buildpack_tarball_url}" -o "${jvm_common_buildpack_tarball_path}"
 	tar -xzm --directory "${jvm_common_buildpack_dir}" --strip-components=1 -f "${jvm_common_buildpack_tarball_path}"
 
 	# This script translates non-JDBC compliant DATABASE_URL (and similar) environment variables into their
