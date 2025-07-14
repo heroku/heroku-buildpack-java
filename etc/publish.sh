@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# NOTE: This script requires bash >= 4.4 and GNU coreutils!
+# If you run this on macOS, you might need to install the appropiate packages.
+
 set -euo pipefail
 shopt -s inherit_errexit
 
@@ -58,6 +61,7 @@ esac
 
 echo -e "\nCreating GitHub release..."
 gh release create "${new_git_tag}" --title "${new_git_tag}" --notes "${changelog_entry}"
+git fetch --tags
 
 echo -e "\nUpdating previous-version tag..."
 git tag -f previous-version latest-version
