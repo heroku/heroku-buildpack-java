@@ -242,6 +242,8 @@ maven::run_mvn() {
 	local maven_opts="${4}"
 	local maven_goals="${5}"
 
+	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
+
 	if maven::should_use_wrapper "${build_dir}"; then
 		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/mvnw"
@@ -255,8 +257,6 @@ maven::run_mvn() {
 
 	local settings_xml_opts
 	settings_xml_opts="$(maven::settings_xml_opts "${build_dir}")"
-
-	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
 	output::step "Executing Maven"
 
