@@ -22,7 +22,7 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
 
-maven::run_mvn \
+maven::setup_maven_and_build_app \
 	"${BUILD_DIR}" \
 	"${CACHE_DIR}" \
 	"${MAVEN_JAVA_OPTS:-""}" \

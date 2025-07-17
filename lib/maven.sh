@@ -10,19 +10,80 @@ source "${BUILDPACK_DIR}/lib/util.sh"
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
-# Determines if Maven Wrapper should be used for the given build directory.
-# Returns 0 (true) if mvnw exists and no maven.version is specified in system.properties.
+# Sets up Maven environment and builds the application.
+#
+# This function handles the complete Maven build process including:
+# - Detecting and configuring Maven Wrapper (mvnw) or downloading specified Maven version
+# - Setting up Maven repository caching and wrapper caching for faster subsequent builds
+# - Configuring MAVEN_OPTS with memory limits and repository locations
+# - Resolving settings.xml from MAVEN_SETTINGS_PATH, MAVEN_SETTINGS_URL, or local file
+# - Executing the build with the specified Maven goals and options
 #
 # Usage:
 # ```
-# if maven::should_use_wrapper "${BUILD_DIR}"; then
-#     echo "Using Maven Wrapper"
-# fi
+# maven::setup_maven_and_build_app "${BUILD_DIR}" "${CACHE_DIR}" "${MAVEN_JAVA_OPTS}" "${MAVEN_OPTS}" "${MAVEN_GOALS}"
 # ```
-maven::should_use_wrapper() {
+maven::setup_maven_and_build_app() {
 	local build_dir="${1}"
+	local cache_dir="${2}"
+	local maven_java_opts="${3}"
+	local maven_opts="${4}"
+	local maven_goals="${5}"
 
-	[[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
+	# See: https://maven.apache.org/configure.html#maven_opts-environment-variable
+	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
+
+	if maven::should_use_wrapper "${build_dir}"; then
+		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
+		chmod +x "${build_dir}/mvnw"
+		local maven_exe="./mvnw"
+	else
+		local maven_version
+		maven_version="$(java_properties::get "${build_dir}/system.properties" "maven.version")"
+		maven::download_and_install "${maven_version:-${DEFAULT_MAVEN_VERSION}}" "${cache_dir}/.maven"
+		local maven_exe="mvn"
+	fi
+
+	local settings_xml_opts
+	settings_xml_opts="$(maven::settings_xml_opts "${build_dir}")"
+
+	output::step "Executing Maven"
+
+	cd "${build_dir}"
+	echo "$ ${maven_exe} ${maven_opts} ${maven_goals}" | output::indent
+
+	# We rely on word splitting for settings_xml_opts, maven_opts, and maven_goals:
+	# Intentional word splitting needed for Maven command arguments
+	# shellcheck disable=SC2086
+	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${settings_xml_opts} ${maven_opts} ${maven_goals} | output::indent; then
+		output::error <<-EOF
+			Error: Maven build failed.
+
+			An error occurred during the Maven build process. This usually
+			indicates an issue with your application's dependencies, configuration,
+			or source code.
+
+			First, check the build output above for specific error messages
+			from Maven that might indicate what went wrong. Common issues include:
+
+			- Missing or incompatible dependencies in your POM
+			- Compilation errors in your application source code
+			- Test failures (if tests are enabled during the build)
+			- Invalid Maven configuration or settings
+			- Using an incompatible OpenJDK version for your project
+
+			If you're unable to determine the cause from the Maven output,
+			try building your application locally with the same Maven command
+			to reproduce and debug the issue.
+		EOF
+
+		return 1
+	fi
+
+	if maven::should_use_wrapper "${build_dir}"; then
+		util::cache_copy ".m2/wrapper" "${build_dir}" "${cache_dir}"
+		rm -rf "${build_dir}/.m2/wrapper"
+	fi
 }
 
 # Downloads and installs the specified Maven version to the given directory.
@@ -142,25 +203,43 @@ maven::download_and_install() {
 	chmod +x "${maven_home}/bin/mvn"
 }
 
-# Determines the URL or file path for Maven settings.xml configuration.
-# Checks for MAVEN_SETTINGS_PATH, MAVEN_SETTINGS_URL, or local settings.xml in order.
+# Determines if Maven Wrapper should be used for the given build directory.
+# Returns 0 (true) if mvnw exists and no maven.version is specified in system.properties.
 #
 # Usage:
 # ```
-# url=$(maven::get_settings_url "${BUILD_DIR}")
+# if maven::should_use_wrapper "${BUILD_DIR}"; then
+#     echo "Using Maven Wrapper"
+# fi
 # ```
-maven::get_settings_url() {
+maven::should_use_wrapper() {
 	local build_dir="${1}"
 
-	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
-		local absolute_path
-		absolute_path=$(cd "${build_dir}" && realpath -m "${MAVEN_SETTINGS_PATH}")
+	[[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
+}
 
-		echo "file://${absolute_path}"
+# Generates the Maven settings option (-s) for the command line.
+# Checks for settings in order: MAVEN_SETTINGS_PATH, MAVEN_SETTINGS_URL, or local settings.xml.
+# Downloads remote settings if needed and returns the -s option with file path.
+#
+# Usage:
+# ```
+# settings_xml_opts=$(maven::settings_xml_opts "${BUILD_DIR}")
+# ```
+maven::settings_xml_opts() {
+	local build_dir="${1}"
+
+	local settings_file=""
+	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
+		settings_file=$(cd "${build_dir}" && realpath -m "${MAVEN_SETTINGS_PATH}")
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
-		echo "${MAVEN_SETTINGS_URL}"
+		settings_file=$(maven::download_settings_xml "${MAVEN_SETTINGS_URL}")
 	elif [[ -f "${build_dir}/settings.xml" ]]; then
-		echo "file://${build_dir}/settings.xml"
+		settings_file="${build_dir}/settings.xml"
+	fi
+
+	if [[ -n "${settings_file}" ]]; then
+		echo -n "-s ${settings_file}"
 	fi
 }
 
@@ -200,99 +279,5 @@ maven::download_settings_xml() {
 		EOF
 
 		exit 1
-	fi
-}
-
-# Generates the Maven settings option (-s) for the command line.
-# Returns the -s option with settings file path if a settings file is available.
-#
-# Usage:
-# ```
-# settings_opt=$(maven::settings_xml_opts "${BUILD_DIR}")
-# ```
-maven::settings_xml_opts() {
-	local build_dir="${1}"
-
-	local url
-	url=$(maven::get_settings_url "${build_dir}")
-
-	if [[ -n "${url}" ]]; then
-		local settings_file
-		if [[ "${url}" == file://* ]]; then
-			settings_file="${url#file://}"
-		else
-			settings_file=$(maven::download_settings_xml "${url}")
-		fi
-		echo -n "-s ${settings_file}"
-	fi
-}
-
-# Executes Maven with the specified options and goals.
-# Automatically detects and uses Maven Wrapper if available, otherwise downloads and uses Maven.
-# Handles settings.xml configuration and sets up proper MAVEN_OPTS environment.
-#
-# Usage:
-# ```
-# maven::run_mvn "${BUILD_DIR}" "${CACHE_DIR}" "${MAVEN_JAVA_OPTS}" "${MAVEN_OPTS}" "${MAVEN_GOALS}"
-# ```
-maven::run_mvn() {
-	local build_dir="${1}"
-	local cache_dir="${2}"
-	local maven_java_opts="${3}"
-	local maven_opts="${4}"
-	local maven_goals="${5}"
-
-	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
-
-	if maven::should_use_wrapper "${build_dir}"; then
-		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
-		chmod +x "${build_dir}/mvnw"
-		local maven_exe="./mvnw"
-	else
-		local maven_version
-		maven_version="$(java_properties::get "${build_dir}/system.properties" "maven.version")"
-		maven::download_and_install "${maven_version:-${DEFAULT_MAVEN_VERSION}}" "${cache_dir}/.maven"
-		local maven_exe="mvn"
-	fi
-
-	local settings_xml_opts
-	settings_xml_opts="$(maven::settings_xml_opts "${build_dir}")"
-
-	output::step "Executing Maven"
-
-	cd "${build_dir}"
-	echo "$ ${maven_exe} ${maven_opts} ${maven_goals}" | output::indent
-
-	# We rely on word splitting for settings_xml_opts, maven_opts, and maven_goals:
-	# Intentional word splitting needed for Maven command arguments
-	# shellcheck disable=SC2086
-	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${settings_xml_opts} ${maven_opts} ${maven_goals} | output::indent; then
-		output::error <<-EOF
-			Error: Maven build failed.
-
-			An error occurred during the Maven build process. This usually
-			indicates an issue with your application's dependencies, configuration,
-			or source code.
-
-			First, check the build output above for specific error messages
-			from Maven that might indicate what went wrong. Common issues include:
-
-			- Missing or incompatible dependencies in your POM
-			- Compilation errors in your application source code
-			- Test failures (if tests are enabled during the build)
-			- Invalid Maven configuration or settings
-			- Using an incompatible OpenJDK version for your project
-
-			If you're unable to determine the cause from the Maven output,
-			try building your application locally with the same Maven command
-			to reproduce and debug the issue.
-		EOF
-
-		return 1
-	fi
-
-	if maven::should_use_wrapper "${build_dir}"; then
-		util::cache_copy ".m2/wrapper" "${build_dir}" "${cache_dir}"
-		rm -rf "${build_dir}/.m2/wrapper"
 	fi
 }
