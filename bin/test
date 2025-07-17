@@ -11,6 +11,7 @@ BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 source "${BUILDPACK_DIR}/lib/output.sh"
 source "${BUILDPACK_DIR}/lib/util.sh"
 source "${BUILDPACK_DIR}/lib/common.sh"
+source "${BUILDPACK_DIR}/lib/java_properties.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"
 
 util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
@@ -19,7 +20,7 @@ cd "${BUILD_DIR}"
 
 mvn_settings_opt="$(maven::mvn_settings_opt "${BUILD_DIR}" "${BUILD_DIR}")"
 
-if [[ -f "${BUILD_DIR}/mvnw" ]] && [[ -z "$(common::get_app_system_value "${BUILD_DIR}/system.properties" "maven.version")" ]]; then
+if [[ -f "${BUILD_DIR}/mvnw" ]] && [[ -z "$(java_properties::get "${BUILD_DIR}/system.properties" "maven.version")" ]]; then
 	# shellcheck disable=SC2086
 	./mvnw -B ${mvn_settings_opt} "${MAVEN_HEROKU_CI_GOAL:-test}"
 else

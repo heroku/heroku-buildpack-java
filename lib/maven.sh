@@ -4,6 +4,9 @@
 # however, it helps Shellcheck realise the options under which these functions will run.
 set -euo pipefail
 
+BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+source "${BUILDPACK_DIR}/lib/java_properties.sh"
+
 maven::get_settings_url() {
 	local build_dir="${1}"
 	
@@ -76,7 +79,7 @@ maven::run_mvn() {
 	local mvn_opts="${4}"
 
 	mkdir -p "${cache_dir}"
-	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(common::get_app_system_value "${build_dir}/system.properties" "maven.version")" ]]; then
+	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]; then
 		common::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
@@ -86,7 +89,7 @@ maven::run_mvn() {
 
 		local maven_home="${cache_dir}/.maven"
 		local defined_maven_version
-		defined_maven_version=$(common::get_app_system_value "${build_dir}/system.properties" "maven.version")
+		defined_maven_version=$(java_properties::get "${build_dir}/system.properties" "maven.version")
 		local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
 
 		output::step "Installing Maven ${maven_version}..."
