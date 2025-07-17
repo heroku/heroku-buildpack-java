@@ -230,54 +230,42 @@ maven::settings_xml_opts() {
 	local build_dir="${1}"
 
 	local settings_file=""
+
 	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
 		settings_file=$(cd "${build_dir}" && realpath -m "${MAVEN_SETTINGS_PATH}")
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
-		settings_file=$(maven::download_settings_xml "${MAVEN_SETTINGS_URL}")
+		local target
+		target=$(mktemp --suffix=.xml)
+
+		if curl --silent --show-error --fail --retry 3 --retry-connrefused --connect-timeout 5 --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${target}"; then
+			settings_file="${target}"
+		else
+			output::error <<-EOF
+				Error: Unable to download Maven settings.xml.
+
+				An error occurred while downloading the Maven settings file from:
+				${MAVEN_SETTINGS_URL}
+
+				In some cases, this happens due to a temporary issue with
+				the network connection or server, or because the URL is
+				inaccessible or requires authentication.
+
+				Check that the URL in your MAVEN_SETTINGS_URL environment
+				variable is correct and publicly accessible. If the settings file
+				is not needed, you can remove the MAVEN_SETTINGS_URL environment variable 
+				to use default Maven settings.
+
+				Learn more about Maven settings configuration:
+				https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
+			EOF
+
+			exit 1
+		fi
 	elif [[ -f "${build_dir}/settings.xml" ]]; then
 		settings_file="${build_dir}/settings.xml"
 	fi
 
 	if [[ -n "${settings_file}" ]]; then
 		echo -n "-s ${settings_file}"
-	fi
-}
-
-# Downloads Maven settings.xml from a URL and returns the path to the temporary file.
-# Exits with error if download fails.
-#
-# Usage:
-# ```
-# settings_file=$(maven::download_settings_xml "${url}")
-# ```
-maven::download_settings_xml() {
-	local url="${1}"
-
-	local target
-	target=$(mktemp --suffix=.xml)
-
-	if curl --silent --show-error --fail --retry 3 --retry-connrefused --connect-timeout 5 --max-time 10 --location "${url}" --output "${target}"; then
-		echo "${target}"
-	else
-		output::error <<-EOF
-			Error: Unable to download Maven settings.xml.
-
-			An error occurred while downloading the Maven settings file from:
-			${url}
-
-			In some cases, this happens due to a temporary issue with
-			the network connection or server, or because the URL is
-			inaccessible or requires authentication.
-
-			Check that the URL in your MAVEN_SETTINGS_URL environment
-			variable is correct and publicly accessible. If the settings file
-			is not needed, you can remove the MAVEN_SETTINGS_URL environment variable 
-			to use default Maven settings.
-
-			Learn more about Maven settings configuration:
-			https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
-		EOF
-
-		exit 1
 	fi
 }
