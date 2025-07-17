@@ -21,11 +21,14 @@ openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DI
 cd "${BUILD_DIR}"
 
 common::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
+
 maven::run_mvn "${BUILD_DIR}" "${BUILD_DIR}" "" "${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
+
 mkdir -p "${BUILD_DIR}/.profile.d"
 cat <<-EOF >"${BUILD_DIR}/.profile.d/maven.sh"
 	export M2_HOME="\$HOME/.maven"
 	export MAVEN_OPTS="-Xmx1024m -Duser.home=\$HOME -Dmaven.repo.local=\$HOME/.m2/repository"
 	export PATH="\$M2_HOME/bin:\$PATH"
 EOF
+
 common::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"

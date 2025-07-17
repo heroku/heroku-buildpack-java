@@ -23,7 +23,7 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
 
-maven::run_mvn "${BUILD_DIR}" "${CACHE_DIR}" " ${MAVEN_JAVA_OPTS:-""}" "${MAVEN_CUSTOM_OPTS:-"-DskipTests"} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
+maven::run_mvn "${BUILD_DIR}" "${CACHE_DIR}" "${MAVEN_JAVA_OPTS:-""}" "${MAVEN_CUSTOM_OPTS:-"-DskipTests"} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
 if [[ -f "${BUILD_DIR}/mvnw" ]] && [[ -z "$(java_properties::get "${BUILD_DIR}/system.properties" "maven.version")" ]]; then
 	common::cache_copy ".m2/wrapper" "${BUILD_DIR}" "${CACHE_DIR}"
 	rm -rf "${BUILD_DIR}/.m2"

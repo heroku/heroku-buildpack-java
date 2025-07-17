@@ -120,7 +120,7 @@ maven::run_mvn() {
 	local mvn_settings_opt
 	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
 
-	export MAVEN_OPTS="-Xmx1024m${java_opts_extra} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
+	export MAVEN_OPTS="-Xmx1024m${java_opts_extra:+ ${java_opts_extra}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
 	# shellcheck disable=SC2164
 	cd "${build_dir}"
