@@ -10,7 +10,7 @@ BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 source "${BUILDPACK_DIR}/lib/output.sh"
 source "${BUILDPACK_DIR}/lib/util.sh"
-source "${BUILDPACK_DIR}/lib/common.sh"
+source "${BUILDPACK_DIR}/lib/java_properties.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"
 source "${BUILDPACK_DIR}/lib/metrics.sh"
 source "${BUILDPACK_DIR}/lib/openjdk.sh"
@@ -22,5 +22,9 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
 
-maven::run_mvn "compile" "${BUILD_DIR}" "${CACHE_DIR}"
-maven::remove_mvn "${BUILD_DIR}" "${CACHE_DIR}"
+maven::setup_maven_and_build_app \
+	"${BUILD_DIR}" \
+	"${CACHE_DIR}" \
+	"${MAVEN_JAVA_OPTS:-""}" \
+	"${MAVEN_CUSTOM_OPTS:-"-DskipTests"}" \
+	"${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
