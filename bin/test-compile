@@ -21,7 +21,7 @@ cd "${BUILD_DIR}"
 
 util::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
 
-maven::run_mvn "${BUILD_DIR}" "${BUILD_DIR}" "" "${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
+maven::run_mvn "${BUILD_DIR}" "${CACHE_DIR}" "" "" "${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
 
 mkdir -p "${BUILD_DIR}/.profile.d"
 cat <<-EOF >"${BUILD_DIR}/.profile.d/maven.sh"

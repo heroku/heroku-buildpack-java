@@ -193,8 +193,9 @@ maven::mvn_settings_opt() {
 maven::run_mvn() {
 	local build_dir="${1}"
 	local cache_dir="${2}"
-	local java_opts_extra="${3}"
-	local mvn_opts="${4}"
+	local maven_java_opts="${3}"
+	local maven_opts="${4}"
+	local maven_goals="${5}"
 
 	local use_maven_wrapper=0
 	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]; then
@@ -219,16 +220,16 @@ maven::run_mvn() {
 	local mvn_settings_opt
 	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
 
-	export MAVEN_OPTS="-Xmx1024m${java_opts_extra:+ ${java_opts_extra}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
+	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
 	output::step "Executing Maven"
 
 	cd "${build_dir}"
-	echo "$ ${maven_exe} ${mvn_opts}" | output::indent
+	echo "$ ${maven_exe} ${maven_opts} ${maven_goals}" | output::indent
 
-	# We rely on word splitting for mvn_settings_opt and mvn_opts:
+	# We rely on word splitting for mvn_settings_opt, maven_opts, and maven_goals:
 	# shellcheck disable=SC2086
-	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvn_opts} | output::indent; then
+	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${maven_opts} ${maven_goals} | output::indent; then
 		output::error <<-EOF
 			Error: Maven build failed.
 
