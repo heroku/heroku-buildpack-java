@@ -6,13 +6,24 @@ set -euo pipefail
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
+# Copies a subdirectory from source to destination, replacing any existing content.
+#
+# Usage:
+# ```
+# common::cache_copy ".m2/wrapper" "${CACHE_DIR}" "${BUILD_DIR}"
+# ```
 common::cache_copy() {
-	local rel_dir="${1}"
-	local from_dir="${2}"
-	local to_dir="${3}"
-	rm -rf "${to_dir:?}/${rel_dir:?}"
-	if [[ -d "${from_dir}/${rel_dir}" ]]; then
-		mkdir -p "${to_dir}/${rel_dir}"
-		cp -pr "${from_dir}/${rel_dir}"/. "${to_dir}/${rel_dir}"
+	local subdirectory="${1}"
+	local source_dir="${2}"
+	local destination_dir="${3}"
+	
+	local destination_path="${destination_dir}/${subdirectory}"
+	local source_path="${source_dir}/${subdirectory}"
+	
+	rm -rf "${destination_path:?}"
+	
+	if [[ -d "${source_path}" ]]; then
+		mkdir -p "${destination_path}"
+		cp -pr "${source_path}"/. "${destination_path}"
 	fi
 }
