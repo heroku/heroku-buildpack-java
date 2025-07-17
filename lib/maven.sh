@@ -45,7 +45,9 @@ maven::setup_maven_and_build_app() {
 	fi
 
 	local settings_xml_opts
-	settings_xml_opts="$(maven::settings_xml_opts "${build_dir}")"
+	if ! settings_xml_opts="$(maven::settings_xml_opts "${build_dir}")"; then
+		exit 1
+	fi
 
 	output::step "Executing Maven"
 
@@ -233,7 +235,9 @@ maven::settings_xml_opts() {
 	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
 		settings_file=$(cd "${build_dir}" && realpath -m "${MAVEN_SETTINGS_PATH}")
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
-		settings_file=$(maven::download_settings_xml "${MAVEN_SETTINGS_URL}")
+		if ! settings_file=$(maven::download_settings_xml "${MAVEN_SETTINGS_URL}"); then
+			return 1
+		fi
 	elif [[ -f "${build_dir}/settings.xml" ]]; then
 		settings_file="${build_dir}/settings.xml"
 	fi
@@ -278,6 +282,6 @@ maven::download_settings_xml() {
 			https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
 		EOF
 
-		exit 1
+		return 1
 	fi
 }
