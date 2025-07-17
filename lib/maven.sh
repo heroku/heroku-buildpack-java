@@ -218,6 +218,8 @@ maven::run_mvn() {
 	export MAVEN_OPTS="-Xmx1024m${java_opts_extra:+ ${java_opts_extra}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
 	output::step "Executing Maven"
+
+	cd "${build_dir}"
 	echo "$ ${maven_exe} ${mvn_opts}" | output::indent
 
 	# We rely on word splitting for mvn_settings_opt and mvn_opts:
@@ -234,7 +236,7 @@ maven::run_mvn() {
 			from Maven that might indicate what went wrong. Common issues include:
 
 			- Missing or incompatible dependencies in your POM
-			- Compilation errors in your Java source code
+			- Compilation errors in your application source code
 			- Test failures (if tests are enabled during the build)
 			- Invalid Maven configuration or settings
 			- Using an incompatible OpenJDK version for your project
