@@ -5,18 +5,11 @@
 set -euo pipefail
 
 maven::mvn_java_opts() {
-	local scope="${1}"
-	local build_dir="${2}"
-	local cache_dir="${3}"
+	local build_dir="${1}"
+	local cache_dir="${2}"
+	local java_opts_extra="${3}"
 
-	echo -n "-Xmx1024m"
-	if [[ "${scope}" = "compile" ]]; then
-		echo -n " ${MAVEN_JAVA_OPTS:-""}"
-	elif [[ "${scope}" = "test-compile" ]]; then
-		echo -n ""
-	fi
-
-	echo -n " -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
+	echo -n "-Xmx1024m${java_opts_extra} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 }
 
 maven::mvn_settings_opt() {
@@ -50,9 +43,10 @@ maven::has_maven_wrapper() {
 }
 
 maven::run_mvn() {
-	local scope="${1}"
-	local build_dir="${2}"
-	local cache_dir="${3}"
+	local build_dir="${1}"
+	local cache_dir="${2}"
+	local java_opts_extra="${3}"
+	local mvn_opts="${4}"
 
 	mkdir -p "${cache_dir}"
 	if maven::has_maven_wrapper "${build_dir}" && [[ -z "$(common::detect_maven_version "${build_dir}")" ]]; then
@@ -96,19 +90,11 @@ maven::run_mvn() {
 	local mvn_settings_opt
 	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
 
-	MAVEN_OPTS="$(maven::mvn_java_opts "${scope}" "${build_dir}" "${cache_dir}")"
+	MAVEN_OPTS="$(maven::mvn_java_opts "${build_dir}" "${cache_dir}" "${java_opts_extra}")"
 	export MAVEN_OPTS
 
 	# shellcheck disable=SC2164
 	cd "${build_dir}"
-	local mvn_opts
-	if [[ "${scope}" = "compile" ]]; then
-		mvn_opts="${MAVEN_CUSTOM_OPTS:-"-DskipTests"} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
-	elif [[ "${scope}" = "test-compile" ]]; then
-		mvn_opts="${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
-	else
-		mvn_opts=""
-	fi
 
 	output::step "Executing Maven"
 	echo "$ ${maven_exe} ${mvn_opts}" | output::indent
