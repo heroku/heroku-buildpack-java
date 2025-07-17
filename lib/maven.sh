@@ -46,12 +46,7 @@ maven::mvn_settings_opt() {
 
 maven::has_maven_wrapper() {
 	local home="${1}"
-	if [[ -f "${home}/mvnw" ]] &&
-		[[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ]]; then
-		return 0
-	else
-		return 1
-	fi
+	[[ -f "${home}/mvnw" ]] && [[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ]]
 }
 
 maven::run_mvn() {
