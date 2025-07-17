@@ -47,8 +47,7 @@ maven::mvn_settings_opt() {
 maven::has_maven_wrapper() {
 	local home="${1}"
 	if [[ -f "${home}/mvnw" ]] &&
-		[[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ]] &&
-		[[ -z "$(common::detect_maven_version "${home}")" ]]; then
+		[[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ]]; then
 		return 0
 	else
 		return 1
@@ -61,7 +60,7 @@ maven::run_mvn() {
 	local maven_install_dir="${3}"
 
 	mkdir -p "${maven_install_dir}"
-	if maven::has_maven_wrapper "${home}"; then
+	if maven::has_maven_wrapper "${home}" && [[ -z "$(common::detect_maven_version "${home}")" ]]; then
 		common::cache_copy ".m2/wrapper" "${maven_install_dir}" "${home}"
 		chmod +x "${home}/mvnw"
 		local maven_exe="./mvnw"
