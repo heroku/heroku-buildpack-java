@@ -17,9 +17,7 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 cd "${BUILD_DIR}"
 
-if ! settings_xml_opts="$(maven::settings_xml_opts "${BUILD_DIR}")"; then
-	exit 1
-fi
+settings_xml_opts="$(maven::settings_xml_opts "${BUILD_DIR}")"
 
 if maven::should_use_wrapper "${BUILD_DIR}"; then
 	# Intentional word splitting for settings_xml_opts
