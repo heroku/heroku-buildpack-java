@@ -30,6 +30,12 @@ util::export_env_dir() {
 	done
 }
 
+# Returns the current time in milliseconds since epoch.
+#
+# Usage:
+# ```
+# timestamp=$(util::nowms)
+# ```
 util::nowms() {
 	date +%s%3N
 }
