@@ -50,12 +50,12 @@ util::cache_copy() {
 	local subdirectory="${1}"
 	local source_dir="${2}"
 	local destination_dir="${3}"
-	
+
 	local destination_path="${destination_dir}/${subdirectory}"
 	local source_path="${source_dir}/${subdirectory}"
-	
+
 	rm -rf "${destination_path:?}"
-	
+
 	if [[ -d "${source_path}" ]]; then
 		mkdir -p "${destination_path}"
 		cp -pr "${source_path}"/. "${destination_path}"

@@ -10,13 +10,126 @@ source "${BUILDPACK_DIR}/lib/util.sh"
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
+# Downloads and installs the specified Maven version to the given directory.
+#
+# Usage:
+# ```
+# maven::download_and_install "3.9.4" "/path/to/maven/home"
+# ```
+maven::download_and_install() {
+	local maven_version="${1}"
+	local maven_home="${2}"
+
+	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
+
+	mkdir -p "${maven_home}"
+
+	local tarball_path
+	tarball_path=$(mktemp)
+
+	local http_status_code
+	http_status_code=$(curl \
+		--retry 3 \
+		--retry-connrefused \
+		--connect-timeout 5 \
+		--silent \
+		--show-error \
+		--max-time 60 \
+		--location \
+		--write-out "%{http_code}" \
+		--output "${tarball_path}" \
+		"${maven_url}")
+
+	local curl_exit_code=$?
+
+	if [[ "${http_status_code}" == "404" ]]; then
+		output::error <<-EOF
+			Error: The requested Maven version isn't available.
+
+			Your app's system.properties file specifies a Maven version
+			of ${maven_version}, however, we couldn't find that version in the
+			Maven repository.
+
+			Check that this Maven version has been released upstream:
+			https://maven.apache.org/docs/history.html
+
+			If it has, make sure that you are using the latest version
+			of this buildpack, and haven't pinned to an older release:
+			https://devcenter.heroku.com/articles/managing-buildpacks#view-your-buildpacks
+			https://devcenter.heroku.com/articles/managing-buildpacks#classic-buildpacks-references
+
+			We also strongly recommend using the Maven Wrapper instead of
+			pinning to an exact Maven version such as ${maven_version}.
+			Remove the maven.version property from your system.properties file
+			and set up Maven Wrapper in your project, which will automatically
+			download and use the correct Maven version.
+
+			Learn more about Maven Wrapper:
+			https://maven.apache.org/wrapper/
+
+			The default supported version is ${DEFAULT_MAVEN_VERSION}.
+		EOF
+
+		exit 1
+	elif [[ "${curl_exit_code}" -ne 0 || "${http_status_code}" != "200" ]]; then
+		output::error <<-EOF
+			Error: Unable to download Maven.
+
+			An error occurred while downloading the Maven archive from:
+			${maven_url}
+
+			In some cases, this happens due to a temporary issue with
+			the network connection or server.
+
+			First, make sure that you are using the latest version
+			of this buildpack, and haven't pinned to an older release:
+			https://devcenter.heroku.com/articles/managing-buildpacks#view-your-buildpacks
+			https://devcenter.heroku.com/articles/managing-buildpacks#classic-buildpacks-references
+
+			Then try building again to see if the error resolves itself.
+
+			HTTP status code: ${http_status_code}, curl exit code: ${curl_exit_code}
+		EOF
+
+		exit 1
+	fi
+
+	local error_log
+	error_log=$(mktemp)
+
+	if ! tar -xzm --strip-components 1 -C "${maven_home}" -f "${tarball_path}" 2>&1 | tee "${error_log}"; then
+		output::error <<-EOF
+			Error: Unable to extract Maven.
+
+			An error occurred while extracting the Maven archive:
+			${maven_url}
+
+			In some cases, this happens due to a corrupted download
+			or a temporary issue with the archive format.
+
+			First, make sure that you are using the latest version
+			of this buildpack, and haven't pinned to an older release:
+			https://devcenter.heroku.com/articles/managing-buildpacks#view-your-buildpacks
+			https://devcenter.heroku.com/articles/managing-buildpacks#classic-buildpacks-references
+
+			Then try building again to see if the error resolves itself.
+
+			Error details: $(head --lines=1 "${error_log}" || true)
+		EOF
+
+		exit 1
+	fi
+
+	chmod +x "${maven_home}/bin/mvn"
+}
+
 maven::get_settings_url() {
 	local build_dir="${1}"
-	
+
 	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
 		local absolute_path
 		absolute_path=$(cd "${build_dir}" && realpath -m "${MAVEN_SETTINGS_PATH}")
-		
+
 		echo "file://${absolute_path}"
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
 		echo "${MAVEN_SETTINGS_URL}"
@@ -27,10 +140,10 @@ maven::get_settings_url() {
 
 maven::download_settings_xml() {
 	local url="${1}"
-	
+
 	local target
 	target=$(mktemp --suffix=.xml)
-	
+
 	if curl --silent --show-error --fail --retry 3 --retry-connrefused --connect-timeout 5 --max-time 10 --location "${url}" --output "${target}"; then
 		echo "${target}"
 	else
@@ -55,7 +168,7 @@ maven::download_settings_xml() {
 
 maven::resolve_settings_file() {
 	local url="${1}"
-	
+
 	if [[ "${url}" == file://* ]]; then
 		echo "${url#file://}"
 	else
@@ -66,7 +179,7 @@ maven::resolve_settings_file() {
 maven::mvn_settings_opt() {
 	local build_dir="${1}"
 	local cache_dir="${2}"
-	
+
 	local url
 	url=$(maven::get_settings_url "${build_dir}")
 
@@ -96,23 +209,7 @@ maven::run_mvn() {
 		local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
 
 		output::step "Installing Maven ${maven_version}..."
-		local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
-		
-		# Inlined common::is_supported_maven_version check
-		if [[ "${maven_version}" = "${DEFAULT_MAVEN_VERSION}" ]] || curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${maven_url}" >/dev/null; then
-			# Inlined common::download_maven
-			rm -rf "${maven_home}"
-			mkdir -p "${maven_home}"
-			curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${maven_url}" | tar -xzm --strip-components 1 -C "${maven_home}"
-			chmod +x "${maven_home}/bin/mvn"
-		else
-			output::error <<-EOF
-				ERROR: You have defined an unsupported Maven version in the system.properties file.
-
-				The default supported version is ${DEFAULT_MAVEN_VERSION}
-			EOF
-			return 1
-		fi
+		maven::download_and_install "${maven_version}" "${maven_home}"
 
 		PATH="${cache_dir}/.maven/bin:${PATH}"
 		local maven_exe="mvn"

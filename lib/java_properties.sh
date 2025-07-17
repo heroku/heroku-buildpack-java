@@ -18,4 +18,4 @@ java_properties::get() {
 	else
 		echo ""
 	fi
-} 
+}
