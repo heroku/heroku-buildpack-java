@@ -6,8 +6,8 @@ set -euo pipefail
 
 maven::mvn_java_opts() {
 	local scope="${1}"
-	local home="${2}"
-	local cache="${3}"
+	local build_dir="${2}"
+	local cache_dir="${3}"
 
 	echo -n "-Xmx1024m"
 	if [[ "${scope}" = "compile" ]]; then
@@ -16,17 +16,17 @@ maven::mvn_java_opts() {
 		echo -n ""
 	fi
 
-	echo -n " -Duser.home=${home} -Dmaven.repo.local=${cache}/.m2/repository"
+	echo -n " -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 }
 
 maven::mvn_settings_opt() {
-	local home="${1}"
-	local maven_install_dir="${2}"
+	local build_dir="${1}"
+	local cache_dir="${2}"
 
 	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
 		echo -n "-s ${MAVEN_SETTINGS_PATH}"
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
-		local settings_xml="${maven_install_dir}/.m2/settings.xml"
+		local settings_xml="${cache_dir}/.m2/settings.xml"
 		mkdir -p "$(dirname "${settings_xml}")"
 		curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${settings_xml}"
 		if [[ -f "${settings_xml}" ]]; then
@@ -37,35 +37,35 @@ maven::mvn_settings_opt() {
 			EOF
 			return 1
 		fi
-	elif [[ -f "${home}/settings.xml" ]]; then
-		echo -n "-s ${home}/settings.xml"
+	elif [[ -f "${build_dir}/settings.xml" ]]; then
+		echo -n "-s ${build_dir}/settings.xml"
 	else
 		echo -n ""
 	fi
 }
 
 maven::has_maven_wrapper() {
-	local home="${1}"
-	[[ -f "${home}/mvnw" ]] && [[ -f "${home}/.mvn/wrapper/maven-wrapper.properties" ]]
+	local build_dir="${1}"
+	[[ -f "${build_dir}/mvnw" ]] && [[ -f "${build_dir}/.mvn/wrapper/maven-wrapper.properties" ]]
 }
 
 maven::run_mvn() {
 	local scope="${1}"
-	local home="${2}"
-	local maven_install_dir="${3}"
+	local build_dir="${2}"
+	local cache_dir="${3}"
 
-	mkdir -p "${maven_install_dir}"
-	if maven::has_maven_wrapper "${home}" && [[ -z "$(common::detect_maven_version "${home}")" ]]; then
-		common::cache_copy ".m2/wrapper" "${maven_install_dir}" "${home}"
-		chmod +x "${home}/mvnw"
+	mkdir -p "${cache_dir}"
+	if maven::has_maven_wrapper "${build_dir}" && [[ -z "$(common::detect_maven_version "${build_dir}")" ]]; then
+		common::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
+		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
 	else
 		# shellcheck disable=SC2164
-		cd "${maven_install_dir}"
+		cd "${cache_dir}"
 
-		local maven_home="${maven_install_dir}/.maven"
+		local maven_home="${cache_dir}/.maven"
 		local defined_maven_version
-		defined_maven_version=$(common::detect_maven_version "${home}")
+		defined_maven_version=$(common::detect_maven_version "${build_dir}")
 		local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
 
 		output::step "Installing Maven ${maven_version}..."
@@ -87,20 +87,20 @@ maven::run_mvn() {
 			return 1
 		fi
 
-		PATH="${maven_install_dir}/.maven/bin:${PATH}"
+		PATH="${cache_dir}/.maven/bin:${PATH}"
 		local maven_exe="mvn"
 		# shellcheck disable=SC2164
-		cd "${home}"
+		cd "${build_dir}"
 	fi
 
 	local mvn_settings_opt
-	mvn_settings_opt="$(maven::mvn_settings_opt "${home}" "${maven_install_dir}")"
+	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
 
-	MAVEN_OPTS="$(maven::mvn_java_opts "${scope}" "${home}" "${maven_install_dir}")"
+	MAVEN_OPTS="$(maven::mvn_java_opts "${scope}" "${build_dir}" "${cache_dir}")"
 	export MAVEN_OPTS
 
 	# shellcheck disable=SC2164
-	cd "${home}"
+	cd "${build_dir}"
 	local mvn_opts
 	if [[ "${scope}" = "compile" ]]; then
 		mvn_opts="${MAVEN_CUSTOM_OPTS:-"-DskipTests"} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
