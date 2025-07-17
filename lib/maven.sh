@@ -20,6 +20,8 @@ maven::download_and_install() {
 	local maven_version="${1}"
 	local maven_home="${2}"
 
+	output::step "Installing Maven ${maven_version}..."
+
 	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
 
 	mkdir -p "${maven_home}"
@@ -200,30 +202,20 @@ maven::run_mvn() {
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
 	else
-		# shellcheck disable=SC2164
-		cd "${cache_dir}"
-
-		local maven_home="${cache_dir}/.maven"
 		local defined_maven_version
 		defined_maven_version=$(java_properties::get "${build_dir}/system.properties" "maven.version")
 		local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
 
-		output::step "Installing Maven ${maven_version}..."
-		maven::download_and_install "${maven_version}" "${maven_home}"
+		maven::download_and_install "${maven_version}" "${cache_dir}/.maven"
 
 		PATH="${cache_dir}/.maven/bin:${PATH}"
 		local maven_exe="mvn"
-		# shellcheck disable=SC2164
-		cd "${build_dir}"
 	fi
 
 	local mvn_settings_opt
 	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
 
 	export MAVEN_OPTS="-Xmx1024m${java_opts_extra:+ ${java_opts_extra}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
-
-	# shellcheck disable=SC2164
-	cd "${build_dir}"
 
 	output::step "Executing Maven"
 	echo "$ ${maven_exe} ${mvn_opts}" | output::indent
@@ -237,6 +229,7 @@ maven::run_mvn() {
 			We're sorry this build is failing! If you can't find the issue in application code,
 			please submit a ticket so we can help: https://help.heroku.com/
 		EOF
+
 		return 1
 	fi
 }
