@@ -196,8 +196,12 @@ maven::run_mvn() {
 	local java_opts_extra="${3}"
 	local mvn_opts="${4}"
 
-	mkdir -p "${cache_dir}"
+	local use_maven_wrapper=0
 	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]; then
+		use_maven_wrapper=1
+	fi
+
+	if ((use_maven_wrapper)); then
 		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
@@ -247,5 +251,10 @@ maven::run_mvn() {
 		EOF
 
 		return 1
+	fi
+
+	if ((use_maven_wrapper)); then
+		util::cache_copy ".m2/wrapper" "${build_dir}" "${cache_dir}"
+		rm -rf "${build_dir}/.m2"
 	fi
 }
