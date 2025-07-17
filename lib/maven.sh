@@ -19,23 +19,41 @@ maven::get_settings_url() {
 	fi
 }
 
+maven::download_settings_xml() {
+	local url="${1}"
+	
+	local target
+	target=$(mktemp --suffix=.xml)
+	
+	if curl --silent --show-error --fail --retry 3 --retry-connrefused --connect-timeout 5 --max-time 10 --location "${url}" --output "${target}"; then
+		echo "${target}"
+	else
+		output::error <<-EOF
+			ERROR: Failed to download Maven settings.xml
+
+			The URL specified in MAVEN_SETTINGS_URL could not be downloaded. This may be due to:
+			- Network connectivity issues
+			- Invalid or inaccessible URL
+			- Server authentication requirements
+			- Temporary server unavailability
+
+			Please verify the URL is correct and accessible, or remove the MAVEN_SETTINGS_URL
+			environment variable to use default Maven settings.
+
+			URL: ${url}
+		EOF
+
+		exit 1
+	fi
+}
+
 maven::resolve_settings_file() {
 	local url="${1}"
-	local cache_dir="${2}"
 	
 	if [[ "${url}" == file://* ]]; then
 		echo "${url#file://}"
 	else
-		local target="${cache_dir}/.m2/settings.xml"
-		mkdir -p "$(dirname "${target}")"
-		if curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${url}" --output "${target}"; then
-			echo "${target}"
-		else
-			output::error <<-EOF
-				ERROR: Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!
-			EOF
-			return 1
-		fi
+		maven::download_settings_xml "${url}"
 	fi
 }
 
@@ -47,7 +65,7 @@ maven::mvn_settings_opt() {
 	url=$(maven::get_settings_url "${build_dir}")
 	if [[ -n "${url}" ]]; then
 		local path
-		path=$(maven::resolve_settings_file "${url}" "${cache_dir}")
+		path=$(maven::resolve_settings_file "${url}")
 		echo -n "-s ${path}"
 	fi
 }
