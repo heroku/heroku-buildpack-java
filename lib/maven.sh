@@ -228,10 +228,24 @@ maven::run_mvn() {
 	# shellcheck disable=SC2086
 	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${mvn_opts} | output::indent; then
 		output::error <<-EOF
-			ERROR: Failed to build app with Maven
+			Error: Maven build failed.
 
-			We're sorry this build is failing! If you can't find the issue in application code,
-			please submit a ticket so we can help: https://help.heroku.com/
+			An error occurred during the Maven build process. This usually
+			indicates an issue with your application's dependencies, configuration,
+			or source code.
+
+			First, check the build output above for specific error messages
+			from Maven that might indicate what went wrong. Common issues include:
+
+			- Missing or incompatible dependencies in your POM
+			- Compilation errors in your Java source code
+			- Test failures (if tests are enabled during the build)
+			- Invalid Maven configuration or settings
+			- Using an incompatible OpenJDK version for your project
+
+			If you're unable to determine the cause from the Maven output,
+			try building your application locally with the same Maven command
+			to reproduce and debug the issue.
 		EOF
 
 		return 1
