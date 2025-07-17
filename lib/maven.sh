@@ -31,7 +31,7 @@ maven::download_settings_xml() {
 		output::error <<-EOF
 			ERROR: Failed to download Maven settings.xml
 
-			The URL specified in MAVEN_SETTINGS_URL could not be downloaded. This may be due to:
+			The URL specified in MAVEN_SETTINGS_URL couldn't be downloaded. This may be due to:
 			- Network connectivity issues
 			- Invalid or inaccessible URL
 			- Server authentication requirements
@@ -63,10 +63,9 @@ maven::mvn_settings_opt() {
 	
 	local url
 	url=$(maven::get_settings_url "${build_dir}")
+
 	if [[ -n "${url}" ]]; then
-		local path
-		path=$(maven::resolve_settings_file "${url}")
-		echo -n "-s ${path}"
+		echo -n "-s $(maven::resolve_settings_file "${url}")"
 	fi
 }
 
@@ -118,8 +117,7 @@ maven::run_mvn() {
 	local mvn_settings_opt
 	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
 
-	MAVEN_OPTS="-Xmx1024m${java_opts_extra} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
-	export MAVEN_OPTS
+	export MAVEN_OPTS="-Xmx1024m${java_opts_extra} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
 	# shellcheck disable=SC2164
 	cd "${build_dir}"
@@ -139,5 +137,3 @@ maven::run_mvn() {
 		return 1
 	fi
 }
-
-
