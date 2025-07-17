@@ -17,12 +17,14 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 cd "${BUILD_DIR}"
 
-mvn_settings_opt="$(maven::mvn_settings_opt "${BUILD_DIR}")"
+settings_xml_opts="$(maven::settings_xml_opts "${BUILD_DIR}")"
 
 if maven::should_use_wrapper "${BUILD_DIR}"; then
+	# Intentional word splitting for settings_xml_opts
 	# shellcheck disable=SC2086
-	./mvnw -B ${mvn_settings_opt} "${MAVEN_HEROKU_CI_GOAL:-test}"
+	./mvnw -B ${settings_xml_opts} "${MAVEN_HEROKU_CI_GOAL:-test}"
 else
+	# Intentional word splitting for settings_xml_opts
 	# shellcheck disable=SC2086
-	mvn -B ${mvn_settings_opt} "${MAVEN_HEROKU_CI_GOAL:-test}"
+	mvn -B ${settings_xml_opts} "${MAVEN_HEROKU_CI_GOAL:-test}"
 fi

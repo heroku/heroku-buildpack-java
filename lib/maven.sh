@@ -208,9 +208,9 @@ maven::download_settings_xml() {
 #
 # Usage:
 # ```
-# settings_opt=$(maven::mvn_settings_opt "${BUILD_DIR}")
+# settings_opt=$(maven::settings_xml_opts "${BUILD_DIR}")
 # ```
-maven::mvn_settings_opt() {
+maven::settings_xml_opts() {
 	local build_dir="${1}"
 
 	local url
@@ -253,8 +253,8 @@ maven::run_mvn() {
 		local maven_exe="mvn"
 	fi
 
-	local mvn_settings_opt
-	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}")"
+	local settings_xml_opts
+	settings_xml_opts="$(maven::settings_xml_opts "${build_dir}")"
 
 	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
@@ -263,9 +263,10 @@ maven::run_mvn() {
 	cd "${build_dir}"
 	echo "$ ${maven_exe} ${maven_opts} ${maven_goals}" | output::indent
 
-	# We rely on word splitting for mvn_settings_opt, maven_opts, and maven_goals:
+	# We rely on word splitting for settings_xml_opts, maven_opts, and maven_goals:
+	# Intentional word splitting needed for Maven command arguments
 	# shellcheck disable=SC2086
-	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${mvn_settings_opt} ${maven_opts} ${maven_goals} | output::indent; then
+	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${settings_xml_opts} ${maven_opts} ${maven_goals} | output::indent; then
 		output::error <<-EOF
 			Error: Maven build failed.
 
