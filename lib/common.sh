@@ -6,51 +6,7 @@ set -euo pipefail
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
-common::install_maven() {
-	local install_dir="${1}"
-	local build_dir="${2}"
-	local maven_home="${install_dir}/.maven"
 
-	local defined_maven_version
-	defined_maven_version=$(common::detect_maven_version "${build_dir}")
-
-	local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
-
-	output::step "Installing Maven ${maven_version}..."
-	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
-	if common::is_supported_maven_version "${maven_version}" "${maven_url}"; then
-		common::download_maven "${maven_url}" "${maven_home}"
-	else
-		output::error <<-EOF
-			ERROR: You have defined an unsupported Maven version in the system.properties file.
-
-			The default supported version is ${DEFAULT_MAVEN_VERSION}
-		EOF
-		return 1
-	fi
-}
-
-common::download_maven() {
-	local maven_url="${1}"
-	local install_dir="${2}"
-
-	rm -rf "${install_dir}"
-	mkdir -p "${install_dir}"
-	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${maven_url}" | tar -xzm --strip-components 1 -C "${install_dir}"
-	chmod +x "${install_dir}/bin/mvn"
-}
-
-common::is_supported_maven_version() {
-	local maven_version="${1}"
-	local maven_url="${2:?}"
-	if [[ "${maven_version}" = "${DEFAULT_MAVEN_VERSION}" ]]; then
-		return 0
-	elif curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${maven_url}" >/dev/null; then
-		return 0
-	else
-		return 1
-	fi
-}
 
 common::detect_maven_version() {
 	local base_dir="${1}"

@@ -19,19 +19,6 @@ maven::mvn_java_opts() {
 	echo -n " -Duser.home=${home} -Dmaven.repo.local=${cache}/.m2/repository"
 }
 
-maven::mvn_cmd_opts() {
-	local scope="${1}"
-
-	if [[ "${scope}" = "compile" ]]; then
-		echo -n "${MAVEN_CUSTOM_OPTS:-"-DskipTests"}"
-		echo -n " ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
-	elif [[ "${scope}" = "test-compile" ]]; then
-		echo -n "${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
-	else
-		echo -n ""
-	fi
-}
-
 maven::mvn_settings_opt() {
 	local home="${1}"
 	local maven_install_dir="${2}"
@@ -82,7 +69,30 @@ maven::run_mvn() {
 		# shellcheck disable=SC2164
 		cd "${maven_install_dir}"
 
-		common::install_maven "${maven_install_dir}" "${home}"
+		local maven_home="${maven_install_dir}/.maven"
+		local defined_maven_version
+		defined_maven_version=$(common::detect_maven_version "${home}")
+		local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
+
+		output::step "Installing Maven ${maven_version}..."
+		local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
+		
+		# Inlined common::is_supported_maven_version check
+		if [[ "${maven_version}" = "${DEFAULT_MAVEN_VERSION}" ]] || curl -I --retry 3 --retry-connrefused --connect-timeout 5 --fail --silent --max-time 5 --location "${maven_url}" >/dev/null; then
+			# Inlined common::download_maven
+			rm -rf "${maven_home}"
+			mkdir -p "${maven_home}"
+			curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 60 --location "${maven_url}" | tar -xzm --strip-components 1 -C "${maven_home}"
+			chmod +x "${maven_home}/bin/mvn"
+		else
+			output::error <<-EOF
+				ERROR: You have defined an unsupported Maven version in the system.properties file.
+
+				The default supported version is ${DEFAULT_MAVEN_VERSION}
+			EOF
+			return 1
+		fi
+
 		PATH="${maven_install_dir}/.maven/bin:${PATH}"
 		local maven_exe="mvn"
 		# shellcheck disable=SC2164
@@ -98,7 +108,13 @@ maven::run_mvn() {
 	# shellcheck disable=SC2164
 	cd "${home}"
 	local mvn_opts
-	mvn_opts="$(maven::mvn_cmd_opts "${scope}")"
+	if [[ "${scope}" = "compile" ]]; then
+		mvn_opts="${MAVEN_CUSTOM_OPTS:-"-DskipTests"} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
+	elif [[ "${scope}" = "test-compile" ]]; then
+		mvn_opts="${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
+	else
+		mvn_opts=""
+	fi
 
 	output::step "Executing Maven"
 	echo "$ ${maven_exe} ${mvn_opts}" | output::indent
@@ -116,22 +132,4 @@ maven::run_mvn() {
 	fi
 }
 
-maven::write_mvn_profile() {
-	local home="${1}"
 
-	mkdir -p "${home}/.profile.d"
-	cat <<-EOF >"${home}/.profile.d/maven.sh"
-		export M2_HOME="\$HOME/.maven"
-		export MAVEN_OPTS="$(maven::mvn_java_opts "test" "\$HOME" "\$HOME")"
-		export PATH="\$M2_HOME/bin:\$PATH"
-	EOF
-}
-
-maven::remove_mvn() {
-	local home="${1}"
-	local maven_install_dir="${2}"
-	if maven::has_maven_wrapper "${home}"; then
-		common::cache_copy ".m2/wrapper" "${home}" "${maven_install_dir}"
-		rm -rf "${home}/.m2"
-	fi
-}

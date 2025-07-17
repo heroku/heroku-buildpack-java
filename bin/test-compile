@@ -22,5 +22,10 @@ cd "${BUILD_DIR}"
 
 common::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
 maven::run_mvn "test-compile" "${BUILD_DIR}" "${BUILD_DIR}"
-maven::write_mvn_profile "${BUILD_DIR}"
+mkdir -p "${BUILD_DIR}/.profile.d"
+cat <<-EOF >"${BUILD_DIR}/.profile.d/maven.sh"
+	export M2_HOME="\$HOME/.maven"
+	export MAVEN_OPTS="$(maven::mvn_java_opts "test" "\$HOME" "\$HOME")"
+	export PATH="\$M2_HOME/bin:\$PATH"
+EOF
 common::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
