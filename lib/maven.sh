@@ -29,11 +29,6 @@ maven::mvn_settings_opt() {
 	fi
 }
 
-maven::has_maven_wrapper() {
-	local build_dir="${1}"
-	[[ -f "${build_dir}/mvnw" ]] && [[ -f "${build_dir}/.mvn/wrapper/maven-wrapper.properties" ]]
-}
-
 maven::run_mvn() {
 	local build_dir="${1}"
 	local cache_dir="${2}"
@@ -41,7 +36,7 @@ maven::run_mvn() {
 	local mvn_opts="${4}"
 
 	mkdir -p "${cache_dir}"
-	if maven::has_maven_wrapper "${build_dir}" && [[ -z "$(common::detect_maven_version "${build_dir}")" ]]; then
+	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(common::detect_maven_version "${build_dir}")" ]]; then
 		common::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
