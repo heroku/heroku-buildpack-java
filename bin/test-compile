@@ -25,7 +25,7 @@ maven::run_mvn "${BUILD_DIR}" "${BUILD_DIR}" "" "${MAVEN_CUSTOM_GOALS:-"clean de
 mkdir -p "${BUILD_DIR}/.profile.d"
 cat <<-EOF >"${BUILD_DIR}/.profile.d/maven.sh"
 	export M2_HOME="\$HOME/.maven"
-	export MAVEN_OPTS="$(maven::mvn_java_opts "\$HOME" "\$HOME" "")"
+	export MAVEN_OPTS="-Xmx1024m -Duser.home=\$HOME -Dmaven.repo.local=\$HOME/.m2/repository"
 	export PATH="\$M2_HOME/bin:\$PATH"
 EOF
 common::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"

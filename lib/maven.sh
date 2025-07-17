@@ -4,14 +4,6 @@
 # however, it helps Shellcheck realise the options under which these functions will run.
 set -euo pipefail
 
-maven::mvn_java_opts() {
-	local build_dir="${1}"
-	local cache_dir="${2}"
-	local java_opts_extra="${3}"
-
-	echo -n "-Xmx1024m${java_opts_extra} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
-}
-
 maven::mvn_settings_opt() {
 	local build_dir="${1}"
 	local cache_dir="${2}"
@@ -90,7 +82,7 @@ maven::run_mvn() {
 	local mvn_settings_opt
 	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
 
-	MAVEN_OPTS="$(maven::mvn_java_opts "${build_dir}" "${cache_dir}" "${java_opts_extra}")"
+	MAVEN_OPTS="-Xmx1024m${java_opts_extra} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 	export MAVEN_OPTS
 
 	# shellcheck disable=SC2164
