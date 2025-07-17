@@ -172,16 +172,6 @@ maven::download_settings_xml() {
 	fi
 }
 
-maven::resolve_settings_file() {
-	local url="${1}"
-
-	if [[ "${url}" == file://* ]]; then
-		echo "${url#file://}"
-	else
-		maven::download_settings_xml "${url}"
-	fi
-}
-
 maven::mvn_settings_opt() {
 	local build_dir="${1}"
 	local cache_dir="${2}"
@@ -190,7 +180,13 @@ maven::mvn_settings_opt() {
 	url=$(maven::get_settings_url "${build_dir}")
 
 	if [[ -n "${url}" ]]; then
-		echo -n "-s $(maven::resolve_settings_file "${url}")"
+		local settings_file
+		if [[ "${url}" == file://* ]]; then
+			settings_file="${url#file://}"
+		else
+			settings_file=$(maven::download_settings_xml "${url}")
+		fi
+		echo -n "-s ${settings_file}"
 	fi
 }
 
