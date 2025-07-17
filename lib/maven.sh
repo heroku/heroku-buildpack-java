@@ -10,6 +10,21 @@ source "${BUILDPACK_DIR}/lib/util.sh"
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
+# Determines if Maven Wrapper should be used for the given build directory.
+# Returns 0 (true) if mvnw exists and no maven.version is specified in system.properties.
+#
+# Usage:
+# ```
+# if maven::should_use_wrapper "${BUILD_DIR}"; then
+#     echo "Using Maven Wrapper"
+# fi
+# ```
+maven::should_use_wrapper() {
+	local build_dir="${1}"
+
+	[[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
+}
+
 # Downloads and installs the specified Maven version to the given directory.
 #
 # Usage:
@@ -197,12 +212,7 @@ maven::run_mvn() {
 	local maven_opts="${4}"
 	local maven_goals="${5}"
 
-	local use_maven_wrapper=0
-	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]; then
-		use_maven_wrapper=1
-	fi
-
-	if ((use_maven_wrapper)); then
+	if maven::should_use_wrapper "${build_dir}"; then
 		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
@@ -254,7 +264,7 @@ maven::run_mvn() {
 		return 1
 	fi
 
-	if ((use_maven_wrapper)); then
+	if maven::should_use_wrapper "${build_dir}"; then
 		util::cache_copy ".m2/wrapper" "${build_dir}" "${cache_dir}"
 		rm -rf "${build_dir}/.m2/wrapper"
 	fi
