@@ -255,6 +255,6 @@ maven::run_mvn() {
 
 	if ((use_maven_wrapper)); then
 		util::cache_copy ".m2/wrapper" "${build_dir}" "${cache_dir}"
-		rm -rf "${build_dir}/.m2"
+		rm -rf "${build_dir}/.m2/wrapper"
 	fi
 }
