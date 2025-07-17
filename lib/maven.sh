@@ -150,18 +150,22 @@ maven::download_settings_xml() {
 		echo "${target}"
 	else
 		output::error <<-EOF
-			ERROR: Failed to download Maven settings.xml
+			Error: Unable to download Maven settings.xml.
 
-			The URL specified in MAVEN_SETTINGS_URL couldn't be downloaded. This may be due to:
-			- Network connectivity issues
-			- Invalid or inaccessible URL
-			- Server authentication requirements
-			- Temporary server unavailability
+			An error occurred while downloading the Maven settings file from:
+			${url}
 
-			Please verify the URL is correct and accessible, or remove the MAVEN_SETTINGS_URL
-			environment variable to use default Maven settings.
+			In some cases, this happens due to a temporary issue with
+			the network connection or server, or because the URL is
+			inaccessible or requires authentication.
 
-			URL: ${url}
+			Check that the URL in your MAVEN_SETTINGS_URL environment
+			variable is correct and publicly accessible. If the settings file
+			is not needed, you can remove the MAVEN_SETTINGS_URL environment variable 
+			to use default Maven settings.
+
+			Learn more about Maven settings configuration:
+			https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
 		EOF
 
 		exit 1
