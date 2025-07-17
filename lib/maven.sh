@@ -4,28 +4,51 @@
 # however, it helps Shellcheck realise the options under which these functions will run.
 set -euo pipefail
 
-maven::mvn_settings_opt() {
+maven::get_settings_url() {
 	local build_dir="${1}"
-	local cache_dir="${2}"
-
+	
 	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
-		echo -n "-s ${MAVEN_SETTINGS_PATH}"
+		local absolute_path
+		absolute_path=$(cd "${build_dir}" && realpath -m "${MAVEN_SETTINGS_PATH}")
+		
+		echo "file://${absolute_path}"
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
-		local settings_xml="${cache_dir}/.m2/settings.xml"
-		mkdir -p "$(dirname "${settings_xml}")"
-		curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${MAVEN_SETTINGS_URL}" --output "${settings_xml}"
-		if [[ -f "${settings_xml}" ]]; then
-			echo -n "-s ${settings_xml}"
+		echo "${MAVEN_SETTINGS_URL}"
+	elif [[ -f "${build_dir}/settings.xml" ]]; then
+		echo "file://${build_dir}/settings.xml"
+	fi
+}
+
+maven::resolve_settings_file() {
+	local url="${1}"
+	local cache_dir="${2}"
+	
+	if [[ "${url}" == file://* ]]; then
+		echo "${url#file://}"
+	else
+		local target="${cache_dir}/.m2/settings.xml"
+		mkdir -p "$(dirname "${target}")"
+		if curl --retry 3 --retry-connrefused --connect-timeout 5 --silent --max-time 10 --location "${url}" --output "${target}"; then
+			echo "${target}"
 		else
 			output::error <<-EOF
 				ERROR: Could not download settings.xml from the URL defined in MAVEN_SETTINGS_URL!
 			EOF
 			return 1
 		fi
-	elif [[ -f "${build_dir}/settings.xml" ]]; then
-		echo -n "-s ${build_dir}/settings.xml"
-	else
-		echo -n ""
+	fi
+}
+
+maven::mvn_settings_opt() {
+	local build_dir="${1}"
+	local cache_dir="${2}"
+	
+	local url
+	url=$(maven::get_settings_url "${build_dir}")
+	if [[ -n "${url}" ]]; then
+		local path
+		path=$(maven::resolve_settings_file "${url}" "${cache_dir}")
+		echo -n "-s ${path}"
 	fi
 }
 
@@ -36,7 +59,7 @@ maven::run_mvn() {
 	local mvn_opts="${4}"
 
 	mkdir -p "${cache_dir}"
-	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(common::detect_maven_version "${build_dir}")" ]]; then
+	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(common::get_app_system_value "${build_dir}/system.properties" "maven.version")" ]]; then
 		common::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
@@ -46,7 +69,7 @@ maven::run_mvn() {
 
 		local maven_home="${cache_dir}/.maven"
 		local defined_maven_version
-		defined_maven_version=$(common::detect_maven_version "${build_dir}")
+		defined_maven_version=$(common::get_app_system_value "${build_dir}/system.properties" "maven.version")
 		local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
 
 		output::step "Installing Maven ${maven_version}..."

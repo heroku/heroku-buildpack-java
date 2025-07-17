@@ -6,23 +6,6 @@ set -euo pipefail
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
-
-
-common::detect_maven_version() {
-	local base_dir="${1}"
-	if [[ -f "${base_dir}/system.properties" ]]; then
-		local maven_version
-		maven_version=$(common::get_app_system_value "${base_dir}/system.properties" "maven.version")
-		if [[ -n "${maven_version}" ]]; then
-			echo "${maven_version}"
-		else
-			echo ""
-		fi
-	else
-		echo ""
-	fi
-}
-
 common::get_app_system_value() {
 	local file="${1?No file specified}"
 	local key="${2?No key specified}"

@@ -19,7 +19,7 @@ cd "${BUILD_DIR}"
 
 mvn_settings_opt="$(maven::mvn_settings_opt "${BUILD_DIR}" "${BUILD_DIR}")"
 
-if [[ -f "${BUILD_DIR}/mvnw" ]] && [[ -z "$(common::detect_maven_version "${BUILD_DIR}")" ]]; then
+if [[ -f "${BUILD_DIR}/mvnw" ]] && [[ -z "$(common::get_app_system_value "${BUILD_DIR}/system.properties" "maven.version")" ]]; then
 	# shellcheck disable=SC2086
 	./mvnw -B ${mvn_settings_opt} "${MAVEN_HEROKU_CI_GOAL:-test}"
 else
