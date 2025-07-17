@@ -208,11 +208,10 @@ maven::download_settings_xml() {
 #
 # Usage:
 # ```
-# settings_opt=$(maven::mvn_settings_opt "${BUILD_DIR}" "${CACHE_DIR}")
+# settings_opt=$(maven::mvn_settings_opt "${BUILD_DIR}")
 # ```
 maven::mvn_settings_opt() {
 	local build_dir="${1}"
-	local cache_dir="${2}"
 
 	local url
 	url=$(maven::get_settings_url "${build_dir}")
@@ -255,7 +254,7 @@ maven::run_mvn() {
 	fi
 
 	local mvn_settings_opt
-	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}" "${cache_dir}")"
+	mvn_settings_opt="$(maven::mvn_settings_opt "${build_dir}")"
 
 	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 

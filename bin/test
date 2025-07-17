@@ -17,7 +17,7 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 cd "${BUILD_DIR}"
 
-mvn_settings_opt="$(maven::mvn_settings_opt "${BUILD_DIR}" "${BUILD_DIR}")"
+mvn_settings_opt="$(maven::mvn_settings_opt "${BUILD_DIR}")"
 
 if maven::should_use_wrapper "${BUILD_DIR}"; then
 	# shellcheck disable=SC2086
