@@ -10,7 +10,6 @@ BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 source "${BUILDPACK_DIR}/lib/output.sh"
 source "${BUILDPACK_DIR}/lib/util.sh"
-source "${BUILDPACK_DIR}/lib/common.sh"
 source "${BUILDPACK_DIR}/lib/java_properties.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"
 source "${BUILDPACK_DIR}/lib/metrics.sh"
@@ -25,6 +24,6 @@ openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DI
 
 maven::run_mvn "${BUILD_DIR}" "${CACHE_DIR}" "${MAVEN_JAVA_OPTS:-""}" "${MAVEN_CUSTOM_OPTS:-"-DskipTests"} ${MAVEN_CUSTOM_GOALS:-"clean dependency:list install"}"
 if [[ -f "${BUILD_DIR}/mvnw" ]] && [[ -z "$(java_properties::get "${BUILD_DIR}/system.properties" "maven.version")" ]]; then
-	common::cache_copy ".m2/wrapper" "${BUILD_DIR}" "${CACHE_DIR}"
+	util::cache_copy ".m2/wrapper" "${BUILD_DIR}" "${CACHE_DIR}"
 	rm -rf "${BUILD_DIR}/.m2"
 fi

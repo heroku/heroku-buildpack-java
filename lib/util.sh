@@ -33,3 +33,25 @@ util::export_env_dir() {
 util::nowms() {
 	date +%s%3N
 }
+
+# Copies a subdirectory from source to destination, replacing any existing content.
+#
+# Usage:
+# ```
+# util::cache_copy ".m2/wrapper" "${CACHE_DIR}" "${BUILD_DIR}"
+# ```
+util::cache_copy() {
+	local subdirectory="${1}"
+	local source_dir="${2}"
+	local destination_dir="${3}"
+	
+	local destination_path="${destination_dir}/${subdirectory}"
+	local source_path="${source_dir}/${subdirectory}"
+	
+	rm -rf "${destination_path:?}"
+	
+	if [[ -d "${source_path}" ]]; then
+		mkdir -p "${destination_path}"
+		cp -pr "${source_path}"/. "${destination_path}"
+	fi
+}

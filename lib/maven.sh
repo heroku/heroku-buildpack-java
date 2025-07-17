@@ -6,6 +6,9 @@ set -euo pipefail
 
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 source "${BUILDPACK_DIR}/lib/java_properties.sh"
+source "${BUILDPACK_DIR}/lib/util.sh"
+
+export DEFAULT_MAVEN_VERSION="3.9.4"
 
 maven::get_settings_url() {
 	local build_dir="${1}"
@@ -80,7 +83,7 @@ maven::run_mvn() {
 
 	mkdir -p "${cache_dir}"
 	if [[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]; then
-		common::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
+		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
 	else
