@@ -26,6 +26,7 @@ maven::should_use_wrapper() {
 }
 
 # Downloads and installs the specified Maven version to the given directory.
+# Sets up PATH to include the Maven bin directory.
 #
 # Usage:
 # ```
@@ -137,9 +138,17 @@ maven::download_and_install() {
 		exit 1
 	fi
 
+	PATH="${maven_home}/bin:${PATH}"
 	chmod +x "${maven_home}/bin/mvn"
 }
 
+# Determines the URL or file path for Maven settings.xml configuration.
+# Checks for MAVEN_SETTINGS_PATH, MAVEN_SETTINGS_URL, or local settings.xml in order.
+#
+# Usage:
+# ```
+# url=$(maven::get_settings_url "${BUILD_DIR}")
+# ```
 maven::get_settings_url() {
 	local build_dir="${1}"
 
@@ -155,6 +164,13 @@ maven::get_settings_url() {
 	fi
 }
 
+# Downloads Maven settings.xml from a URL and returns the path to the temporary file.
+# Exits with error if download fails.
+#
+# Usage:
+# ```
+# settings_file=$(maven::download_settings_xml "${url}")
+# ```
 maven::download_settings_xml() {
 	local url="${1}"
 
@@ -187,6 +203,13 @@ maven::download_settings_xml() {
 	fi
 }
 
+# Generates the Maven settings option (-s) for the command line.
+# Returns the -s option with settings file path if a settings file is available.
+#
+# Usage:
+# ```
+# settings_opt=$(maven::mvn_settings_opt "${BUILD_DIR}" "${CACHE_DIR}")
+# ```
 maven::mvn_settings_opt() {
 	local build_dir="${1}"
 	local cache_dir="${2}"
@@ -205,6 +228,14 @@ maven::mvn_settings_opt() {
 	fi
 }
 
+# Executes Maven with the specified options and goals.
+# Automatically detects and uses Maven Wrapper if available, otherwise downloads and uses Maven.
+# Handles settings.xml configuration and sets up proper MAVEN_OPTS environment.
+#
+# Usage:
+# ```
+# maven::run_mvn "${BUILD_DIR}" "${CACHE_DIR}" "${MAVEN_JAVA_OPTS}" "${MAVEN_OPTS}" "${MAVEN_GOALS}"
+# ```
 maven::run_mvn() {
 	local build_dir="${1}"
 	local cache_dir="${2}"
@@ -217,13 +248,9 @@ maven::run_mvn() {
 		chmod +x "${build_dir}/mvnw"
 		local maven_exe="./mvnw"
 	else
-		local defined_maven_version
-		defined_maven_version=$(java_properties::get "${build_dir}/system.properties" "maven.version")
-		local maven_version="${defined_maven_version:-${DEFAULT_MAVEN_VERSION}}"
-
-		maven::download_and_install "${maven_version}" "${cache_dir}/.maven"
-
-		PATH="${cache_dir}/.maven/bin:${PATH}"
+		local maven_version
+		maven_version="$(java_properties::get "${build_dir}/system.properties" "maven.version")"
+		maven::download_and_install "${maven_version:-${DEFAULT_MAVEN_VERSION}}" "${cache_dir}/.maven"
 		local maven_exe="mvn"
 	fi
 
