@@ -17,17 +17,22 @@ RSpec.describe 'Maven buildpack' do
                                                      config: { MAVEN_SETTINGS_URL: SETTINGS_XML_URL_404 })
     app.deploy do
       expect(clean_output(app.output)).to include(<<~OUTPUT)
-        remote: -----> Executing Maven
-        remote:        $ ./mvnw -DskipTests clean dependency:list install
-        remote:        [ERROR] Error executing Maven.
-        remote:        [ERROR] 1 problem was encountered while building the effective settings
-        remote:        [FATAL] Non-parseable settings /tmp/codon/tmp/cache/.m2/settings.xml: only whitespace content allowed before start tag and not N (position: START_DOCUMENT seen N... @1:1)  @ /tmp/codon/tmp/cache/.m2/settings.xml, line 1, column 1
-        remote:        
-        remote: 
-        remote:  !     ERROR: Failed to build app with Maven
+        remote:  !     Error: Unable to download Maven settings.xml.
         remote:  !     
-        remote:  !     We're sorry this build is failing! If you can't find the issue in application code,
-        remote:  !     please submit a ticket so we can help: https://help.heroku.com/
+        remote:  !     An error occurred while downloading the Maven settings file from:
+        remote:  !     #{SETTINGS_XML_URL_404}
+        remote:  !     
+        remote:  !     In some cases, this happens due to a temporary issue with
+        remote:  !     the network connection or server, or because the URL is
+        remote:  !     inaccessible or requires authentication.
+        remote:  !     
+        remote:  !     Check that the URL in your MAVEN_SETTINGS_URL environment
+        remote:  !     variable is correct and publicly accessible. If the settings file
+        remote:  !     is not needed, you can remove the MAVEN_SETTINGS_URL environment variable 
+        remote:  !     to use default Maven settings.
+        remote:  !     
+        remote:  !     Learn more about Maven settings configuration:
+        remote:  !     https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
         remote: 
         remote:  !     Push rejected, failed to compile Java app.
       OUTPUT

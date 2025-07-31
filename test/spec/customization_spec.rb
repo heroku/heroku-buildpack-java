@@ -6,7 +6,7 @@ RSpec.describe 'Maven buildpack' do
   it 'allows to set custom Maven goals via MAVEN_CUSTOM_GOALS' do
     app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_CUSTOM_GOALS: 'site' })
     app.deploy do
-      expect(app.output).to include('./mvnw -DskipTests site')
+      expect(app.output).to include('$ ./mvnw -DskipTests site')
       expect(app.output).to include('[INFO] --- maven-site-plugin:3.7.1:site (default-site) @ simple-http-service ---')
 
       # The dependency list is implemented by using the dependency:list goal. We need to
@@ -40,7 +40,7 @@ RSpec.describe 'Maven buildpack' do
   it 'allows to set custom Maven goals via MAVEN_CUSTOM_OPTS' do
     app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_CUSTOM_OPTS: '-X' })
     app.deploy do
-      expect(app.output).to include('./mvnw -X clean dependency:list install')
+      expect(app.output).to include('$ ./mvnw -X clean dependency:list install')
       expect(app.output).to include('[DEBUG] -- end configuration --')
 
       # -DskipTests is part of the default Maven options. We expect it to be overridden by MAVEN_CUSTOM_OPTS and
