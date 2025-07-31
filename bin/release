@@ -12,10 +12,8 @@ source "${BUILDPACK_DIR}/lib/frameworks.sh"
 echo "---"
 
 if frameworks::has_postgres "${BUILD_DIR}"; then
-	cat <<EOF
-addons:
-  - heroku-postgresql
-EOF
+	echo "addons:"
+	echo "  - heroku-postgresql"
 fi
 
 if [[ ! -f "${BUILD_DIR}/Procfile" ]] && [[ -d "${BUILD_DIR}/target" ]]; then
@@ -24,6 +22,7 @@ if [[ ! -f "${BUILD_DIR}/Procfile" ]] && [[ -d "${BUILD_DIR}/target" ]]; then
 		echo "  web: java -Dquarkus.http.port=\$PORT \$JAVA_OPTS -jar target/quarkus-app/quarkus-run.jar"
 	else
 		cd "${BUILD_DIR}"
+		# Using find in command substitution for jar file discovery
 		# shellcheck disable=SC2044
 		for jar_file in $(find target -maxdepth 1 -name "*.jar" -type f -exec ls -S {} +); do
 			if frameworks::is_spring_boot "${BUILD_DIR}"; then

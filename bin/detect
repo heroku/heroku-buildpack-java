@@ -4,17 +4,23 @@ set -euo pipefail
 
 BUILD_DIR="${1}"
 
-if [[ -f "${BUILD_DIR}/pom.xml" ]] ||
-	[[ -f "${BUILD_DIR}/pom.atom" ]] ||
-	[[ -f "${BUILD_DIR}/pom.clj" ]] ||
-	[[ -f "${BUILD_DIR}/pom.groovy" ]] ||
-	[[ -f "${BUILD_DIR}/pom.rb" ]] ||
-	[[ -f "${BUILD_DIR}/pom.scala" ]] ||
-	[[ -f "${BUILD_DIR}/pom.yaml" ]] ||
-	[[ -f "${BUILD_DIR}/pom.yml" ]]; then
-	echo "Java"
-	exit 0
-else
-	(>&2 echo "Could not find a pom.xml file! Please check that it exists and is committed to Git.")
-	exit 1
-fi
+extensions=(
+	"xml"
+	"atom"
+	"clj"
+	"groovy"
+	"rb"
+	"scala"
+	"yaml"
+	"yml"
+)
+
+for extension in "${extensions[@]}"; do
+	if [[ -f "${BUILD_DIR}/pom.${extension}" ]]; then
+		echo "Java"
+		exit 0
+	fi
+done
+
+(>&2 echo "Could not find a pom.xml file or other supported POM format!")
+exit 1
