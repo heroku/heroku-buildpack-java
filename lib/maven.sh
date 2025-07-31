@@ -196,7 +196,7 @@ maven::install_maven() {
 		exit 1
 	fi
 
-	PATH="${maven_home}/bin:${PATH}"
+	export PATH="${maven_home}/bin:${PATH}"
 	chmod +x "${maven_home}/bin/mvn"
 }
 
@@ -234,8 +234,15 @@ maven::install_settings_xml() {
 	mkdir -p "$(dirname "${settings_destination}")"
 
 	if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
+		local settings_source
+		if [[ "${MAVEN_SETTINGS_PATH}" = /* ]]; then
+			settings_source="${MAVEN_SETTINGS_PATH}"
+		else
+			settings_source="${build_dir}/${MAVEN_SETTINGS_PATH}"
+		fi
+
 		output::step "Using settings.xml from ${MAVEN_SETTINGS_PATH}"
-		ln -sf "${MAVEN_SETTINGS_PATH}" "${settings_destination}"
+		ln -sf "${settings_source}" "${settings_destination}"
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
 		output::step "Using settings.xml from ${MAVEN_SETTINGS_URL}"
 

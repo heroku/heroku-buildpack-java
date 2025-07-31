@@ -69,7 +69,7 @@ RSpec.describe 'Maven buildpack' do
   end
 
   it 'installs the default Maven version when no wrapper is present and no version is explicitly configured' do
-    app = Hatchet::Runner.new('simple-http-service', allow_failure: true)
+    app = Hatchet::Runner.new('simple-http-service')
     app.before_deploy do
       `rm -r mvnw`
     end
