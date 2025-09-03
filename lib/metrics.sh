@@ -19,7 +19,7 @@ PREVIOUS_METRICS_DATA_FILE=""
 # ```
 # metrics::init "${CACHE_DIR}" "scala"
 # ```
-metrics::init() {
+function metrics::init() {
 	local cache_dir="${1}"
 	local buildpack_name="${2}"
 
@@ -36,7 +36,7 @@ metrics::init() {
 # metrics::init "${CACHE_DIR}" "scala"
 # metrics::setup
 # ```
-metrics::setup() {
+function metrics::setup() {
 	if [[ -f "${METRICS_DATA_FILE}" ]]; then
 		cp "${METRICS_DATA_FILE}" "${PREVIOUS_METRICS_DATA_FILE}"
 	fi
@@ -56,7 +56,7 @@ metrics::setup() {
 # metrics::set_raw "success" "true"
 # metrics::set_raw "message" '"Hello World"'
 # ```
-metrics::set_raw() {
+function metrics::set_raw() {
 	local key="${1}"
 	local value="${2}"
 
@@ -74,7 +74,7 @@ metrics::set_raw() {
 # metrics::set_string "buildpack_version" "1.2.3"
 # metrics::set_string "jvm_distribution" "Heroku"
 # ```
-metrics::set_string() {
+function metrics::set_string() {
 	local key="${1}"
 	local value="${2}"
 
@@ -92,7 +92,7 @@ metrics::set_string() {
 # # ... some operation ...
 # metrics::set_duration "compile_duration" "${start_time}"
 # ```
-metrics::set_duration() {
+function metrics::set_duration() {
 	local key="${1}"
 	local start="${2}"
 	local end="${3:-$(util::nowms)}"
@@ -108,6 +108,6 @@ metrics::set_duration() {
 # ```
 # metrics::print_bin_report_yaml
 # ```
-metrics::print_bin_report_yaml() {
+function metrics::print_bin_report_yaml() {
 	jq -r 'keys[] as $key | (.[$key] | tojson) as $value | "\($key): \($value)"' <"${METRICS_DATA_FILE}"
 }
