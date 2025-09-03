@@ -17,17 +17,22 @@ RSpec.describe 'Maven buildpack' do
                                                      config: { MAVEN_SETTINGS_URL: SETTINGS_XML_URL_404 })
     app.deploy do
       expect(clean_output(app.output)).to include(<<~OUTPUT)
-        remote: -----> Executing Maven
-        remote:        $ ./mvnw -DskipTests clean dependency:list install
-        remote:        [ERROR] Error executing Maven.
-        remote:        [ERROR] 1 problem was encountered while building the effective settings
-        remote:        [FATAL] Non-parseable settings /tmp/codon/tmp/cache/.m2/settings.xml: only whitespace content allowed before start tag and not N (position: START_DOCUMENT seen N... @1:1)  @ /tmp/codon/tmp/cache/.m2/settings.xml, line 1, column 1
-        remote:        
-        remote: 
-        remote:  !     ERROR: Failed to build app with Maven
+        remote:  !     Error: Unable to download Maven settings.xml.
         remote:  !     
-        remote:  !     We're sorry this build is failing! If you can't find the issue in application code,
-        remote:  !     please submit a ticket so we can help: https://help.heroku.com/
+        remote:  !     An error occurred while downloading the Maven settings file from:
+        remote:  !     #{SETTINGS_XML_URL_404}
+        remote:  !     
+        remote:  !     In some cases, this happens due to a temporary issue with
+        remote:  !     the network connection or server, or because the URL is
+        remote:  !     inaccessible or requires authentication.
+        remote:  !     
+        remote:  !     Check that the URL in your MAVEN_SETTINGS_URL environment
+        remote:  !     variable is correct and publicly accessible. If the settings file
+        remote:  !     is not needed, you can remove the MAVEN_SETTINGS_URL environment variable 
+        remote:  !     to use default Maven settings.
+        remote:  !     
+        remote:  !     Learn more about Maven settings configuration:
+        remote:  !     https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
         remote: 
         remote:  !     Push rejected, failed to compile Java app.
       OUTPUT
@@ -121,6 +126,132 @@ RSpec.describe 'Maven buildpack' do
       expect(clean_output(app.output)).to(
         include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{SETTINGS_XML_URL_VALUE}")
       )
+    end
+  end
+
+  context 'when settings.xml already exists' do
+    it 'preserves existing settings.xml and warns when MAVEN_SETTINGS_PATH is set' do
+      settings_xml_filename = 'custom-settings.xml'
+      custom_test_value = 'Custom settings from MAVEN_SETTINGS_PATH'
+      existing_test_value = 'Existing settings file'
+
+      app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_SETTINGS_PATH: settings_xml_filename })
+
+      app.before_deploy do
+        write_settings_xml(settings_xml_filename, custom_test_value)
+        FileUtils.mkdir_p('.m2')
+        write_settings_xml('.m2/settings.xml', existing_test_value)
+        `git add . && git commit -m "add settings files"`
+      end
+
+      app.deploy do
+        expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
+          remote:  !     Warning: Using existing settings\\.xml file\\.
+          remote:  !     
+          remote:  !     A settings\\.xml file already exists at .*\\.m2/settings\\.xml\\.
+          remote:  !     However, the MAVEN_SETTINGS_PATH environment variable is set, which
+          remote:  !     would normally be used as the settings\\.xml configuration\\. The existing
+          remote:  !     file will be used\\.
+          remote:  !     
+          remote:  !     If you intended to use the settings from MAVEN_SETTINGS_PATH instead,
+          remote:  !     remove the existing settings\\.xml file at .*\\.m2/settings\\.xml\\.
+        REGEX
+
+        expect(clean_output(app.output)).to(
+          include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{existing_test_value}")
+        )
+        expect(clean_output(app.output)).not_to(
+          include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{custom_test_value}")
+        )
+      end
+    end
+
+    it 'preserves existing settings.xml and warns when MAVEN_SETTINGS_URL is set' do
+      existing_test_value = 'Existing settings file for URL test'
+
+      app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_SETTINGS_URL: SETTINGS_XML_URL })
+
+      app.before_deploy do
+        FileUtils.mkdir_p('.m2')
+        write_settings_xml('.m2/settings.xml', existing_test_value)
+        `git add . && git commit -m "add existing settings file"`
+      end
+
+      app.deploy do
+        expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
+          remote:  !     Warning: Using existing settings\\.xml file\\.
+          remote:  !     
+          remote:  !     A settings\\.xml file already exists at .*\\.m2/settings\\.xml\\.
+          remote:  !     However, the MAVEN_SETTINGS_URL environment variable is set, which
+          remote:  !     would normally be used as the settings\\.xml configuration\\. The existing
+          remote:  !     file will be used\\.
+          remote:  !     
+          remote:  !     If you intended to use the settings from MAVEN_SETTINGS_URL instead,
+          remote:  !     remove the existing settings\\.xml file at .*\\.m2/settings\\.xml\\.
+        REGEX
+
+        expect(clean_output(app.output)).to(
+          include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{existing_test_value}")
+        )
+        expect(clean_output(app.output)).not_to(
+          include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{SETTINGS_XML_URL_VALUE}")
+        )
+      end
+    end
+
+    it 'preserves existing settings.xml and warns when project settings.xml exists' do
+      project_test_value = 'Project directory settings'
+      existing_test_value = 'Existing settings file for project test'
+
+      app = Hatchet::Runner.new('simple-http-service')
+
+      app.before_deploy do
+        write_settings_xml('settings.xml', project_test_value)
+        FileUtils.mkdir_p('.m2')
+        write_settings_xml('.m2/settings.xml', existing_test_value)
+        `git add . && git commit -m "add settings files"`
+      end
+
+      app.deploy do
+        expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
+          remote:  !     Warning: Using existing settings\\.xml file\\.
+          remote:  !     
+          remote:  !     A settings\\.xml file already exists at .*\\.m2/settings\\.xml\\.
+          remote:  !     However, a settings\\.xml file was also found in the project directory,
+          remote:  !     which would normally be used as the settings\\.xml configuration\\. The
+          remote:  !     existing file will be used\\.
+          remote:  !     
+          remote:  !     If you intended to use the settings from your project directory instead,
+          remote:  !     remove the existing settings\\.xml file at .*\\.m2/settings\\.xml\\.
+        REGEX
+
+        expect(clean_output(app.output)).to(
+          include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{existing_test_value}")
+        )
+        expect(clean_output(app.output)).not_to(
+          include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{project_test_value}")
+        )
+      end
+    end
+
+    it 'uses existing settings.xml without warning when no other methods are configured' do
+      existing_test_value = 'Existing settings file, no conflicts'
+
+      app = Hatchet::Runner.new('simple-http-service')
+
+      app.before_deploy do
+        FileUtils.mkdir_p('.m2')
+        write_settings_xml('.m2/settings.xml', existing_test_value)
+        `git add . && git commit -m "add existing settings file"`
+      end
+
+      app.deploy do
+        expect(clean_output(app.output)).not_to match(/remote:  !     Warning: Using existing settings\.xml file\./)
+        expect(clean_output(app.output)).not_to match(/would normally be used as the settings\.xml configuration/)
+        expect(clean_output(app.output)).to(
+          include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{existing_test_value}")
+        )
+      end
     end
   end
 end

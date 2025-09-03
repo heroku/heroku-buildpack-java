@@ -7,6 +7,11 @@ RSpec.describe 'Maven buildpack' do
     app = Hatchet::Runner.new('simple-http-service')
 
     app.run_ci do |test_run|
+      # Matching against this specific dependency download since there are some dependencies that are downloaded
+      # at runtime and not stored in the cache (bin/test doesn't have access to the cache) so that a more generic
+      # match will not work.
+      expect(clean_output(test_run.output)).to include('Downloading from central: https://repo.maven.apache.org/maven2/io/undertow')
+
       expect(clean_output(test_run.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
         \\[INFO\\] -------------------------------------------------------
         \\[INFO\\]  T E S T S
@@ -18,6 +23,10 @@ RSpec.describe 'Maven buildpack' do
         \\[INFO\\] 
         \\[INFO\\] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
       REGEX
+
+      test_run.run_again
+
+      expect(clean_output(test_run.output)).not_to match('Downloading from central: https://repo.maven.apache.org/maven2/io/undertow')
     end
   end
 end
