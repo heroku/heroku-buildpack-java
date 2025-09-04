@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v78] - 2025-09-04
+
 * Fix a buildpack crash when determining Maven version that can occur for some configurations. ([#264](https://github.com/heroku/heroku-buildpack-java/pull/264))
 
 ## [v77] - 2025-09-04
@@ -118,7 +121,8 @@
 
 * Added a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v77...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v78...main
+[v78]: https://github.com/heroku/heroku-buildpack-java/compare/v77...v78
 [v77]: https://github.com/heroku/heroku-buildpack-java/compare/v76...v77
 [v76]: https://github.com/heroku/heroku-buildpack-java/compare/v75...v76
 [v75]: https://github.com/heroku/heroku-buildpack-java/compare/v74...v75
