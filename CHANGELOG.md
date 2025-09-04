@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v77] - 2025-09-04
+
 * Refactor Maven installation and invocation code ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
 * Improve error messages with detailed troubleshooting guidance ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
 * Enhance `settings.xml` handling and error reporting ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))  
@@ -114,7 +117,8 @@
 
 * Added a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v76...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v77...main
+[v77]: https://github.com/heroku/heroku-buildpack-java/compare/v76...v77
 [v76]: https://github.com/heroku/heroku-buildpack-java/compare/v75...v76
 [v75]: https://github.com/heroku/heroku-buildpack-java/compare/v74...v75
 [v74]: https://github.com/heroku/heroku-buildpack-java/compare/v73...v74
