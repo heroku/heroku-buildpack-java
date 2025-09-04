@@ -7,6 +7,7 @@ set -euo pipefail
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 source "${BUILDPACK_DIR}/lib/java_properties.sh"
 source "${BUILDPACK_DIR}/lib/util.sh"
+source "${BUILDPACK_DIR}/lib/metrics.sh"
 
 export DEFAULT_MAVEN_VERSION="3.9.4"
 
@@ -34,27 +35,39 @@ function maven::setup_maven_and_build_app() {
 	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
 	if maven::should_use_wrapper "${build_dir}"; then
-		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
-		chmod +x "${build_dir}/mvnw"
+		metrics::set_raw "maven_wrapper" "true"
 		local maven_exe="./mvnw"
+
+		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
+		chmod +x "${build_dir}/${maven_exe}"
 	else
-		local maven_version
-		maven_version="$(java_properties::get "${build_dir}/system.properties" "maven.version")"
-		maven::install_maven "${maven_version:-${DEFAULT_MAVEN_VERSION}}" "${cache_dir}/.maven"
+		metrics::set_raw "maven_wrapper" "false"
 		local maven_exe="mvn"
+
+		maven_version_selector=$(java_properties::get "${build_dir}/system.properties" "maven.version")
+
+		local maven_install_start_time
+		maven_install_start_time=$(util::nowms)
+
+		maven::install_maven "${maven_version_selector:-${DEFAULT_MAVEN_VERSION}}" "${cache_dir}/.maven"
+
+		metrics::set_duration "maven_install_duration" "${maven_install_start_time}"
 	fi
+
+	local maven_version
+	maven_version="$(cd "${build_dir}" && ${maven_exe} --version 2>/dev/null | awk '/Apache Maven/ {gsub(/\x1b\[[0-9;]*m/, ""); print $3}')"
+	metrics::set_string "maven_version" "${maven_version}"
 
 	maven::install_settings_xml "${build_dir}" "${build_dir}/.m2/settings.xml"
 
 	output::step "Executing Maven"
 
-	cd "${build_dir}"
 	echo "$ ${maven_exe} ${maven_opts} ${maven_goals}" | output::indent
 
 	# We rely on word splitting for settings_xml_opts, maven_opts, and maven_goals:
 	# Intentional word splitting needed for Maven command arguments
 	# shellcheck disable=SC2086
-	if ! ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${maven_opts} ${maven_goals} | output::indent; then
+	if ! (cd "${build_dir}" && ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${maven_opts} ${maven_goals}) | output::indent; then
 		output::error <<-EOF
 			Error: Maven build failed.
 
@@ -76,6 +89,7 @@ function maven::setup_maven_and_build_app() {
 			to reproduce and debug the issue.
 		EOF
 
+		metrics::set_string "failure_reason" "execute_maven::non_zero_exit_code"
 		return 1
 	fi
 
@@ -146,6 +160,7 @@ function maven::install_maven() {
 			The default supported version is ${DEFAULT_MAVEN_VERSION}.
 		EOF
 
+		metrics::set_string "failure_reason" "install_maven::version_unavailable"
 		exit 1
 	elif [[ "${curl_exit_code}" -ne 0 || "${http_status_code}" != "200" ]]; then
 		output::error <<-EOF
@@ -167,6 +182,7 @@ function maven::install_maven() {
 			HTTP status code: ${http_status_code}, curl exit code: ${curl_exit_code}
 		EOF
 
+		metrics::set_string "failure_reason" "install_maven::download_error"
 		exit 1
 	fi
 
@@ -193,6 +209,7 @@ function maven::install_maven() {
 			Error details: $(head --lines=1 "${error_log}" || true)
 		EOF
 
+		metrics::set_string "failure_reason" "install_maven::extraction_error"
 		exit 1
 	fi
 
@@ -239,6 +256,8 @@ function maven::install_settings_xml() {
 
 	# Check if settings.xml already exists and warn if any method would be used
 	if [[ -f "${settings_destination}" ]]; then
+		metrics::set_string "maven_settings_xml_source_type" "maven_default_location"
+
 		if [[ -n "${MAVEN_SETTINGS_PATH:-}" ]]; then
 			output::warning <<-EOF
 				Warning: Using existing settings.xml file.
@@ -290,9 +309,11 @@ function maven::install_settings_xml() {
 		fi
 
 		output::step "Using settings.xml from ${MAVEN_SETTINGS_PATH}"
+		metrics::set_string "maven_settings_xml_source_type" "path"
 		ln -sf "${settings_source}" "${settings_destination}"
 	elif [[ -n "${MAVEN_SETTINGS_URL:-}" ]]; then
 		output::step "Using settings.xml from ${MAVEN_SETTINGS_URL}"
+		metrics::set_string "maven_settings_xml_source_type" "url"
 
 		if ! curl \
 			--silent \
@@ -324,10 +345,12 @@ function maven::install_settings_xml() {
 				https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
 			EOF
 
+			metrics::set_string "failure_reason" "settings_xml::download_error"
 			exit 1
 		fi
 	elif [[ -f "${build_dir}/settings.xml" ]]; then
 		output::step "Using settings.xml from project directory"
+		metrics::set_string "maven_settings_xml_source_type" "app_root"
 		ln -sf "${build_dir}/settings.xml" "${settings_destination}"
 	fi
 }
