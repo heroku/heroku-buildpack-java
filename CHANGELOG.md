@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Fix a buildpack crash when determining Maven version that can occur for some configurations. ([#264](https://github.com/heroku/heroku-buildpack-java/pull/264))
 
 ## [v77] - 2025-09-04
 

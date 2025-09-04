@@ -54,8 +54,8 @@ function maven::setup_maven_and_build_app() {
 		metrics::set_duration "maven_install_duration" "${maven_install_start_time}"
 	fi
 
-	local maven_version
-	maven_version="$(cd "${build_dir}" && ${maven_exe} --version 2>/dev/null | awk '/Apache Maven/ {gsub(/\x1b\[[0-9;]*m/, ""); print $3}')"
+	local maven_version="unknown"
+	maven_version="$( (cd "${build_dir}" && ${maven_exe} --version 2>/dev/null | awk '/Apache Maven/ {gsub(/\x1b\[[0-9;]*m/, ""); print $3}') || true)"
 	metrics::set_string "maven_version" "${maven_version}"
 
 	maven::install_settings_xml "${build_dir}" "${build_dir}/.m2/settings.xml"
