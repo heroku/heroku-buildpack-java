@@ -35,6 +35,8 @@ function maven::setup_maven_and_build_app() {
 	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
 	if maven::should_use_wrapper "${build_dir}"; then
+		maven::ensure_wrapper_files "${build_dir}"
+
 		metrics::set_raw "maven_wrapper" "true"
 		local maven_exe="./mvnw"
 
@@ -230,6 +232,53 @@ function maven::should_use_wrapper() {
 	local build_dir="${1}"
 
 	[[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
+}
+
+# Ensures all required Maven Wrapper files are present in the build directory.
+#
+# Validates that essential Maven Wrapper files exist and provides a clear error message
+# with instructions for fixing missing files. This function should be called before
+# attempting to execute the Maven Wrapper to prevent cryptic runtime errors.
+#
+# Usage:
+# ```
+# maven::ensure_wrapper_files "${BUILD_DIR}"
+# ```
+function maven::ensure_wrapper_files() {
+	local build_dir="${1}"
+
+	local required_files=(
+		".mvn/wrapper/maven-wrapper.properties"
+		"mvnw"
+	)
+
+	local missing_files=()
+
+	for file in "${required_files[@]}"; do
+		if [[ ! -f "${build_dir}/${file}" ]]; then
+			missing_files+=("${file}")
+		fi
+	done
+
+	if [[ ${#missing_files[@]} -gt 0 ]]; then
+		output::error <<-EOF
+			Error: Maven Wrapper files are missing or incomplete.
+
+			The following required Maven Wrapper files were not found:
+			$(printf '  - %s\n' "${missing_files[@]}")
+
+			To fix this issue, run this command in your project directory
+			locally and commit the generated files:
+			$ mvn wrapper:wrapper
+
+			For more information about Maven Wrapper, see:
+			https://maven.apache.org/tools/wrapper/
+			https://devcenter.heroku.com/articles/java-support#specifying-a-maven-version
+		EOF
+
+		metrics::set_string "failure_reason" "maven_wrapper::missing_files"
+		return 1
+	fi
 }
 
 # Installs Maven settings.xml to the specified destination.

@@ -96,4 +96,31 @@ RSpec.describe 'Maven buildpack' do
       REGEX
     end
   end
+
+  it 'fails with descriptive error when Maven Wrapper properties file is missing' do
+    app = Hatchet::Runner.new('simple-http-service', allow_failure: true)
+
+    app.before_deploy do
+      `rm .mvn/wrapper/maven-wrapper.properties`
+    end
+
+    app.deploy do
+      expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
+        remote:  !     Error: Maven Wrapper files are missing or incomplete\\.
+        remote:  !     
+        remote:  !     The following required Maven Wrapper files were not found:
+        remote:  !       - \\.mvn/wrapper/maven-wrapper\\.properties
+        remote:  !     
+        remote:  !     To fix this issue, run this command in your project directory
+        remote:  !     locally and commit the generated files:
+        remote:  !     \\$ mvn wrapper:wrapper
+        remote:  !     
+        remote:  !     For more information about Maven Wrapper, see:
+        remote:  !     https://maven\\.apache\\.org/tools/wrapper/
+        remote:  !     https://devcenter\\.heroku\\.com/articles/java-support#specifying-a-maven-version
+        remote: 
+        remote:  !     Push rejected, failed to compile Java app\\.
+      REGEX
+    end
+  end
 end
