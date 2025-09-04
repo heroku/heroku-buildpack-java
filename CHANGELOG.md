@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v79] - 2025-09-04
+
 * Add Maven Wrapper validation with clear error message when required files are missing ([#266](https://github.com/heroku/heroku-buildpack-java/pull/266))
 
 ## [v78] - 2025-09-04
@@ -122,7 +125,8 @@
 
 * Added a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v78...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v79...main
+[v79]: https://github.com/heroku/heroku-buildpack-java/compare/v78...v79
 [v78]: https://github.com/heroku/heroku-buildpack-java/compare/v77...v78
 [v77]: https://github.com/heroku/heroku-buildpack-java/compare/v76...v77
 [v76]: https://github.com/heroku/heroku-buildpack-java/compare/v75...v76
