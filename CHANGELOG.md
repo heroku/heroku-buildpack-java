@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+* Refactor Maven installation and invocation code ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
+* Improve error messages with detailed troubleshooting guidance ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
+* Enhance `settings.xml` handling and error reporting ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))  
+* Buildpack output slightly changed. If you match against the buildpack output, verify your matching still works and adjust if necessary. ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
 
 ## [v76] - 2025-07-14
 

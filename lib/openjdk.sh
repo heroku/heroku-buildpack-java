@@ -4,7 +4,7 @@
 # however, it helps Shellcheck realise the options under which these functions will run.
 set -euo pipefail
 
-openjdk::install_openjdk_via_jvm_common_buildpack() {
+function openjdk::install_openjdk_via_jvm_common_buildpack() {
 	local build_dir="${1}"
 	# The install_openjdk function from the JVM common buildpack requires the path to the host buildpack to write to the
 	# export script so that OpenJDK can be found by subsequent buildpacks.

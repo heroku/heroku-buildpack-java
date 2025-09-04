@@ -10,7 +10,6 @@ BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 
 source "${BUILDPACK_DIR}/lib/output.sh"
 source "${BUILDPACK_DIR}/lib/util.sh"
-source "${BUILDPACK_DIR}/lib/common.sh"
 source "${BUILDPACK_DIR}/lib/maven.sh"
 source "${BUILDPACK_DIR}/lib/openjdk.sh"
 
@@ -20,7 +19,23 @@ openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DI
 
 cd "${BUILD_DIR}"
 
-common::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
-maven::run_mvn "test-compile" "${BUILD_DIR}" "${BUILD_DIR}"
-maven::write_mvn_profile "${BUILD_DIR}"
-common::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
+maven::setup_maven_and_build_app \
+	"${BUILD_DIR}" \
+	"${CACHE_DIR}" \
+	"" \
+	"" \
+	"${MAVEN_CUSTOM_GOALS:-"clean dependency:resolve-plugins test-compile"}"
+
+# To run tests, Maven and its local repository need to be available at runtime.
+# Copy from cache and configure Maven environment for runtime usage.
+
+util::cache_copy ".m2/repository" "${CACHE_DIR}" "${BUILD_DIR}"
+util::cache_copy ".m2/wrapper" "${CACHE_DIR}" "${BUILD_DIR}"
+util::cache_copy ".maven" "${CACHE_DIR}" "${BUILD_DIR}"
+
+mkdir -p "${BUILD_DIR}/.profile.d"
+cat <<-EOF >"${BUILD_DIR}/.profile.d/maven.sh"
+	export M2_HOME="\$HOME/.maven"
+	export MAVEN_OPTS="-Xmx1024m -Duser.home=\$HOME -Dmaven.repo.local=\$HOME/.m2/repository"
+	export PATH="\$M2_HOME/bin:\$PATH"
+EOF

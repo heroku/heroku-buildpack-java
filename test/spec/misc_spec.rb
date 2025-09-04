@@ -73,10 +73,24 @@ RSpec.describe 'Maven buildpack' do
         remote:        \\[ERROR\\] For more information about the errors and possible solutions, please read the following articles:
         remote:        \\[ERROR\\] \\[Help 1\\] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
         remote: 
-        remote:  !     ERROR: Failed to build app with Maven
+        remote:  !     Error: Maven build failed.
         remote:  !     
-        remote:  !     We're sorry this build is failing! If you can't find the issue in application code,
-        remote:  !     please submit a ticket so we can help: https://help.heroku.com/
+        remote:  !     An error occurred during the Maven build process. This usually
+        remote:  !     indicates an issue with your application's dependencies, configuration,
+        remote:  !     or source code.
+        remote:  !     
+        remote:  !     First, check the build output above for specific error messages
+        remote:  !     from Maven that might indicate what went wrong. Common issues include:
+        remote:  !     
+        remote:  !     - Missing or incompatible dependencies in your POM
+        remote:  !     - Compilation errors in your application source code
+        remote:  !     - Test failures \\(if tests are enabled during the build\\)
+        remote:  !     - Invalid Maven configuration or settings
+        remote:  !     - Using an incompatible OpenJDK version for your project
+        remote:  !     
+        remote:  !     If you're unable to determine the cause from the Maven output,
+        remote:  !     try building your application locally with the same Maven command
+        remote:  !     to reproduce and debug the issue.
         remote: 
         remote:  !     Push rejected, failed to compile Java app.
       REGEX
