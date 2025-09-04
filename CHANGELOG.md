@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-* Add Maven Wrapper validation with clear error message when required files are missing ([#000](https://github.com/heroku/heroku-buildpack-java/pull/000))
+* Add Maven Wrapper validation with clear error message when required files are missing ([#266](https://github.com/heroku/heroku-buildpack-java/pull/266))
 
 ## [v78] - 2025-09-04
 
