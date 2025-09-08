@@ -34,9 +34,12 @@ function maven::setup_maven_and_build_app() {
 	# See: https://maven.apache.org/configure.html#maven_opts-environment-variable
 	export MAVEN_OPTS="-Xmx1024m${maven_java_opts:+ ${maven_java_opts}} -Duser.home=${build_dir} -Dmaven.repo.local=${cache_dir}/.m2/repository"
 
-	if maven::should_use_wrapper "${build_dir}"; then
-		maven::ensure_wrapper_files "${build_dir}"
+	# Check for incomplete Maven wrapper setup and warn users, regardless of whether
+	# the wrapper will be used, to help them fix the issue without failing the build.
+	# Not failing the build is legacy behavior, but we will change it in a future version.
+	maven::check_wrapper_setup "${build_dir}"
 
+	if maven::should_use_wrapper "${build_dir}"; then
 		metrics::set_raw "maven_wrapper" "true"
 		local maven_exe="./mvnw"
 
@@ -237,50 +240,46 @@ function maven::should_use_wrapper() {
 	[[ -f "${build_dir}/mvnw" ]] && [[ -f "${build_dir}/.mvn/wrapper/maven-wrapper.properties" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
 }
 
-# Ensures all required Maven Wrapper files are present in the build directory.
+# Checks Maven Wrapper setup completeness.
 #
-# Validates that essential Maven Wrapper files exist and provides a clear error message
-# with instructions for fixing missing files. This function should be called before
-# attempting to execute the Maven Wrapper to prevent cryptic runtime errors.
+# If mvnw exists but required wrapper files are missing, emits a warning
+# with instructions for fixing the setup. Does not warn if mvnw is not present.
 #
 # Usage:
 # ```
-# maven::ensure_wrapper_files "${BUILD_DIR}"
+# maven::check_wrapper_setup "${BUILD_DIR}"
 # ```
-function maven::ensure_wrapper_files() {
+function maven::check_wrapper_setup() {
 	local build_dir="${1}"
 
-	local required_files=(
-		".mvn/wrapper/maven-wrapper.properties"
-		"mvnw"
-	)
+	if [[ ! -f "${build_dir}/mvnw" ]]; then
+		return 0
+	fi
 
-	local missing_files=()
+	if [[ ! -f "${build_dir}/.mvn/wrapper/maven-wrapper.properties" ]]; then
+		output::warning <<-EOF
+			Warning: Maven Wrapper script found without properties file.
 
-	for file in "${required_files[@]}"; do
-		if [[ ! -f "${build_dir}/${file}" ]]; then
-			missing_files+=("${file}")
-		fi
-	done
-
-	if [[ ${#missing_files[@]} -gt 0 ]]; then
-		output::error <<-EOF
-			Error: Maven Wrapper files are missing or incomplete.
-
-			The following required Maven Wrapper files were not found:
-			$(printf '  - %s\n' "${missing_files[@]}")
+			Found mvnw script but missing .mvn/wrapper/maven-wrapper.properties.
+			The Maven Wrapper requires both files to function properly.
 
 			To fix this issue, run this command in your project directory
 			locally and commit the generated files:
 			$ mvn wrapper:wrapper
+
+			Alternatively, if you don't want to use Maven Wrapper, you can
+			delete the mvnw file from your project, though the usage of the
+			Maven Wrapper is strongly recommended.
+
+			IMPORTANT: This warning will become an error in a future version
+			of this buildpack. Please fix this issue as soon as possible.
 
 			For more information about Maven Wrapper, see:
 			https://maven.apache.org/tools/wrapper/
 			https://devcenter.heroku.com/articles/java-support#specifying-a-maven-version
 		EOF
 
-		metrics::set_string "failure_reason" "maven_wrapper::missing_files"
-		return 1
+		metrics::set_string "maven_wrapper_incomplete" "true"
 	fi
 }
 
