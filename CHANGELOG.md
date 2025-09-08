@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v80] - 2025-09-08
+
 * Change Maven Wrapper validation from build-failing error to warning when properties file is missing ([#268](https://github.com/heroku/heroku-buildpack-java/pull/268))
 
 ## [v79] - 2025-09-04
@@ -126,7 +129,8 @@
 
 * Added a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v79...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v80...main
+[v80]: https://github.com/heroku/heroku-buildpack-java/compare/v79...v80
 [v79]: https://github.com/heroku/heroku-buildpack-java/compare/v78...v79
 [v78]: https://github.com/heroku/heroku-buildpack-java/compare/v77...v78
 [v77]: https://github.com/heroku/heroku-buildpack-java/compare/v76...v77
