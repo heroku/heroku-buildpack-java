@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Change Maven Wrapper validation from build-failing error to warning when properties file is missing ([#000](https://github.com/heroku/heroku-buildpack-java/pull/000))
 
 ## [v79] - 2025-09-04
 
