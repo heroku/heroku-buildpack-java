@@ -231,7 +231,10 @@ function maven::install_maven() {
 function maven::should_use_wrapper() {
 	local build_dir="${1}"
 
-	[[ -f "${build_dir}/mvnw" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
+	# A surprising number of projects don't have a maven-wrapper.properties file,
+	# but have an mvnw script. We will enforce correct Maven wrapper setup at some point, but
+	# for now, we continue to support this and fall back to not using the wrapper in such cases.
+	[[ -f "${build_dir}/mvnw" ]] && [[ -f "${build_dir}/.mvn/wrapper/maven-wrapper.properties" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
 }
 
 # Ensures all required Maven Wrapper files are present in the build directory.
