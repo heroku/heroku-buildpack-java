@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* Improve detection error message with better user experience and guidance for other build tools ([#TBD](https://github.com/heroku/heroku-buildpack-java/pull/TBD))
+
 
 ## [v80] - 2025-09-08
 

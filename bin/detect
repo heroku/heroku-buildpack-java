@@ -4,6 +4,10 @@ set -euo pipefail
 
 BUILD_DIR="${1}"
 
+BUILDPACK_DIR=$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)
+
+source "${BUILDPACK_DIR}/lib/output.sh"
+
 extensions=(
 	"xml"
 	"atom"
@@ -22,5 +26,34 @@ for extension in "${extensions[@]}"; do
 	fi
 done
 
-(>&2 echo "Could not find a pom.xml file or other supported POM format!")
+output::error <<-EOF
+	Error: Your app is configured to use the Java buildpack,
+	but we couldn't find any supported Java project files.
+
+	The Java buildpack only supports Maven projects. It requires a 'pom.xml'
+	file or other supported POM format in the root directory of your source code.
+
+	Supported POM formats: pom.xml, pom.atom, pom.clj, pom.groovy,
+	pom.rb, pom.scala, pom.yaml, pom.yml
+
+	IMPORTANT: If your Java project uses a different build tool:
+	- For Gradle projects, use the heroku/gradle buildpack instead
+	- For sbt projects (including Play! Framework), use the heroku/scala buildpack instead
+
+	Currently the root directory of your app contains:
+
+	$(ls -1A --indicator-style=slash "${BUILD_DIR}" 2>/dev/null || echo "Unable to list directory contents")
+
+	If your app already has a POM file, check that it:
+
+	1. Is in the top level directory (not a subdirectory).
+	2. Has the correct spelling (the filenames are case-sensitive).
+	3. Isn't listed in '.gitignore' or '.slugignore'.
+	4. Has been added to the Git repository using 'git add --all'
+		 and then committed using 'git commit'.
+
+	For help with using Java on Heroku, see:
+	https://devcenter.heroku.com/articles/java-support
+EOF
+
 exit 1
