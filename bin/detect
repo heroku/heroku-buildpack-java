@@ -30,11 +30,10 @@ output::error <<-EOF
 	Error: Your app is configured to use the Java buildpack,
 	but we couldn't find any supported Java project files.
 
-	The Java buildpack only supports Maven projects. It requires a 'pom.xml'
+	The Java buildpack only supports Maven projects. It requires a pom.xml
 	file or other supported POM format in the root directory of your source code.
 
-	Supported POM formats: pom.xml, pom.atom, pom.clj, pom.groovy,
-	pom.rb, pom.scala, pom.yaml, pom.yml
+	Supported POM formats: $(printf "pom.%s, " "${extensions[@]}" | sed 's/, $//')
 
 	IMPORTANT: If your Java project uses a different build tool:
 	- For Gradle projects, use the heroku/gradle buildpack instead
