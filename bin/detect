@@ -49,7 +49,7 @@ output::error <<-EOF
 	2. Has the correct spelling (the filenames are case-sensitive).
 	3. Isn't listed in '.gitignore' or '.slugignore'.
 	4. Has been added to the Git repository using 'git add --all'
-		 and then committed using 'git commit'.
+	   and then committed using 'git commit'.
 
 	For help with using Java on Heroku, see:
 	https://devcenter.heroku.com/articles/java-support

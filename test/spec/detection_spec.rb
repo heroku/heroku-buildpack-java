@@ -10,11 +10,10 @@ RSpec.describe 'Java buildpack detection' do
         remote:  !     Error: Your app is configured to use the Java buildpack,
         remote:  !     but we couldn't find any supported Java project files.
         remote:  !     
-        remote:  !     The Java buildpack only supports Maven projects. It requires a 'pom.xml'
+        remote:  !     The Java buildpack only supports Maven projects. It requires a pom.xml
         remote:  !     file or other supported POM format in the root directory of your source code.
         remote:  !     
-        remote:  !     Supported POM formats: pom.xml, pom.atom, pom.clj, pom.groovy,
-        remote:  !     pom.rb, pom.scala, pom.yaml, pom.yml
+        remote:  !     Supported POM formats: pom.xml, pom.atom, pom.clj, pom.groovy, pom.rb, pom.scala, pom.yaml, pom.yml
         remote:  !     
         remote:  !     IMPORTANT: If your Java project uses a different build tool:
         remote:  !     - For Gradle projects, use the heroku/gradle buildpack instead
