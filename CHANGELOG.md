@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-* Improve detection error message with better user experience and guidance for other build tools ([#TBD](https://github.com/heroku/heroku-buildpack-java/pull/TBD))
+* Improve detection error message with better user experience and guidance for other build tools ([#270](https://github.com/heroku/heroku-buildpack-java/pull/270))
 
 
 ## [v80] - 2025-09-08
