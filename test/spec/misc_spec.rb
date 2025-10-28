@@ -72,26 +72,26 @@ RSpec.describe 'Maven buildpack' do
         remote:        \\[ERROR\\] 
         remote:        \\[ERROR\\] For more information about the errors and possible solutions, please read the following articles:
         remote:        \\[ERROR\\] \\[Help 1\\] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
-        remote: 
+        remote:
         remote:  !     Error: Maven build failed.
-        remote:  !     
+        remote:  !
         remote:  !     An error occurred during the Maven build process. This usually
         remote:  !     indicates an issue with your application's dependencies, configuration,
         remote:  !     or source code.
-        remote:  !     
+        remote:  !
         remote:  !     First, check the build output above for specific error messages
         remote:  !     from Maven that might indicate what went wrong. Common issues include:
-        remote:  !     
+        remote:  !
         remote:  !     - Missing or incompatible dependencies in your POM
         remote:  !     - Compilation errors in your application source code
         remote:  !     - Test failures \\(if tests are enabled during the build\\)
         remote:  !     - Invalid Maven configuration or settings
         remote:  !     - Using an incompatible OpenJDK version for your project
-        remote:  !     
+        remote:  !
         remote:  !     If you're unable to determine the cause from the Maven output,
         remote:  !     try building your application locally with the same Maven command
         remote:  !     to reproduce and debug the issue.
-        remote: 
+        remote:
         remote:  !     Push rejected, failed to compile Java app.
       REGEX
     end
@@ -108,21 +108,21 @@ RSpec.describe 'Maven buildpack' do
       expect(app.output).to include('[INFO] BUILD SUCCESS')
       expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
         remote:  !     Warning: Maven Wrapper script found without properties file\\.
-        remote:  !     
+        remote:  !
         remote:  !     Found mvnw script but missing \\.mvn/wrapper/maven-wrapper\\.properties\\.
         remote:  !     The Maven Wrapper requires both files to function properly\\.
-        remote:  !     
+        remote:  !
         remote:  !     To fix this issue, run this command in your project directory
         remote:  !     locally and commit the generated files:
         remote:  !     \\$ mvn wrapper:wrapper
-        remote:  !     
+        remote:  !
         remote:  !     Alternatively, if you don't want to use Maven Wrapper, you can
         remote:  !     delete the mvnw file from your project, though the usage of the
         remote:  !     Maven Wrapper is strongly recommended\\.
-        remote:  !     
+        remote:  !
         remote:  !     IMPORTANT: This warning will become an error in a future version
         remote:  !     of this buildpack\\. Please fix this issue as soon as possible\\.
-        remote:  !     
+        remote:  !
         remote:  !     For more information about Maven Wrapper, see:
         remote:  !     https://maven\\.apache\\.org/tools/wrapper/
         remote:  !     https://devcenter\\.heroku\\.com/articles/java-support#specifying-a-maven-version
