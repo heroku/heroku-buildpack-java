@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Improve OpenJDK installation via jvm-common buildpack to prevent function overrides and fix environment variable handling ([#275](https://github.com/heroku/heroku-buildpack-java/pull/275))
 * Improve detection error message with better user experience and guidance for other build tools ([#270](https://github.com/heroku/heroku-buildpack-java/pull/270))
 
 

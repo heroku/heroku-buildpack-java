@@ -20,7 +20,17 @@ function openjdk::install_openjdk_via_jvm_common_buildpack() {
 	local jvm_common_buildpack_dir
 	jvm_common_buildpack_dir=$(mktemp -d)
 
-	curl --silent --show-error --fail --retry 3 --retry-connrefused --connect-timeout 5 --location "${jvm_common_buildpack_tarball_url}" -o "${jvm_common_buildpack_tarball_path}"
+	curl \
+		--connect-timeout 3 \
+		--max-time 60 \
+		--retry 5 \
+		--retry-connrefused \
+		--no-progress-meter \
+		--fail \
+		--location \
+		"${jvm_common_buildpack_tarball_url}" \
+		-o "${jvm_common_buildpack_tarball_path}"
+
 	tar -xzm --directory "${jvm_common_buildpack_dir}" --strip-components=1 -f "${jvm_common_buildpack_tarball_path}"
 
 	# This script translates non-JDBC compliant DATABASE_URL (and similar) environment variables into their
@@ -30,9 +40,19 @@ function openjdk::install_openjdk_via_jvm_common_buildpack() {
 	# shellcheck source=/dev/null
 	source "${jvm_common_buildpack_dir}/opt/jdbc.sh"
 
-	# shellcheck source=/dev/null
-	source "${jvm_common_buildpack_dir}/bin/java"
+	# Run the main installation in a sub-shell to avoid it overriding library functions and global
+	# variables in the host buildpack.
+	(
+		# shellcheck source=/dev/null
+		source "${jvm_common_buildpack_dir}/bin/java"
 
-	# See: https://github.com/heroku/heroku-buildpack-jvm-common/blob/main/bin/java
-	install_openjdk "${build_dir}" "${host_buildpack_dir}"
+		# See: https://github.com/heroku/heroku-buildpack-jvm-common/blob/main/bin/java
+		install_openjdk "${build_dir}" "${host_buildpack_dir}"
+	)
+
+	# Since we run install_openjdk in a sub-shell, any environment variables set by it will not be available in this
+	# (parent) shell. As documented in the jvm buildpack, we can source the modified export script from this (host)
+	# buildpack to get the necessary changes.
+	# shellcheck source=/dev/null
+	source "${host_buildpack_dir}/export"
 }
