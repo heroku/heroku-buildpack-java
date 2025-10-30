@@ -18,22 +18,22 @@ RSpec.describe 'Maven buildpack' do
     app.deploy do
       expect(clean_output(app.output)).to include(<<~OUTPUT)
         remote:  !     Error: Unable to download Maven settings.xml.
-        remote:  !     
+        remote:  !
         remote:  !     An error occurred while downloading the Maven settings file from:
         remote:  !     #{SETTINGS_XML_URL_404}
-        remote:  !     
+        remote:  !
         remote:  !     In some cases, this happens due to a temporary issue with
         remote:  !     the network connection or server, or because the URL is
         remote:  !     inaccessible or requires authentication.
-        remote:  !     
+        remote:  !
         remote:  !     Check that the URL in your MAVEN_SETTINGS_URL environment
         remote:  !     variable is correct and publicly accessible. If the settings file
-        remote:  !     is not needed, you can remove the MAVEN_SETTINGS_URL environment variable 
+        remote:  !     is not needed, you can remove the MAVEN_SETTINGS_URL environment variable
         remote:  !     to use default Maven settings.
-        remote:  !     
+        remote:  !
         remote:  !     Learn more about Maven settings configuration:
         remote:  !     https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml
-        remote: 
+        remote:
         remote:  !     Push rejected, failed to compile Java app.
       OUTPUT
     end
@@ -147,12 +147,12 @@ RSpec.describe 'Maven buildpack' do
       app.deploy do
         expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
           remote:  !     Warning: Using existing settings\\.xml file\\.
-          remote:  !     
+          remote:  !
           remote:  !     A settings\\.xml file already exists at .*\\.m2/settings\\.xml\\.
           remote:  !     However, the MAVEN_SETTINGS_PATH environment variable is set, which
           remote:  !     would normally be used as the settings\\.xml configuration\\. The existing
           remote:  !     file will be used\\.
-          remote:  !     
+          remote:  !
           remote:  !     If you intended to use the settings from MAVEN_SETTINGS_PATH instead,
           remote:  !     remove the existing settings\\.xml file at .*\\.m2/settings\\.xml\\.
         REGEX
@@ -180,12 +180,12 @@ RSpec.describe 'Maven buildpack' do
       app.deploy do
         expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
           remote:  !     Warning: Using existing settings\\.xml file\\.
-          remote:  !     
+          remote:  !
           remote:  !     A settings\\.xml file already exists at .*\\.m2/settings\\.xml\\.
           remote:  !     However, the MAVEN_SETTINGS_URL environment variable is set, which
           remote:  !     would normally be used as the settings\\.xml configuration\\. The existing
           remote:  !     file will be used\\.
-          remote:  !     
+          remote:  !
           remote:  !     If you intended to use the settings from MAVEN_SETTINGS_URL instead,
           remote:  !     remove the existing settings\\.xml file at .*\\.m2/settings\\.xml\\.
         REGEX
@@ -215,12 +215,12 @@ RSpec.describe 'Maven buildpack' do
       app.deploy do
         expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
           remote:  !     Warning: Using existing settings\\.xml file\\.
-          remote:  !     
+          remote:  !
           remote:  !     A settings\\.xml file already exists at .*\\.m2/settings\\.xml\\.
           remote:  !     However, a settings\\.xml file was also found in the project directory,
           remote:  !     which would normally be used as the settings\\.xml configuration\\. The
           remote:  !     existing file will be used\\.
-          remote:  !     
+          remote:  !
           remote:  !     If you intended to use the settings from your project directory instead,
           remote:  !     remove the existing settings\\.xml file at .*\\.m2/settings\\.xml\\.
         REGEX

@@ -58,4 +58,6 @@ def clean_output(output)
     .gsub(/ {8}(?=\R)/, '')
     # Remove ANSI colour codes used in buildpack output (e.g. error messages).
     .gsub(/\e\[[0-9;]+m/, '')
+    # Remove trailing space from empty "remote: " lines added by Heroku
+    .gsub(/^remote: $/, 'remote:')
 end
