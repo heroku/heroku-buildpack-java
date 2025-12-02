@@ -2,17 +2,17 @@
 
 ## [Unreleased]
 
-* Improve OpenJDK installation via jvm-common buildpack to prevent function overrides and fix environment variable handling ([#275](https://github.com/heroku/heroku-buildpack-java/pull/275))
-* Improve detection error message with better user experience and guidance for other build tools ([#270](https://github.com/heroku/heroku-buildpack-java/pull/270))
+* Improve OpenJDK installation via `jvm-common` buildpack to prevent function overrides and fix environment variable handling. ([#275](https://github.com/heroku/heroku-buildpack-java/pull/275))
+* Improve detection error message with better user experience and guidance for other build tools. ([#270](https://github.com/heroku/heroku-buildpack-java/pull/270))
 
 
 ## [v80] - 2025-09-08
 
-* Change Maven Wrapper validation from build-failing error to warning when properties file is missing ([#268](https://github.com/heroku/heroku-buildpack-java/pull/268))
+* Change Maven Wrapper validation from build-failing error to warning when properties file is missing. ([#268](https://github.com/heroku/heroku-buildpack-java/pull/268))
 
 ## [v79] - 2025-09-04
 
-* Add Maven Wrapper validation with clear error message when required files are missing ([#266](https://github.com/heroku/heroku-buildpack-java/pull/266))
+* Add Maven Wrapper validation with clear error message when required files are missing. ([#266](https://github.com/heroku/heroku-buildpack-java/pull/266))
 
 ## [v78] - 2025-09-04
 
@@ -20,19 +20,19 @@
 
 ## [v77] - 2025-09-04
 
-* Refactor Maven installation and invocation code ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
-* Improve error messages with detailed troubleshooting guidance ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
-* Enhance `settings.xml` handling and error reporting ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))  
+* Refactor Maven installation and invocation code. ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
+* Improve error messages with detailed troubleshooting guidance. ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
+* Enhance `settings.xml` handling and error reporting. ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
 * Buildpack output slightly changed. If you match against the buildpack output, verify your matching still works and adjust if necessary. ([#257](https://github.com/heroku/heroku-buildpack-java/pull/257))
 
 ## [v76] - 2025-07-14
 
-* Remove heroku-20 support ([#245](https://github.com/heroku/heroku-buildpack-java/pull/245))
+* Remove `heroku-20` support. ([#245](https://github.com/heroku/heroku-buildpack-java/pull/245))
 * Buildpack output slightly changed. If you match against the buildpack output, verify your matching still works and adjust if necessary. ([#249](https://github.com/heroku/heroku-buildpack-java/pull/249))
 
 ## [v75] - 2025-02-24
 
-* Internal changes only
+* Internal changes only.
 
 ## [v74] - 2024-10-04
 
@@ -40,97 +40,110 @@
 
 ## [v73] - 2023-08-14
 
-* Remove heroku-18 support ([#204](https://github.com/heroku/heroku-buildpack-java/pull/204))
+* Remove `heroku-18` support. ([#204](https://github.com/heroku/heroku-buildpack-java/pull/204))
 * Upgrade default Maven version to `3.9.4`. ([#207](https://github.com/heroku/heroku-buildpack-java/pull/207))
 
 ## [v72] - 2022-06-14
 
-* Adjust curl retry and connection timeout handling
-* Vendor buildpack-stdlib rather than downloading it at build time
-* Switch to the recommended regional S3 domain instead of the global one
+* Adjust `curl` retry and connection timeout handling.
+* Vendor `buildpack-stdlib` rather than downloading it at build time.
+* Switch to the recommended regional S3 domain instead of the global one.
 
 ## [v71] - 2022-06-07
 
-* Add heroku-22 support
+* Add `heroku-22` support.
 
 ## [v70] - 2022-05-18
 
-* Remove heroku-16 support
-* Remove Cloud Native Buildpack support. Development of Heroku JVM Cloud Native Buildpacks now takes place in a dedicated repository: https://github.com/heroku/buildpacks-jvm
+* Remove `heroku-16` support.
+* Remove Cloud Native Buildpack support. Development of Heroku JVM Cloud Native Buildpacks now takes place in a dedicated repository: https://github.com/heroku/buildpacks-jvm.
 
 ## [v69] - 2021-01-13
 
-* Upgrade CNB API compatibility version to 0.4
+* Upgrade CNB API compatibility version to `0.4`.
 
 ## [v68] - 2020-11-17
 
-* Enable heroku-20 testing
+* Enable `heroku-20` testing.
 
 ## [v67] - 2020-10-12
 
-* Update tests
+* Update tests.
 
 ## [v66] - 2019-12-17
 
-* Add support for Cloud Native Buildpacks API
-* Add support for Maven wrapper without binary JAR by removing check for .mvn/wrapper/maven-wrapper.jar
+* Add support for Cloud Native Buildpacks API.
+* Add support for Maven wrapper without binary JAR by removing check for `.mvn/wrapper/maven-wrapper.jar`.
 
 ## [v65] - 2019-10-14
 
-* Upgrade default Maven version to 3.6.2
+* Upgrade default Maven version to `3.6.2`. ([#118](https://github.com/heroku/heroku-buildpack-java/pull/118))
 
-## 64
+## [v64] - 2019-09-30
 
-* Add support for Maven 3.5 and 3.6
-* Cache system.properties file
+* Add support for Maven `3.5` and `3.6`. ([#115](https://github.com/heroku/heroku-buildpack-java/pull/115))
+* Cache `system.properties` file. ([#110](https://github.com/heroku/heroku-buildpack-java/pull/110))
 
-## 63
+## [v63] - 2019-02-27
 
-* Add support for MAVEN_HEROKU_CI_GOAL
+* Add support for `MAVEN_HEROKU_CI_GOAL`. ([#107](https://github.com/heroku/heroku-buildpack-java/pull/107))
 
-## 62
+## [v62] - 2018-06-13
 
-* Improved error behavior for MAVEN_SETTINGS_URL
-* Changed location of JVM common buildpack
+* Improve error behavior for `MAVEN_SETTINGS_URL`. ([#96](https://github.com/heroku/heroku-buildpack-java/pull/96))
+* Change location of JVM common buildpack. ([#97](https://github.com/heroku/heroku-buildpack-java/pull/97))
 
-## v59
+## [v61] - 2018-04-26
 
-* Add support for settings.xml in bin/test
+* Internal changes only.
 
-## v58
+## [v60] - 2018-04-13
 
-* Added mcount of kotlin and groovy files in the repo
-* PR #92: Fix some Bash issues
+* Fix Maven profile handling to avoid hardcoding build directory. ([#94](https://github.com/heroku/heroku-buildpack-java/pull/94))
+* Fix testpack API to use correct parameters. ([#95](https://github.com/heroku/heroku-buildpack-java/pull/95))
 
-## v57
+## [v59] - 2018-01-19
 
-* Added measurement of build time with and without cache
+* Add support for `settings.xml` in `bin/test`. ([#93](https://github.com/heroku/heroku-buildpack-java/pull/93))
 
-## v55
+## [v58] - 2018-01-04
 
-* Added message when pom.xml is not found
+* Add measurement of Kotlin and Groovy files in the repository. ([#91](https://github.com/heroku/heroku-buildpack-java/pull/91))
+* Fix some Bash issues. ([#92](https://github.com/heroku/heroku-buildpack-java/pull/92))
 
-## v42
+## [v57] - 2017-10-19
 
-* Use latest version of Maven by default
+* Add measurement of build time with and without cache. ([#88](https://github.com/heroku/heroku-buildpack-java/pull/88))
 
-## v41
+## [v56] - 2017-10-10
 
-* Upgrade to Maven 3.3.9
-* Add retry option to curl commands
+* Internal changes only.
 
-## v40
+## [v55] - 2017-09-11
 
-* Added dependency:list to maven commands
+* Add message when `pom.xml` is not found.
 
-## v39
+## [v42] - 2015-12-15
 
-* Upgrade default Maven to 3.3.3
-* Upgrade default JDK to 8u51
+* Use latest version of Maven by default.
 
-## v38
+## [v41] - 2015-12-02
 
-* Added a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`
+* Upgrade to Maven `3.3.9`. ([#62](https://github.com/heroku/heroku-buildpack-java/pull/62))
+* Add retry option to `curl` commands. ([#63](https://github.com/heroku/heroku-buildpack-java/pull/63))
+
+## [v40] - 2015-10-12
+
+* Add `dependency:list` to Maven commands.
+
+## [v39] - 2015-08-06
+
+* Upgrade default Maven to `3.3.3`.
+* Upgrade default JDK to `8u51`.
+
+## [v38] - 2015-04-20
+
+* Add a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`.
 
 [unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v80...main
 [v80]: https://github.com/heroku/heroku-buildpack-java/compare/v79...v80
@@ -149,3 +162,18 @@
 [v67]: https://github.com/heroku/heroku-buildpack-java/compare/v66...v67
 [v66]: https://github.com/heroku/heroku-buildpack-java/compare/v65...v66
 [v65]: https://github.com/heroku/heroku-buildpack-java/compare/v64...v65
+[v64]: https://github.com/heroku/heroku-buildpack-java/compare/v63...v64
+[v63]: https://github.com/heroku/heroku-buildpack-java/compare/v62...v63
+[v62]: https://github.com/heroku/heroku-buildpack-java/compare/v61...v62
+[v61]: https://github.com/heroku/heroku-buildpack-java/compare/v60...v61
+[v60]: https://github.com/heroku/heroku-buildpack-java/compare/v59...v60
+[v59]: https://github.com/heroku/heroku-buildpack-java/compare/v58...v59
+[v58]: https://github.com/heroku/heroku-buildpack-java/compare/v57...v58
+[v57]: https://github.com/heroku/heroku-buildpack-java/compare/v56...v57
+[v56]: https://github.com/heroku/heroku-buildpack-java/compare/v54...v56
+[v55]: https://github.com/heroku/heroku-buildpack-java/compare/v54...v56
+[v42]: https://github.com/heroku/heroku-buildpack-java/compare/v41...v42
+[v41]: https://github.com/heroku/heroku-buildpack-java/compare/v40...v41
+[v40]: https://github.com/heroku/heroku-buildpack-java/compare/v39...v40
+[v39]: https://github.com/heroku/heroku-buildpack-java/compare/v38...v39
+[v38]: https://github.com/heroku/heroku-buildpack-java/compare/v37...v38
