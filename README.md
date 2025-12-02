@@ -1,4 +1,4 @@
-![java](https://cloud.githubusercontent.com/assets/871315/20325947/f3544014-ab43-11e6-9c51-8240ce161939.png)
+![java](https://raw.githubusercontent.com/heroku/buildpacks/refs/heads/main/assets/images/buildpack-banner-java.png)
 
 # Heroku Buildpack: Java (Maven) [![CI](https://github.com/heroku/heroku-buildpack-java/actions/workflows/ci.yml/badge.svg)](https://github.com/heroku/heroku-buildpack-java/actions/workflows/ci.yml)
 
