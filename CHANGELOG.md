@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v81] - 2026-02-24
+
 * Improve OpenJDK installation via `jvm-common` buildpack to prevent function overrides and fix environment variable handling. ([#275](https://github.com/heroku/heroku-buildpack-java/pull/275))
 * Improve detection error message with better user experience and guidance for other build tools. ([#270](https://github.com/heroku/heroku-buildpack-java/pull/270))
 * Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#284](https://github.com/heroku/heroku-buildpack-java/pull/284))
@@ -145,7 +148,8 @@
 
 * Add a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v80...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v81...main
+[v81]: https://github.com/heroku/heroku-buildpack-java/compare/v80...v81
 [v80]: https://github.com/heroku/heroku-buildpack-java/compare/v79...v80
 [v79]: https://github.com/heroku/heroku-buildpack-java/compare/v78...v79
 [v78]: https://github.com/heroku/heroku-buildpack-java/compare/v77...v78
