@@ -4,7 +4,7 @@
 
 * Improve OpenJDK installation via `jvm-common` buildpack to prevent function overrides and fix environment variable handling. ([#275](https://github.com/heroku/heroku-buildpack-java/pull/275))
 * Improve detection error message with better user experience and guidance for other build tools. ([#270](https://github.com/heroku/heroku-buildpack-java/pull/270))
-
+* Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#284](https://github.com/heroku/heroku-buildpack-java/pull/284))
 
 ## [v80] - 2025-09-08
 
