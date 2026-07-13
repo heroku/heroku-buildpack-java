@@ -246,8 +246,8 @@ RSpec.describe 'Maven buildpack' do
       end
 
       app.deploy do
-        expect(clean_output(app.output)).not_to match(/remote:  !     Warning: Using existing settings\.xml file\./)
-        expect(clean_output(app.output)).not_to match(/would normally be used as the settings\.xml configuration/)
+        expect(clean_output(app.output)).not_to include('remote:  !     Warning: Using existing settings.xml file.')
+        expect(clean_output(app.output)).not_to include('would normally be used as the settings.xml configuration')
         expect(clean_output(app.output)).to(
           include("[BUILDPACK INTEGRATION TEST - SETTINGS TEST VALUE] #{existing_test_value}")
         )
