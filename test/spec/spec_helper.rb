@@ -51,7 +51,25 @@ def write_sys_props(directory, props)
   end
 end
 
+def find_output_start_index(lines)
+  # Find the first "app detected" line. This skips the buildpack list at the beginning which will contain a GitHub URL
+  # for the buildpack under test that will be different for each PR/branch under test.
+  # For detection failures, look for the "App not compatible" line instead.
+  lines.index { |line| line.match?(/-----> .* app detected|-----> App not compatible with buildpack/) }
+end
+
+def find_output_end_index(lines)
+  # Find the end of relevant build output. For successful builds, this is the "Done: 12.3M" line after compression.
+  # For failed builds, this is the "Push failed" line. This skips build-system output after these lines that is
+  # irrelevant for our tests and changes for each deploy.
+  success_end_index = lines.index { |line| line.match?(/Done: \d+(\.\d+)?[MG]/) }
+  failure_end_index = lines.index { |line| line.match?(/!\s+Push failed/) }
+  [success_end_index, failure_end_index].compact.first
+end
+
 def clean_output(output)
+  lines = output.lines
+  output = lines[find_output_start_index(lines)..find_output_end_index(lines)].join
   output
     # Remove trailing whitespace characters added by Git:
     # https://github.com/heroku/hatchet/issues/162
