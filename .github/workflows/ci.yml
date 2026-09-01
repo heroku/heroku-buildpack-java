@@ -42,7 +42,6 @@ jobs:
       HEROKU_DISABLE_AUTOUPDATE: 1
       HATCHET_BUILDPACK_BASE: https://github.com/heroku/heroku-buildpack-java
       HATCHET_DEFAULT_STACK: ${{ matrix.stack }}
-      DEBUG_OUTPUT_DIR: ${{ github.workspace }}/debug-output
     steps:
       - uses: actions/checkout@v7
       - name: Install Ruby and dependencies
@@ -54,13 +53,6 @@ jobs:
         run: bundle exec hatchet ci:setup
       - name: Run Hatchet integration tests
         run: bundle exec parallel_split_test test/spec/
-      - name: Upload debug output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-output-${{ matrix.stack }}
-          path: ${{ github.workspace }}/debug-output
-          if-no-files-found: warn
 
   container-test:
     runs-on: ubuntu-24.04

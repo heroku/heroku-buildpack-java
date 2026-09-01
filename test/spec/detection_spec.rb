@@ -6,14 +6,6 @@ RSpec.describe 'Java buildpack detection' do
   it 'shows helpful error message when no Java project files are found' do
     app = Hatchet::Runner.new('non-java-app', allow_failure: true)
     app.deploy do
-      dump_dir = ENV.fetch('DEBUG_OUTPUT_DIR', nil)
-      if dump_dir
-        FileUtils.mkdir_p(dump_dir)
-        stack = ENV.fetch('HATCHET_DEFAULT_STACK', 'unknown')
-        pid = Process.pid
-        File.binwrite(File.join(dump_dir, "detection-#{stack}-#{pid}-raw.bin"), app.output)
-        File.binwrite(File.join(dump_dir, "detection-#{stack}-#{pid}-cleaned.bin"), clean_output(app.output))
-      end
       expect(clean_output(app.output)).to include(<<~OUTPUT)
         remote:  !     Error: Your app is configured to use the Java buildpack,
         remote:  !     but we couldn't find any supported Java project files.
