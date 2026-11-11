@@ -9,7 +9,7 @@ source "${BUILDPACK_DIR}/lib/java_properties.sh"
 source "${BUILDPACK_DIR}/lib/util.sh"
 source "${BUILDPACK_DIR}/lib/metrics.sh"
 
-export DEFAULT_MAVEN_VERSION="3.9.4"
+export DEFAULT_MAVEN_VERSION="3.10.0"
 
 # Sets up Maven environment and builds the application.
 #
