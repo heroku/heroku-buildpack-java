@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Upgrade default Maven version to `3.10.0`. ([#313](https://github.com/heroku/heroku-buildpack-java/pull/313))
 
 ## [v81] - 2026-02-24
 

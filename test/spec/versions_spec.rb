@@ -139,6 +139,6 @@ RSpec.describe 'Maven buildpack' do
   end
 end
 
-DEFAULT_MAVEN_VERSION = '3.9.4'
+DEFAULT_MAVEN_VERSION = '3.10.0'
 UNKNOWN_MAVEN_VERSION = '1.0.0-unknown-version'
 SIMPLE_HTTP_SERVICE_MAVEN_WRAPPER_VERSION = '3.6.3'
