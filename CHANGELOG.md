@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Fix Maven failing to start when the build cache holds an installation of a different Maven version. ([#315](https://github.com/heroku/heroku-buildpack-java/pull/315))
 
 ## [v82] - 2026-11-12
 

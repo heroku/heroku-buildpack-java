@@ -117,6 +117,7 @@ function maven::install_maven() {
 
 	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
 
+	rm -rf "${maven_home}"
 	mkdir -p "${maven_home}"
 
 	local tarball_path

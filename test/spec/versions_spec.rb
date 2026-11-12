@@ -137,6 +137,27 @@ RSpec.describe 'Maven buildpack' do
       expect(clean_output(app.output)).to include('[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.9.4')
     end
   end
+
+  it 'replaces a cached Maven installation when the Maven version changes' do
+    app = Hatchet::Runner.new('simple-http-service')
+    app.before_deploy do
+      `rm mvnw`
+      add_to_system_properties('maven.version', '3.9.4')
+    end
+
+    app.deploy do
+      expect(clean_output(app.output)).to include('[BUILDPACK INTEGRATION TEST - MAVEN VERSION] 3.9.4')
+
+      add_to_system_properties('maven.version', DEFAULT_MAVEN_VERSION)
+      app.commit!
+      app.push!
+
+      expect(clean_output(app.output)).to include("remote: -----> Installing Maven #{DEFAULT_MAVEN_VERSION}...")
+      expect(clean_output(app.output)).to(
+        include("[BUILDPACK INTEGRATION TEST - MAVEN VERSION] #{DEFAULT_MAVEN_VERSION}")
+      )
+    end
+  end
 end
 
 DEFAULT_MAVEN_VERSION = '3.10.0'
