@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v82] - 2026-11-12
+
 * Upgrade default Maven version to `3.10.0`. ([#313](https://github.com/heroku/heroku-buildpack-java/pull/313))
 
 ## [v81] - 2026-02-24
@@ -149,7 +152,8 @@
 
 * Add a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v81...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v82...main
+[v82]: https://github.com/heroku/heroku-buildpack-java/compare/v81...v82
 [v81]: https://github.com/heroku/heroku-buildpack-java/compare/v80...v81
 [v80]: https://github.com/heroku/heroku-buildpack-java/compare/v79...v80
 [v79]: https://github.com/heroku/heroku-buildpack-java/compare/v78...v79
