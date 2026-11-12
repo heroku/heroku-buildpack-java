@@ -296,7 +296,7 @@ function maven::wrapper_supports_mirror() {
 	local distribution_url
 	distribution_url=$(java_properties::get "${build_dir}/.mvn/wrapper/maven-wrapper.properties" "distributionUrl")
 
-	if [[ "${distribution_url}" != "${MAVEN_CENTRAL_URL}/"* && "${distribution_url}" != "https://repo1.maven.org/maven2/"* ]]; then
+	if [[ "${distribution_url}" != "https://repo.maven.apache.org/maven2/"* && "${distribution_url}" != "https://repo1.maven.org/maven2/"* ]]; then
 		return 1
 	fi
 
