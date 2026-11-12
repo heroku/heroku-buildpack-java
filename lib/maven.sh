@@ -11,6 +11,9 @@ source "${BUILDPACK_DIR}/lib/metrics.sh"
 
 export DEFAULT_MAVEN_VERSION="3.10.0"
 
+MAVEN_CENTRAL_URL="https://repo.maven.apache.org/maven2"
+MAVEN_CENTRAL_MIRROR_URL="https://heroku-buildpacks-jvm.s3.dualstack.us-east-1.amazonaws.com/maven-central"
+
 # Sets up Maven environment and builds the application.
 #
 # This function handles the complete Maven build process including:
@@ -115,7 +118,8 @@ function maven::install_maven() {
 
 	output::step "Installing Maven ${maven_version}..."
 
-	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
+	local maven_path="org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
+	local maven_url="${MAVEN_CENTRAL_MIRROR_URL}/${maven_path}"
 
 	# The Maven home lives in the cache directory and may hold a different Maven version from a
 	# previous build. Extracting over it would leave stale files behind, such as a second
@@ -127,19 +131,19 @@ function maven::install_maven() {
 	tarball_path=$(mktemp)
 
 	local http_status_code
-	http_status_code=$(curl \
-		--retry 3 \
-		--retry-connrefused \
-		--connect-timeout 5 \
-		--silent \
-		--show-error \
-		--max-time 60 \
-		--location \
-		--write-out "%{http_code}" \
-		--output "${tarball_path}" \
-		"${maven_url}")
-
+	http_status_code=$(maven::download_file "${maven_url}" "${tarball_path}")
 	local curl_exit_code=$?
+
+	# The mirror is updated periodically and might not have recently released versions yet. S3 responds
+	# with 403 instead of 404 for missing objects since the bucket doesn't allow public listing.
+	if [[ "${http_status_code}" == "403" || "${http_status_code}" == "404" ]]; then
+		metrics::set_string "maven_install_source" "maven_central"
+		maven_url="${MAVEN_CENTRAL_URL}/${maven_path}"
+		http_status_code=$(maven::download_file "${maven_url}" "${tarball_path}")
+		curl_exit_code=$?
+	else
+		metrics::set_string "maven_install_source" "mirror"
+	fi
 
 	if [[ "${http_status_code}" == "404" ]]; then
 		output::error <<-EOF
@@ -224,6 +228,29 @@ function maven::install_maven() {
 
 	export PATH="${maven_home}/bin:${PATH}"
 	chmod +x "${maven_home}/bin/mvn"
+}
+
+# Downloads the given URL to the given path and prints the HTTP status code.
+#
+# Usage:
+# ```
+# http_status_code=$(maven::download_file "https://example.com/file.tar.gz" "/tmp/file.tar.gz")
+# ```
+function maven::download_file() {
+	local url="${1}"
+	local output_path="${2}"
+
+	curl \
+		--retry 3 \
+		--retry-connrefused \
+		--connect-timeout 5 \
+		--silent \
+		--show-error \
+		--max-time 60 \
+		--location \
+		--write-out "%{http_code}" \
+		--output "${output_path}" \
+		"${url}"
 }
 
 # Determines if Maven Wrapper should be used for the given build directory.
