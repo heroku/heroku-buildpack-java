@@ -58,12 +58,12 @@ RSpec.describe 'Maven buildpack' do
     app.deploy do
       expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
         remote:        \\[INFO\\] ------------------------------------------------------------------------
-        remote:        \\[INFO\\] BUILD FAILURE
+        remote:        \\[ERROR\\] BUILD FAILURE
         remote:        \\[INFO\\] ------------------------------------------------------------------------
         remote:        \\[INFO\\] Total time:  [0-9\\.]+ s
         remote:        \\[INFO\\] Finished at: [^ ]+
         remote:        \\[INFO\\] ------------------------------------------------------------------------
-        remote:        \\[ERROR\\] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile \\(default-compile\\) on project app-with-compile-error: Compilation failure
+        remote:        \\[ERROR\\] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.16.0:compile \\(default-compile\\) on project app-with-compile-error: Compilation failure
         remote:        \\[ERROR\\] /tmp/build_[^ ]+/src/main/java/com/heroku/App.java:\\[5,28\\] ';' expected
         remote:        \\[ERROR\\] -> \\[Help 1\\]
         remote:        \\[ERROR\\] 
