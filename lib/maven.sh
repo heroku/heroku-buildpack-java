@@ -48,6 +48,15 @@ function maven::setup_maven_and_build_app() {
 
 		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/${maven_exe}"
+
+		if [[ -n "${MVNW_REPOURL:-}" ]]; then
+			metrics::set_string "maven_wrapper_repo_url_source" "user"
+		elif maven::wrapper_supports_mirror "${build_dir}"; then
+			metrics::set_string "maven_wrapper_repo_url_source" "mirror"
+			export MVNW_REPOURL="${MAVEN_CENTRAL_MIRROR_URL}"
+		else
+			metrics::set_string "maven_wrapper_repo_url_source" "default"
+		fi
 	else
 		metrics::set_raw "maven_wrapper" "false"
 		local maven_exe="mvn"
@@ -269,6 +278,39 @@ function maven::should_use_wrapper() {
 	# but have an mvnw script. We will enforce correct Maven wrapper setup at some point, but
 	# for now, we continue to support this and fall back to not using the wrapper in such cases.
 	[[ -f "${build_dir}/mvnw" ]] && [[ -f "${build_dir}/.mvn/wrapper/maven-wrapper.properties" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
+}
+
+# Determines if the Maven Wrapper in the given build directory can download Maven from the Maven Central mirror.
+# Returns 0 (true) if the distributionUrl points to Maven Central and the wrapper keeps the Maven version
+# from the distributionUrl when MVNW_REPOURL is set.
+#
+# Usage:
+# ```
+# if maven::wrapper_supports_mirror "${BUILD_DIR}"; then
+#     export MVNW_REPOURL="${MAVEN_CENTRAL_MIRROR_URL}"
+# fi
+# ```
+function maven::wrapper_supports_mirror() {
+	local build_dir="${1}"
+
+	# Properties files can escape colons, e.g. https\://repo.maven.apache.org/maven2/...
+	local distribution_url
+	distribution_url=$(grep -E "^distributionUrl[[:space:]]*=" "${build_dir}/.mvn/wrapper/maven-wrapper.properties" 2>/dev/null | head -n 1 | cut -d "=" -f 2- | tr -d '\\[:space:]' || true)
+
+	if [[ "${distribution_url}" != "${MAVEN_CENTRAL_URL}/"* && "${distribution_url}" != "https://repo1.maven.org/maven2/"* ]]; then
+		return 1
+	fi
+
+	# The only-script wrapper type downloads Maven without a wrapper JAR.
+	if grep -q -F "_MVNW_REPO_PATTERN" "${build_dir}/mvnw"; then
+		return 0
+	fi
+
+	# Takari wrapper JARs ignore the distributionUrl when MVNW_REPOURL is set and download a hardcoded Maven
+	# version instead. Only Apache Maven Wrapper JARs keep the version. A missing JAR is downloaded from the
+	# wrapperUrl, which might point to a Takari JAR. Zip entry names are stored uncompressed, so the JAR can be
+	# identified by its Maven metadata path without extracting it.
+	grep -q -a -F "META-INF/maven/org.apache.maven.wrapper/maven-wrapper/" "${build_dir}/.mvn/wrapper/maven-wrapper.jar" 2>/dev/null
 }
 
 # Checks Maven Wrapper setup completeness.
