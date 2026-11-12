@@ -28,7 +28,7 @@ end
 
 def add_to_system_properties(key, value)
   properties = JavaProperties.load('system.properties')
-  properties[key] = value
+  properties[key.to_sym] = value
   JavaProperties.write(properties, 'system.properties')
 end
 
