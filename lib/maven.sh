@@ -117,6 +117,9 @@ function maven::install_maven() {
 
 	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
 
+	# The Maven home lives in the cache directory and may hold a different Maven version from a
+	# previous build. Extracting over it would leave stale files behind, such as a second
+	# plexus-classworlds jar that breaks the classpath bin/mvn builds with a glob.
 	rm -rf "${maven_home}"
 	mkdir -p "${maven_home}"
 
