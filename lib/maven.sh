@@ -293,9 +293,8 @@ function maven::should_use_wrapper() {
 function maven::wrapper_supports_mirror() {
 	local build_dir="${1}"
 
-	# Properties files can escape colons, e.g. https\://repo.maven.apache.org/maven2/...
 	local distribution_url
-	distribution_url=$(grep -E "^distributionUrl[[:space:]]*=" "${build_dir}/.mvn/wrapper/maven-wrapper.properties" 2>/dev/null | head -n 1 | cut -d "=" -f 2- | tr -d '\\[:space:]' || true)
+	distribution_url=$(java_properties::get "${build_dir}/.mvn/wrapper/maven-wrapper.properties" "distributionUrl")
 
 	if [[ "${distribution_url}" != "${MAVEN_CENTRAL_URL}/"* && "${distribution_url}" != "https://repo1.maven.org/maven2/"* ]]; then
 		return 1
