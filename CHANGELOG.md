@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 * Download Maven from a Heroku-hosted mirror of Maven Central, with a fallback to Maven Central for versions not yet mirrored. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
-* Download Maven Wrapper distributions from a Heroku-hosted mirror of Maven Central for apps using Apache Maven Wrapper 3.x with a `distributionUrl` on Maven Central. ([#319](https://github.com/heroku/heroku-buildpack-java/pull/319))
+* Download Maven Wrapper distributions from a Heroku-hosted mirror of Maven Central for apps using the `only-script` type of Maven Wrapper with a `distributionUrl` on Maven Central. ([#319](https://github.com/heroku/heroku-buildpack-java/pull/319))
 
 ## [v83] - 2026-11-12
 

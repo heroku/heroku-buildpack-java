@@ -281,8 +281,7 @@ function maven::should_use_wrapper() {
 }
 
 # Determines if the Maven Wrapper in the given build directory can download Maven from the Maven Central mirror.
-# Returns 0 (true) if the distributionUrl points to Maven Central and the wrapper keeps the Maven version
-# from the distributionUrl when MVNW_REPOURL is set.
+# Returns 0 (true) if the distributionUrl points to Maven Central and the wrapper is of the only-script type.
 #
 # Usage:
 # ```
@@ -300,16 +299,10 @@ function maven::wrapper_supports_mirror() {
 		return 1
 	fi
 
-	# The only-script wrapper type downloads Maven without a wrapper JAR.
-	if grep -q -F "_MVNW_REPO_PATTERN" "${build_dir}/mvnw"; then
-		return 0
-	fi
-
-	# Takari wrapper JARs ignore the distributionUrl when MVNW_REPOURL is set and download a hardcoded Maven
-	# version instead. Only Apache Maven Wrapper JARs keep the version. A missing JAR is downloaded from the
-	# wrapperUrl, which might point to a Takari JAR. Zip entry names are stored uncompressed, so the JAR can be
-	# identified by its Maven metadata path without extracting it.
-	grep -q -a -F "META-INF/maven/org.apache.maven.wrapper/maven-wrapper/" "${build_dir}/.mvn/wrapper/maven-wrapper.jar" 2>/dev/null
+	# Wrapper types that use a JAR are not supported since some JARs, such as the ones from Takari, ignore the
+	# distributionUrl when MVNW_REPOURL is set and download a hardcoded Maven version instead. The only-script
+	# type downloads Maven without a JAR and is identified by its handling of MVNW_REPOURL.
+	grep -q -F "_MVNW_REPO_PATTERN" "${build_dir}/mvnw"
 }
 
 # Checks Maven Wrapper setup completeness.
