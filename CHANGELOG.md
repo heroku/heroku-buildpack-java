@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v83] - 2026-11-12
+
 * Fix Maven failing to start when the build cache holds an installation of a different Maven version. ([#315](https://github.com/heroku/heroku-buildpack-java/pull/315))
 
 ## [v82] - 2026-11-12
@@ -153,7 +156,8 @@
 
 * Add a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v82...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v83...main
+[v83]: https://github.com/heroku/heroku-buildpack-java/compare/v82...v83
 [v82]: https://github.com/heroku/heroku-buildpack-java/compare/v81...v82
 [v81]: https://github.com/heroku/heroku-buildpack-java/compare/v80...v81
 [v80]: https://github.com/heroku/heroku-buildpack-java/compare/v79...v80
