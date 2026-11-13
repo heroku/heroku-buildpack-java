@@ -56,6 +56,25 @@ function maven::setup_maven_and_build_app() {
 		wrapper_version=$(maven::wrapper_version "${build_dir}")
 		metrics::set_string "maven_wrapper_version" "${wrapper_version:-unknown}"
 
+		if maven::is_outdated_wrapper_version "${wrapper_version}"; then
+			output::warning <<-EOF
+				Warning: Outdated Maven Wrapper version.
+
+				Your app uses an outdated Maven Wrapper version (${wrapper_version:-unknown}).
+
+				Upgrade to the latest Apache Maven Wrapper version by running this
+				command in your project directory locally and committing the
+				updated files:
+				$ mvn wrapper:wrapper
+
+				This warning will become an error in a future version
+				of this buildpack.
+
+				For more information about Maven Wrapper, see:
+				https://maven.apache.org/tools/wrapper/
+			EOF
+		fi
+
 		if [[ -n "${MVNW_REPOURL:-}" ]]; then
 			metrics::set_string "maven_wrapper_repo_url_source" "user"
 		elif maven::wrapper_supports_mirror "${build_dir}"; then
