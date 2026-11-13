@@ -52,6 +52,10 @@ function maven::setup_maven_and_build_app() {
 		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/${maven_exe}"
 
+		local wrapper_version
+		wrapper_version=$(maven::wrapper_version "${build_dir}")
+		metrics::set_string "maven_wrapper_version" "${wrapper_version:-unknown}"
+
 		if [[ -n "${MVNW_REPOURL:-}" ]]; then
 			metrics::set_string "maven_wrapper_repo_url_source" "user"
 		elif maven::wrapper_supports_mirror "${build_dir}"; then
