@@ -55,6 +55,7 @@ Configure the buildpack by setting environment variables:
 | `MAVEN_JAVA_OPTS` | JVM options for Maven execution | (none) |
 | `MAVEN_SETTINGS_PATH` | Path to a custom `settings.xml` file | (none) |
 | `MAVEN_SETTINGS_URL` | URL from which to download a custom `settings.xml` file | (none) |
+| `MAVEN_CENTRAL_MIRROR` | Set to `false` to resolve Maven Central artifacts from `repo.maven.apache.org` instead of the Google Maven Central mirror. Mirrors in your `settings.xml` take precedence over the Google mirror. | `true` |
 | `MAVEN_HEROKU_CI_GOAL` | Maven goal for Heroku CI test runs | `test` |
 
 For more information about using a custom Maven `settings.xml` file, see [Using a Custom Maven Settings File](https://devcenter.heroku.com/articles/using-a-custom-maven-settings-xml).

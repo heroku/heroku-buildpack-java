@@ -5,6 +5,7 @@
 * Download Maven from a Heroku-hosted mirror of Maven Central. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
 * Download Maven Wrapper distributions from a Heroku-hosted mirror of Maven Central for apps using Apache Maven Wrapper `3.2.0` or later with a `distributionUrl` on Maven Central. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
 * Warn when the Maven Wrapper is older than `3.2.0`. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
+* Resolve Maven Central artifacts from the Google Maven Central mirror to avoid Maven Central rate limiting. Set `MAVEN_CENTRAL_MIRROR` to `false` to opt out. ([#321](https://github.com/heroku/heroku-buildpack-java/pull/321))
 
 ## [v83] - 2026-11-12
 
