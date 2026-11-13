@@ -11,7 +11,8 @@ RSpec.describe 'Maven buildpack' do
     end
   end
 
-  it 'resolves Maven Central artifacts from Maven Central when MAVEN_CENTRAL_MIRROR is false' do
+  it 'resolves Maven Central artifacts from Maven Central when MAVEN_CENTRAL_MIRROR is false',
+     skip: 'Maven Central rate limits CI' do
     app = Hatchet::Runner.new('simple-http-service', config: { MAVEN_CENTRAL_MIRROR: 'false' })
     app.deploy do
       expect(clean_output(app.output)).to include('Downloading from central: https://repo.maven.apache.org/maven2/')
@@ -29,7 +30,7 @@ RSpec.describe 'Maven buildpack' do
             <mirror>
               <id>user-mirror</id>
               <mirrorOf>*</mirrorOf>
-              <url>https://repo1.maven.org/maven2</url>
+              <url>https://maven-central.storage-download.googleapis.com/maven2</url>
             </mirror>
           </mirrors>
         </settings>
@@ -37,8 +38,10 @@ RSpec.describe 'Maven buildpack' do
     end
 
     app.deploy do
-      expect(clean_output(app.output)).to include('Downloading from user-mirror: https://repo1.maven.org/maven2/')
-      expect(clean_output(app.output)).not_to include('https://maven-central.storage-download.googleapis.com')
+      # The user mirror points at the Google mirror instead of Maven Central since Maven Central rate limits CI.
+      # The buildpack's mirror has the `central` id, so the mirror id in the log tells them apart.
+      expect(clean_output(app.output)).to include('Downloading from user-mirror: https://maven-central.storage-download.googleapis.com/maven2/')
+      expect(clean_output(app.output)).not_to include('Downloading from central:')
     end
   end
 end
