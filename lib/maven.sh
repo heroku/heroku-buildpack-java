@@ -528,42 +528,22 @@ function maven::write_central_mirror_settings() {
 		return 1
 	fi
 
-	# This overrides the `central` repository instead of declaring a <mirror>. Maven prefers mirrors
-	# that match a repository id exactly over wildcard mirrors, so a <mirror> for `central` would take
-	# precedence over user mirrors such as `<mirrorOf>*</mirrorOf>`. Keeping the `central` id also
-	# keeps artifacts in the existing local repository cache valid.
+	# Profile repositories don't apply to BOMs imported by other BOMs, which resolve from the super POM's
+	# `central` repository instead, so this declares a <mirror>. Maven prefers mirrors that match a repository
+	# id exactly over all other mirrors, which would take precedence over user mirrors such as
+	# `<mirrorOf>*</mirrorOf>`. The `!heroku-unused` exclusion turns `central` into a pattern that Maven only
+	# considers after user mirrors. The `central` mirror id keeps artifacts in the existing local repository
+	# cache valid.
 	cat >"${settings_path}" <<-EOF
 		<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
-		  <profiles>
-		    <profile>
-		      <id>google-maven-central-mirror</id>
-		      <repositories>
-		        <repository>
-		          <id>central</id>
-		          <url>https://maven-central.storage-download.googleapis.com/maven2</url>
-		          <snapshots>
-		            <enabled>false</enabled>
-		          </snapshots>
-		        </repository>
-		      </repositories>
-		      <pluginRepositories>
-		        <pluginRepository>
-		          <id>central</id>
-		          <url>https://maven-central.storage-download.googleapis.com/maven2</url>
-		          <snapshots>
-		            <enabled>false</enabled>
-		          </snapshots>
-		          <releases>
-		            <updatePolicy>never</updatePolicy>
-		          </releases>
-		        </pluginRepository>
-		      </pluginRepositories>
-		    </profile>
-		  </profiles>
-		  <activeProfiles>
-		    <activeProfile>google-maven-central-mirror</activeProfile>
-		  </activeProfiles>
+		  <mirrors>
+		    <mirror>
+		      <id>central</id>
+		      <mirrorOf>central,!heroku-unused</mirrorOf>
+		      <url>https://maven-central.storage-download.googleapis.com/maven2</url>
+		    </mirror>
+		  </mirrors>
 		</settings>
 	EOF
 }
