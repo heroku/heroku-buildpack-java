@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v84] - 2026-11-13
+
 * Download Maven from a Heroku-hosted mirror of Maven Central. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
 * Download Maven Wrapper distributions from a Heroku-hosted mirror of Maven Central for apps using Apache Maven Wrapper `3.2.0` or later with a `distributionUrl` on Maven Central. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
 * Warn when the Maven Wrapper is older than `3.2.0`. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
@@ -160,7 +163,8 @@
 
 * Add a new config var for customizing Maven options: `MAVEN_JAVA_OPTS`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v83...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-java/compare/v84...main
+[v84]: https://github.com/heroku/heroku-buildpack-java/compare/v83...v84
 [v83]: https://github.com/heroku/heroku-buildpack-java/compare/v82...v83
 [v82]: https://github.com/heroku/heroku-buildpack-java/compare/v81...v82
 [v81]: https://github.com/heroku/heroku-buildpack-java/compare/v80...v81
