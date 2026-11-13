@@ -20,5 +20,6 @@ function java_properties::get() {
 	local grep_result
 	grep_result=$(grep -E "^${escaped_key}[[:space:]=]+" "${file}" 2>/dev/null || true)
 
-	echo "${grep_result}" | sed -E -e "s/${escaped_key}([\ \t]*=[\ \t]*|[\ \t]+)([_A-Za-z0-9\.-]*).*/\2/g"
+	# Backslashes escape characters in property values, e.g. https\://repo.maven.apache.org/maven2
+	echo "${grep_result}" | sed -E -e "s/${escaped_key}([\ \t]*=[\ \t]*|[\ \t]+)([^[:space:]]*).*/\2/g" -e 's/\\(.)/\1/g'
 }

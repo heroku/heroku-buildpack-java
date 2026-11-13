@@ -129,4 +129,28 @@ RSpec.describe 'Maven buildpack' do
       REGEX
     end
   end
+
+  it 'warns when Maven Wrapper is outdated but continues build' do
+    app = Hatchet::Runner.new('simple-http-service-outdated-maven-wrapper')
+
+    app.deploy do
+      expect(app.output).to include('[INFO] BUILD SUCCESS')
+      expect(clean_output(app.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
+        remote:  !     Warning: Outdated Maven Wrapper version\\.
+        remote:  !
+        remote:  !     Your app uses an outdated Maven Wrapper version \\(3\\.1\\.1\\)\\.
+        remote:  !
+        remote:  !     Upgrade to the latest Apache Maven Wrapper version by running this
+        remote:  !     command in your project directory locally and committing the
+        remote:  !     updated files:
+        remote:  !     \\$ mvn wrapper:wrapper
+        remote:  !
+        remote:  !     This warning will become an error in a future version
+        remote:  !     of this buildpack\\.
+        remote:  !
+        remote:  !     For more information about Maven Wrapper, see:
+        remote:  !     https://maven\\.apache\\.org/tools/wrapper/
+      REGEX
+    end
+  end
 end
