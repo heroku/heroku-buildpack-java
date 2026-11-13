@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Download Maven from a Heroku-hosted mirror of Maven Central. ([#317](https://github.com/heroku/heroku-buildpack-java/pull/317))
 
 ## [v83] - 2026-11-12
 

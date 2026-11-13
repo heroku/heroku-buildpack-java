@@ -11,6 +11,8 @@ source "${BUILDPACK_DIR}/lib/metrics.sh"
 
 export DEFAULT_MAVEN_VERSION="3.10.0"
 
+MAVEN_CENTRAL_MIRROR_URL="https://heroku-buildpacks-jvm.s3.dualstack.us-east-1.amazonaws.com/maven-central"
+
 # Sets up Maven environment and builds the application.
 #
 # This function handles the complete Maven build process including:
@@ -115,7 +117,7 @@ function maven::install_maven() {
 
 	output::step "Installing Maven ${maven_version}..."
 
-	local maven_url="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
+	local maven_url="${MAVEN_CENTRAL_MIRROR_URL}/org/apache/maven/apache-maven/${maven_version}/apache-maven-${maven_version}-bin.tar.gz"
 
 	# The Maven home lives in the cache directory and may hold a different Maven version from a
 	# previous build. Extracting over it would leave stale files behind, such as a second
@@ -141,7 +143,8 @@ function maven::install_maven() {
 
 	local curl_exit_code=$?
 
-	if [[ "${http_status_code}" == "404" ]]; then
+	# S3 responds with 403 instead of 404 for missing objects since the bucket doesn't allow public listing.
+	if [[ "${http_status_code}" == "403" || "${http_status_code}" == "404" ]]; then
 		output::error <<-EOF
 			Error: The requested Maven version isn't available.
 
