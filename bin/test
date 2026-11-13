@@ -17,12 +17,19 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 
 cd "${BUILD_DIR}"
 
+maven_opts=(-B)
+global_settings_path=$(mktemp)
+
+if maven::write_central_mirror_settings "${global_settings_path}"; then
+	maven_opts+=(--global-settings "${global_settings_path}")
+fi
+
 if maven::should_use_wrapper "${BUILD_DIR}"; then
 	if [[ -z "${MVNW_REPOURL:-}" ]] && maven::wrapper_supports_mirror "${BUILD_DIR}"; then
 		export MVNW_REPOURL="${MAVEN_CENTRAL_MIRROR_URL}"
 	fi
 
-	./mvnw -B "${MAVEN_HEROKU_CI_GOAL:-test}"
+	./mvnw "${maven_opts[@]}" "${MAVEN_HEROKU_CI_GOAL:-test}"
 else
-	mvn -B "${MAVEN_HEROKU_CI_GOAL:-test}"
+	mvn "${maven_opts[@]}" "${MAVEN_HEROKU_CI_GOAL:-test}"
 fi

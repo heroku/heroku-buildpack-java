@@ -103,14 +103,25 @@ function maven::setup_maven_and_build_app() {
 
 	maven::install_settings_xml "${build_dir}" "${build_dir}/.m2/settings.xml"
 
+	local global_settings_opts=""
+	local global_settings_path
+	global_settings_path=$(mktemp)
+
+	if maven::write_central_mirror_settings "${global_settings_path}"; then
+		metrics::set_raw "maven_central_mirror" "true"
+		global_settings_opts="--global-settings ${global_settings_path}"
+	else
+		metrics::set_raw "maven_central_mirror" "false"
+	fi
+
 	output::step "Executing Maven"
 
 	echo "$ ${maven_exe} ${maven_opts} ${maven_goals}" | output::indent
 
-	# We rely on word splitting for settings_xml_opts, maven_opts, and maven_goals:
+	# We rely on word splitting for global_settings_opts, maven_opts, and maven_goals:
 	# Intentional word splitting needed for Maven command arguments
 	# shellcheck disable=SC2086
-	if ! (cd "${build_dir}" && ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${maven_opts} ${maven_goals}) | output::indent; then
+	if ! (cd "${build_dir}" && ${maven_exe} -DoutputFile=target/mvn-dependency-list.log -B ${global_settings_opts} ${maven_opts} ${maven_goals}) | output::indent; then
 		output::error <<-EOF
 			Error: Maven build failed.
 
@@ -497,4 +508,60 @@ function maven::install_settings_xml() {
 		metrics::set_string "maven_settings_xml_source_type" "app_root"
 		ln -sf "${build_dir}/settings.xml" "${settings_destination}"
 	fi
+}
+
+# Writes a Maven global settings file that points the `central` repository at the Heroku
+# Maven Central mirror. Returns 1 without writing anything if MAVEN_CENTRAL_MIRROR is `false`.
+#
+# Usage:
+# ```
+# if maven::write_central_mirror_settings "/tmp/global-settings.xml"; then
+#     mvn --global-settings "/tmp/global-settings.xml" install
+# fi
+# ```
+function maven::write_central_mirror_settings() {
+	local settings_path="${1}"
+
+	if [[ "${MAVEN_CENTRAL_MIRROR:-}" == "false" ]]; then
+		return 1
+	fi
+
+	# This overrides the `central` repository instead of declaring a <mirror>. Maven prefers mirrors
+	# that match a repository id exactly over wildcard mirrors, so a <mirror> for `central` would take
+	# precedence over user mirrors such as `<mirrorOf>*</mirrorOf>`. Keeping the `central` id also
+	# keeps artifacts in the existing local repository cache valid.
+	cat >"${settings_path}" <<-EOF
+		<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+		  <profiles>
+		    <profile>
+		      <id>heroku-maven-central-mirror</id>
+		      <repositories>
+		        <repository>
+		          <id>central</id>
+		          <url>https://d14yi51kyp4b7k.cloudfront.net/maven2</url>
+		          <snapshots>
+		            <enabled>false</enabled>
+		          </snapshots>
+		        </repository>
+		      </repositories>
+		      <pluginRepositories>
+		        <pluginRepository>
+		          <id>central</id>
+		          <url>https://d14yi51kyp4b7k.cloudfront.net/maven2</url>
+		          <snapshots>
+		            <enabled>false</enabled>
+		          </snapshots>
+		          <releases>
+		            <updatePolicy>never</updatePolicy>
+		          </releases>
+		        </pluginRepository>
+		      </pluginRepositories>
+		    </profile>
+		  </profiles>
+		  <activeProfiles>
+		    <activeProfile>heroku-maven-central-mirror</activeProfile>
+		  </activeProfiles>
+		</settings>
+	EOF
 }
