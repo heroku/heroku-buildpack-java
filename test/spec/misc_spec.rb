@@ -130,7 +130,8 @@ RSpec.describe 'Maven buildpack' do
     end
   end
 
-  it 'warns when Maven Wrapper is outdated but continues build' do
+  it 'warns when Maven Wrapper is outdated but continues build',
+     skip: 'Maven Wrapper 3.1.1 downloads Maven from Maven Central, which rate limits CI' do
     app = Hatchet::Runner.new('simple-http-service-outdated-maven-wrapper')
 
     app.deploy do
