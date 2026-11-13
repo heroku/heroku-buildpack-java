@@ -510,8 +510,10 @@ function maven::install_settings_xml() {
 	fi
 }
 
-# Writes a Maven global settings file that points the `central` repository at the Heroku
+# Writes a Maven global settings file that points the `central` repository at the Google
 # Maven Central mirror. Returns 1 without writing anything if MAVEN_CENTRAL_MIRROR is `false`.
+#
+# This is a temporary workaround for rate limiting by Maven Central.
 #
 # Usage:
 # ```
@@ -535,11 +537,11 @@ function maven::write_central_mirror_settings() {
 		          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
 		  <profiles>
 		    <profile>
-		      <id>heroku-maven-central-mirror</id>
+		      <id>google-maven-central-mirror</id>
 		      <repositories>
 		        <repository>
 		          <id>central</id>
-		          <url>https://d14yi51kyp4b7k.cloudfront.net/maven2</url>
+		          <url>https://maven-central.storage-download.googleapis.com/maven2</url>
 		          <snapshots>
 		            <enabled>false</enabled>
 		          </snapshots>
@@ -548,7 +550,7 @@ function maven::write_central_mirror_settings() {
 		      <pluginRepositories>
 		        <pluginRepository>
 		          <id>central</id>
-		          <url>https://d14yi51kyp4b7k.cloudfront.net/maven2</url>
+		          <url>https://maven-central.storage-download.googleapis.com/maven2</url>
 		          <snapshots>
 		            <enabled>false</enabled>
 		          </snapshots>
@@ -560,7 +562,7 @@ function maven::write_central_mirror_settings() {
 		    </profile>
 		  </profiles>
 		  <activeProfiles>
-		    <activeProfile>heroku-maven-central-mirror</activeProfile>
+		    <activeProfile>google-maven-central-mirror</activeProfile>
 		  </activeProfiles>
 		</settings>
 	EOF

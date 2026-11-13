@@ -10,7 +10,7 @@ RSpec.describe 'Maven buildpack' do
       # Matching against this specific dependency download since there are some dependencies that are downloaded
       # at runtime and not stored in the cache (bin/test doesn't have access to the cache) so that a more generic
       # match will not work.
-      expect(clean_output(test_run.output)).to include('Downloading from central: https://d14yi51kyp4b7k.cloudfront.net/maven2/io/undertow')
+      expect(clean_output(test_run.output)).to include('Downloading from central: https://maven-central.storage-download.googleapis.com/maven2/io/undertow')
 
       expect(clean_output(test_run.output)).to match(Regexp.new(<<~REGEX, Regexp::MULTILINE))
         \\[INFO\\] -------------------------------------------------------
@@ -26,7 +26,7 @@ RSpec.describe 'Maven buildpack' do
 
       test_run.run_again
 
-      expect(clean_output(test_run.output)).not_to match('Downloading from central: https://d14yi51kyp4b7k.cloudfront.net/maven2/io/undertow')
+      expect(clean_output(test_run.output)).not_to match('Downloading from central: https://maven-central.storage-download.googleapis.com/maven2/io/undertow')
     end
   end
 end
