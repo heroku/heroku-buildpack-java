@@ -18,6 +18,10 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS|JAVA_TOOL_OPTIONS"
 cd "${BUILD_DIR}"
 
 if maven::should_use_wrapper "${BUILD_DIR}"; then
+	if [[ -z "${MVNW_REPOURL:-}" ]] && maven::wrapper_supports_mirror "${BUILD_DIR}"; then
+		export MVNW_REPOURL="${MAVEN_CENTRAL_MIRROR_URL}"
+	fi
+
 	./mvnw -B "${MAVEN_HEROKU_CI_GOAL:-test}"
 else
 	mvn -B "${MAVEN_HEROKU_CI_GOAL:-test}"

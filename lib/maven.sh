@@ -12,6 +12,10 @@ source "${BUILDPACK_DIR}/lib/metrics.sh"
 export DEFAULT_MAVEN_VERSION="3.10.0"
 
 MAVEN_CENTRAL_MIRROR_URL="https://heroku-buildpacks-jvm.s3.dualstack.us-east-1.amazonaws.com/maven-central"
+# Older wrappers can't download Maven from the Maven Central mirror. Takari wrapper JARs ignore the distributionUrl
+# when MVNW_REPOURL is set and download a hardcoded Maven version instead. Apache Maven Wrapper 3.1.x JARs drop the
+# path of MVNW_REPOURL when downloading Maven.
+MAVEN_WRAPPER_MIN_VERSION="3.2.0"
 
 # Sets up Maven environment and builds the application.
 #
@@ -47,6 +51,15 @@ function maven::setup_maven_and_build_app() {
 
 		util::cache_copy ".m2/wrapper" "${cache_dir}" "${build_dir}"
 		chmod +x "${build_dir}/${maven_exe}"
+
+		if [[ -n "${MVNW_REPOURL:-}" ]]; then
+			metrics::set_string "maven_wrapper_repo_url_source" "user"
+		elif maven::wrapper_supports_mirror "${build_dir}"; then
+			metrics::set_string "maven_wrapper_repo_url_source" "mirror"
+			export MVNW_REPOURL="${MAVEN_CENTRAL_MIRROR_URL}"
+		else
+			metrics::set_string "maven_wrapper_repo_url_source" "default"
+		fi
 	else
 		metrics::set_raw "maven_wrapper" "false"
 		local maven_exe="mvn"
@@ -245,6 +258,56 @@ function maven::should_use_wrapper() {
 	# but have an mvnw script. We will enforce correct Maven wrapper setup at some point, but
 	# for now, we continue to support this and fall back to not using the wrapper in such cases.
 	[[ -f "${build_dir}/mvnw" ]] && [[ -f "${build_dir}/.mvn/wrapper/maven-wrapper.properties" ]] && [[ -z "$(java_properties::get "${build_dir}/system.properties" "maven.version")" ]]
+}
+
+# Determines if the Maven Wrapper in the given build directory can download Maven from the Maven Central mirror.
+# Returns 0 (true) if the distributionUrl points to Maven Central and the wrapper version isn't outdated.
+#
+# Usage:
+# ```
+# if maven::wrapper_supports_mirror "${BUILD_DIR}"; then
+#     export MVNW_REPOURL="${MAVEN_CENTRAL_MIRROR_URL}"
+# fi
+# ```
+function maven::wrapper_supports_mirror() {
+	local build_dir="${1}"
+
+	local distribution_url
+	distribution_url=$(java_properties::get "${build_dir}/.mvn/wrapper/maven-wrapper.properties" "distributionUrl")
+
+	if [[ "${distribution_url}" != "https://repo.maven.apache.org/maven2/"* && "${distribution_url}" != "https://repo1.maven.org/maven2/"* ]]; then
+		return 1
+	fi
+
+	! maven::is_outdated_wrapper_version "$(maven::wrapper_version "${build_dir}")"
+}
+
+# Prints the version of the Apache Maven Wrapper in the given build directory, read from the header of the mvnw
+# script. Prints nothing for wrappers without that header, such as the ones from Takari.
+#
+# Usage:
+# ```
+# wrapper_version=$(maven::wrapper_version "${BUILD_DIR}")
+# ```
+function maven::wrapper_version() {
+	local build_dir="${1}"
+
+	sed -n -E "s/^# Apache Maven Wrapper startup batch script, version ([0-9]+(\.[0-9]+)*).*/\1/p" "${build_dir}/mvnw" | head -n 1
+}
+
+# Determines if the given Maven Wrapper version is older than MAVEN_WRAPPER_MIN_VERSION.
+# Returns 0 (true) for an empty version.
+#
+# Usage:
+# ```
+# if maven::is_outdated_wrapper_version "3.1.1"; then
+#     echo "Outdated"
+# fi
+# ```
+function maven::is_outdated_wrapper_version() {
+	local wrapper_version="${1}"
+
+	[[ -z "${wrapper_version}" ]] || ! printf "%s\n" "${MAVEN_WRAPPER_MIN_VERSION}" "${wrapper_version}" | sort -V -C
 }
 
 # Checks Maven Wrapper setup completeness.
